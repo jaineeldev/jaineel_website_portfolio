@@ -16,6 +16,8 @@ type Project = {
   features?: string[];
   stack: string[];
   liveUrl: string | null;
+  liveLabel?: string;
+  liveDisabled?: boolean;
   githubUrl: string | null;
   accentColor: string;
   variant: "ui" | "terminal";
@@ -25,10 +27,15 @@ const PROJECTS: Project[] = [
   {
     title: "Portfolio v2",
     description:
-      "This site \u2014 a premium personal portfolio built with Next.js, Tailwind CSS, and Framer Motion. Designed for speed, clarity, and strong visual identity.",
+      "A personal portfolio built from scratch to showcase my work, progression, and range as a developer. Designed around clean structure, subtle motion, and a strong visual identity \u2014 with every detail intentional and every interaction refined.",
+    features: [
+      "Polished entrance flow with a custom preloader and staggered section reveals. Scroll-driven transitions, cursor-reactive depth, and cohesive motion language throughout \u2014 built to feel fast, premium, and alive.",
+    ],
     stack: ["Next.js", "TypeScript", "Tailwind CSS", "Framer Motion"],
-    liveUrl: null,
-    githubUrl: null,
+    liveUrl: "https://jaineel.dev",
+    liveLabel: "You\u2019re already here",
+    liveDisabled: true,
+    githubUrl: "https://github.com/jaineeldev/jaineel_website_portfolio",
     accentColor: "37,99,235",
     variant: "ui",
   },
@@ -303,7 +310,7 @@ function ProjectBlock({
 
             {/* Actions */}
             <div className="relative z-20 flex items-center gap-3">
-              {project.liveUrl && (
+              {project.liveUrl && !project.liveDisabled && (
                 <a
                   href={project.liveUrl}
                   className="group/btn inline-flex items-center gap-2.5 px-5 py-2.5 rounded-full border border-white/12 hover:border-white/25 bg-white/4 hover:bg-white/8 transition-all duration-300"
@@ -321,7 +328,7 @@ function ProjectBlock({
                   }}
                 >
                   <span className="text-[13px] font-medium tracking-wide text-white/65 group-hover/btn:text-white/95 transition-colors duration-300">
-                    View project
+                    {project.liveLabel ?? "View project"}
                   </span>
                   <svg
                     className="w-3.5 h-3.5 text-white/30 group-hover/btn:text-white/70 transition-colors duration-300"
@@ -337,6 +344,27 @@ function ProjectBlock({
                     />
                   </svg>
                 </a>
+              )}
+              {project.liveDisabled && project.liveLabel && (
+                <div
+                  className="inline-flex items-center gap-2.5 px-5 py-2.5 rounded-full border border-white/8 bg-white/2 cursor-default select-none"
+                  style={{ boxShadow: "inset 0 1px 0 rgba(255,255,255,0.03)" }}
+                  aria-disabled="true"
+                >
+                  <span className="relative flex h-1.5 w-1.5">
+                    <span
+                      className="absolute inset-0 rounded-full bg-emerald-400/50 animate-ping"
+                      style={{ animationDuration: "2.5s" }}
+                    />
+                    <span
+                      className="relative inline-flex h-1.5 w-1.5 rounded-full bg-emerald-400/80"
+                      style={{ boxShadow: "0 0 6px rgba(52,211,153,0.4)" }}
+                    />
+                  </span>
+                  <span className="text-[12px] font-mono tracking-[0.06em] text-white/55">
+                    {project.liveLabel}
+                  </span>
+                </div>
               )}
               {project.githubUrl && (
                 <a

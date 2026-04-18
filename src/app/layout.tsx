@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono, Syne } from "next/font/google";
 import { Analytics } from "@vercel/analytics/next";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 import CustomCursor from "@/components/CustomCursor";
 import "./globals.css";
 
@@ -125,6 +126,7 @@ export default function RootLayout({
         <CustomCursor />
         {children}
         <Analytics />
+        <SpeedInsights />
       </body>
     </html>
   );

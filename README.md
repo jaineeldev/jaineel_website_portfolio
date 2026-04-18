@@ -85,7 +85,7 @@ Currently in active development.
 
 * GitHub: https://github.com/jaineeldev
 * LinkedIn: https://www.linkedin.com/in/jaineel-khatri/
-* Email: [khatrijaineel@gmail.com](mailto:your@email.com)
+* Email: [jaineelk.dev@gmail.com](mailto:jaineelk.dev@gmail.com)
 
 ---
 

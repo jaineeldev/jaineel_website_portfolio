@@ -12,7 +12,7 @@ import {
 
 const ease = [0.16, 1, 0.3, 1] as const;
 
-const EMAIL = "khatrijaineel@gmail.com";
+const EMAIL = "jaineelk.dev@gmail.com";
 
 const SOCIALS = [
   { label: "GitHub", href: "https://github.com/jaineeldev" },

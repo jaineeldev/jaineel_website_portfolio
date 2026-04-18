@@ -6,7 +6,7 @@ import Logo from "./Logo";
 const LINKS = [
   { label: "GitHub", href: "https://github.com/jaineeldev" },
   { label: "LinkedIn", href: "https://www.linkedin.com/in/jaineel-khatri/" },
-  { label: "Email", href: "mailto:khatrijaineel@gmail.com" },
+  { label: "Email", href: "mailto:jaineelk.dev@gmail.com" },
 ];
 
 export default function Footer() {

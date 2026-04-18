@@ -60,6 +60,14 @@ A Python-based system inspection and port scanning tool:
 - Exports results to CSV (append-only logging)  
 - GUI with selectable scan options and live status output  
 
+### Hawthorne Corner Store Website
+
+A real-world website built for a local convenience store in Brisbane:
+
+- Clear store information and opening hours  
+- “Open now / Closed” status  
+- Google Maps location support  
+- Simple, responsive design for everyday users 
 
 ## 🎨 Design Approach
 

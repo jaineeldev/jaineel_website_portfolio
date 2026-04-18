@@ -6,7 +6,8 @@ const CLIENT_SECRET = process.env.SPOTIFY_CLIENT_SECRET ?? "";
 const REFRESH_TOKEN = process.env.SPOTIFY_REFRESH_TOKEN ?? "";
 
 const TOKEN_URL = "https://accounts.spotify.com/api/token";
-const NOW_PLAYING_URL = "https://api.spotify.com/v1/me/player/currently-playing";
+const NOW_PLAYING_URL =
+  "https://api.spotify.com/v1/me/player/currently-playing";
 
 async function getAccessToken(): Promise<string> {
   const basic = Buffer.from(`${CLIENT_ID}:${CLIENT_SECRET}`).toString("base64");
@@ -27,9 +28,7 @@ async function getAccessToken(): Promise<string> {
   const data = await res.json();
 
   if (!res.ok || !data.access_token) {
-    throw new Error(
-      `Failed to refresh Spotify access token: ${JSON.stringify(data)}`
-    );
+    throw new Error("Failed to refresh Spotify access token");
   }
 
   return data.access_token;
@@ -37,13 +36,7 @@ async function getAccessToken(): Promise<string> {
 
 export async function GET() {
   if (!CLIENT_ID || !CLIENT_SECRET || !REFRESH_TOKEN) {
-    return Response.json({
-      ok: false,
-      reason: "missing_env",
-      hasClientId: !!CLIENT_ID,
-      hasClientSecret: !!CLIENT_SECRET,
-      hasRefreshToken: !!REFRESH_TOKEN,
-    });
+    return Response.json({ isPlaying: false });
   }
 
   try {
@@ -57,48 +50,33 @@ export async function GET() {
     });
 
     if (res.status === 204) {
-      return Response.json({
-        ok: true,
-        status: 204,
-        isPlaying: false,
-        reason: "spotify_returned_204_no_content",
-      });
+      return Response.json({ isPlaying: false });
     }
 
-    const text = await res.text();
+    if (!res.ok) {
+      return Response.json({ isPlaying: false });
+    }
 
-    let data: any = null;
-    try {
-      data = text ? JSON.parse(text) : null;
-    } catch {
-      data = { raw: text };
+    const data = await res.json();
+
+    if (!data.item || !data.is_playing) {
+      return Response.json({ isPlaying: false });
     }
 
     return Response.json({
-      ok: res.ok,
-      status: res.status,
-      is_playing: data?.is_playing ?? false,
-      has_item: !!data?.item,
-      item_name: data?.item?.name ?? null,
-      artist:
-        data?.item?.artists?.map((a: { name: string }) => a.name).join(", ") ??
+      isPlaying: true,
+      title: data.item.name,
+      artist: data.item.artists
+        .map((a: { name: string }) => a.name)
+        .join(", "),
+      albumArt:
+        data.item.album.images?.[2]?.url ??
+        data.item.album.images?.[0]?.url ??
         null,
-      device: data?.device
-        ? {
-            name: data.device.name,
-            type: data.device.type,
-            is_active: data.device.is_active,
-            is_private_session: data.device.is_private_session,
-            is_restricted: data.device.is_restricted,
-          }
-        : null,
-      debug: data,
+      songUrl: data.item.external_urls?.spotify ?? null,
     });
   } catch (error) {
-    return Response.json({
-      ok: false,
-      reason: "exception",
-      error: error instanceof Error ? error.message : String(error),
-    });
+    console.error("Spotify now playing error:", error);
+    return Response.json({ isPlaying: false });
   }
 }

@@ -21,6 +21,8 @@ const SKILLS_GROUPS: { label: string; items: SkillItem[] }[] = [
   {
     label: "Frontend",
     items: [
+      { name: "HTML", desc: "Semantic markup \u00b7 accessible structure" },
+      { name: "CSS", desc: "Styling \u00b7 layout & responsive design" },
       { name: "Next.js", desc: "React framework \u00b7 SSR / App Router" },
       { name: "React", desc: "Component architecture \u00b7 hooks-driven UI" },
       { name: "TypeScript", desc: "Typed JavaScript \u00b7 scalable apps" },
@@ -33,6 +35,7 @@ const SKILLS_GROUPS: { label: string; items: SkillItem[] }[] = [
     items: [
       { name: "Node.js", desc: "JS runtime \u00b7 server-side logic" },
       { name: "Express", desc: "HTTP framework \u00b7 REST routing" },
+      { name: "PHP", desc: "Server-side scripting \u00b7 web backends" },
       { name: "REST APIs", desc: "Service design \u00b7 endpoint architecture" },
       { name: "SQL", desc: "Relational queries \u00b7 data modelling" },
     ],

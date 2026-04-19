@@ -88,23 +88,20 @@ function SkillPill({
       onMouseLeave={onLeave}
     >
       <motion.div
-        className="relative px-5 py-2.5 rounded-full border backdrop-blur-md transition-all duration-300"
+        className="relative px-5 py-2.5 rounded-full border backdrop-blur-md"
         animate={{
           scale: isActive ? 1.03 : 1,
           y: isActive ? -2 : 0,
-          borderColor: isActive
-            ? "rgba(var(--fg-rgb),0.22)"
-            : "rgba(var(--fg-rgb),0.10)",
-          backgroundColor: isActive
-            ? "rgba(var(--fg-rgb),0.08)"
-            : "rgba(var(--fg-rgb),0.04)",
           opacity: isDimmed ? 0.48 : 1,
         }}
         transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
         style={{
+          borderColor: isActive ? "rgba(var(--fg-rgb),0.22)" : "rgba(var(--fg-rgb),0.10)",
+          backgroundColor: isActive ? "rgba(var(--fg-rgb),0.08)" : "rgba(var(--fg-rgb),0.04)",
           boxShadow: isActive
             ? "0 4px 20px rgba(var(--shadow-rgb),0.3), 0 0 16px rgba(37,99,235,0.10), inset 0 1px 0 rgba(var(--fg-rgb),0.06)"
             : "0 2px 16px rgba(var(--shadow-rgb),0.25), inset 0 1px 0 rgba(var(--fg-rgb),0.04)",
+          transition: "border-color 0.25s cubic-bezier(0.16,1,0.3,1), background-color 0.25s cubic-bezier(0.16,1,0.3,1), box-shadow 0.25s cubic-bezier(0.16,1,0.3,1)",
         }}
       >
         <span
@@ -309,13 +306,16 @@ export default function Skills() {
                   onMouseLeave={onPillLeave}
                 >
                   <motion.div
-                    className="relative px-4 py-1.5 rounded-full border border-dashed backdrop-blur-md transition-all duration-300"
+                    className="relative px-4 py-1.5 rounded-full border border-dashed backdrop-blur-md"
                     animate={{
                       scale: isActive ? 1.03 : 1,
-                      borderColor: isActive ? "rgba(var(--fg-rgb),0.16)" : "rgba(var(--fg-rgb),0.08)",
                       opacity: isDimmed ? 0.35 : 0.7,
                     }}
                     transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
+                    style={{
+                      borderColor: isActive ? "rgba(var(--fg-rgb),0.16)" : "rgba(var(--fg-rgb),0.08)",
+                      transition: "border-color 0.25s cubic-bezier(0.16,1,0.3,1)",
+                    }}
                   >
                     <span className="text-[11px] font-mono tracking-[0.08em] text-fg/55">
                       {item.name}

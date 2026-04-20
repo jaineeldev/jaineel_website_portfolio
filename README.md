@@ -1,100 +1,39 @@
-# Jaineel Khatri — Portfolio v2
+# jaineel.dev
 
-A modern personal portfolio focused on clean UI, subtle motion, and showcasing my progression in cybersecurity and software development.
+Personal portfolio built around one idea: keep everything minimal, but make every detail intentional.
 
-
-## 🌐 Live Site
-
-https://jaineel.dev
-
-
-## 📸 Preview
+**Live site → [jaineel.dev](https://jaineel.dev)**
 
 <p align="center">
   <img src="https://github.com/user-attachments/assets/79a9e54e-f564-4ccf-91a6-32f0d9bd6b02" width="900"/>
 </p>
 
+## tech
 
-## Overview
+```
+framework   →  Next.js
+language    →  TypeScript
+styling     →  Tailwind CSS v4
+motion      →  Framer Motion
+deployment  →  Vercel
+```
 
-This project is built around a simple idea:
+## features
 
-> Keep everything minimal — but make every detail intentional.
+- Custom preloader for controlled page entry
+- Section-based navigation with smooth scroll
+- Staggered entrance animations and scroll-triggered reveals
+- Layered UI with depth — glass and subtle glow effects
+- Interactive project cards with consistent hover states
+- System-style status indicators
 
-Instead of adding unnecessary features, the focus is on:
-- layout balance  
-- interaction design  
-- motion that enhances, not distracts  
-
-
-## 🛠️ Tech Stack
-
-- **Next.js**
-- **TypeScript**
-- **Tailwind CSS**
-- **Framer Motion**
-
-
-## ✨ Key Features
-
-- Smooth section-based navigation  
-- Custom preloader for controlled page entry  
-- Subtle scroll and staggered animations  
-- Layered UI with depth (glass + glow effects)  
-- Interactive project cards with consistent hover states  
-- System-style status indicators  
-
-
-## 🚀 Included Projects
-
-### Portfolio v2
-
-The site itself — built to explore UI polish, motion, and structure.
-
-### System Fingerprint Tool
-
-A Python-based system inspection and port scanning tool:
-
-- Multi-threaded port scanning (1–65535)  
-- Collects IP, MAC address, CPU, OS, and system time  
-- Exports results to CSV (append-only logging)  
-- GUI with selectable scan options and live status output  
-
-### Hawthorne Corner Store Website
-
-A real-world website built for a local convenience store in Brisbane:
-
-- Clear store information and opening hours  
-- “Open now / Closed” status  
-- Google Maps location support  
-- Simple, responsive design for everyday users 
-
-## 🎨 Design Approach
-
-The goal was to build something that feels:
-
-- **Intentional** — no unnecessary elements  
-- **Calm** — minimal but not empty  
-- **Responsive** — motion used with restraint  
-- **Technical** — structured, system-like UI  
-
-
-## 💻 Running Locally
+## running locally
 
 ```bash
 npm install
 npm run dev
 ```
 
-## 📡 Status
+## contact
 
-Live and actively being improved.
-
-
-## 📫 Contact
-
-- GitHub: https://github.com/jaineeldev  
-- LinkedIn: https://www.linkedin.com/in/jaineel-khatri/  
-- Email: jaineelk.dev@gmail.com  
----
-Built with intention.
+[github](https://github.com/jaineeldev) · [linkedin](https://www.linkedin.com/in/jaineel-khatri/) · [jaineelk.dev@gmail.com](mailto:jaineelk.dev@gmail.com)

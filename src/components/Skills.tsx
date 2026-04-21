@@ -13,9 +13,7 @@ import {
 /* ── Skill data ── */
 type SkillItem = { name: string; desc: string; altDesc?: string };
 const EXPLORING: SkillItem[] = [
-  { name: "C++", desc: "Systems programming \u00b7 memory & performance" },
-  { name: "Rust", desc: "Memory safety \u00b7 modern systems language" },
-  { name: "Docker", desc: "Containerisation \u00b7 deployable environments" },
+  { name: "C", desc: "Systems programming \u00b7 memory & performance" },
 ];
 const SKILLS_GROUPS: { label: string; items: SkillItem[] }[] = [
   {
@@ -27,6 +25,7 @@ const SKILLS_GROUPS: { label: string; items: SkillItem[] }[] = [
       { name: "React", desc: "Component architecture \u00b7 hooks-driven UI" },
       { name: "TypeScript", desc: "Typed JavaScript \u00b7 scalable apps" },
       { name: "Tailwind CSS", desc: "Utility-first styling \u00b7 rapid prototyping" },
+      { name: "Vite", desc: "Build tool \u00b7 fast dev server" },
       { name: "Framer Motion", desc: "Animation engine \u00b7 scroll-driven motion" },
     ],
   },

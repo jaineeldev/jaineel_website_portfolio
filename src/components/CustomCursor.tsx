@@ -14,6 +14,11 @@ export default function CustomCursor() {
       return;
     }
 
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      el.style.display = "none";
+      return;
+    }
+
     /* Resolve theme-aware cursor color from CSS variables. */
     const readCursorTokens = () => {
       const styles = getComputedStyle(document.documentElement);
@@ -27,11 +32,30 @@ export default function CustomCursor() {
 
     let tokens = readCursorTokens();
 
+    let mouseX = 0, mouseY = 0;
+    let curX = 0, curY = 0;
+    let hovering = false;
+    let clicking = false;
+    let curScale = 1;
+    let glowOpacity = 1;
+    let isIdle = false;
+    let lastTarget: Element | null = null;
+    let idleTimer: ReturnType<typeof setTimeout>;
+    let raf: number;
+
+    const lerp = (a: number, b: number, t: number) => a + (b - a) * t;
+
+    const writeShadow = () => {
+      const intensity = hovering ? 1.6 : 1;
+      el.style.boxShadow = `0 0 ${12 * intensity}px rgba(${tokens.rgb}, ${0.25 * intensity}), 0 0 ${24 * intensity}px rgba(${tokens.rgb}, ${0.15 * intensity})`;
+    };
+
     const applyTheme = () => {
       tokens = readCursorTokens();
       const bgAlpha = tokens.blend === "normal" ? 1 : 0.85;
       el.style.backgroundColor = `rgba(${tokens.rgb}, ${bgAlpha})`;
       el.style.mixBlendMode = tokens.blend;
+      writeShadow();
     };
     applyTheme();
 
@@ -45,18 +69,6 @@ export default function CustomCursor() {
     });
     themeObserver.observe(document.documentElement, { attributes: true });
 
-    let mouseX = 0, mouseY = 0;
-    let curX = 0, curY = 0;
-    let hovering = false;
-    let clicking = false;
-    let curScale = 1;
-    let glowOpacity = 1;
-    let isIdle = false;
-    let idleTimer: ReturnType<typeof setTimeout>;
-    let raf: number;
-
-    const lerp = (a: number, b: number, t: number) => a + (b - a) * t;
-
     const resetIdle = () => {
       isIdle = false;
       clearTimeout(idleTimer);
@@ -66,8 +78,15 @@ export default function CustomCursor() {
     const onMove = (e: MouseEvent) => {
       mouseX = e.clientX;
       mouseY = e.clientY;
-      const target = e.target as HTMLElement;
-      hovering = !!target.closest("a, button, [role='button'], input, textarea, select");
+      const target = e.target as Element | null;
+      if (target !== lastTarget) {
+        lastTarget = target;
+        const next = !!target?.closest("a, button, [role='button'], input, textarea, select");
+        if (next !== hovering) {
+          hovering = next;
+          writeShadow();
+        }
+      }
       resetIdle();
     };
 
@@ -84,11 +103,8 @@ export default function CustomCursor() {
       curScale = lerp(curScale, targetScale, 0.15);
       glowOpacity = lerp(glowOpacity, isIdle ? 0.4 : 1, 0.04);
 
-      el.style.transform = `translate(${curX - 4}px, ${curY - 4}px) scale(${curScale})`;
+      el.style.transform = `translate3d(${curX - 4}px, ${curY - 4}px, 0) scale(${curScale})`;
       el.style.opacity = `${glowOpacity}`;
-
-      const glowIntensity = hovering ? 1.6 : 1;
-      el.style.boxShadow = `0 0 ${12 * glowIntensity}px rgba(${tokens.rgb}, ${0.25 * glowIntensity}), 0 0 ${24 * glowIntensity}px rgba(${tokens.rgb}, ${0.15 * glowIntensity})`;
 
       raf = requestAnimationFrame(tick);
     };

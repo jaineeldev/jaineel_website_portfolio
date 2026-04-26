@@ -10,6 +10,11 @@ import {
 } from "framer-motion";
 
 /* ── Project data ── */
+type TerminalLine = {
+  prefix: ">" | "[+]" | "[!]" | "[-]" | "[*]";
+  text: string;
+};
+
 type Project = {
   title: string;
   description: string;
@@ -21,6 +26,12 @@ type Project = {
   githubUrl: string | null;
   accentColor: string;
   variant: "ui" | "terminal";
+  terminalLabel?: string;
+  terminalLines?: TerminalLine[];
+  uiLabel?: string;
+  uiKind?: "website" | "mascot";
+  wip?: boolean;
+  collab?: boolean;
 };
 
 const PROJECTS: Project[] = [
@@ -38,6 +49,7 @@ const PROJECTS: Project[] = [
     githubUrl: "https://github.com/jaineeldev/jaineel_website_portfolio",
     accentColor: "37,99,235",
     variant: "ui",
+    uiLabel: "jaineel.dev",
   },
   {
     title: "Hawthorne Corner Store",
@@ -51,6 +63,7 @@ const PROJECTS: Project[] = [
     githubUrl: "https://github.com/jaineeldev/hcs_2.0",
     accentColor: "20,184,166",
     variant: "ui",
+    uiLabel: "hawthornecornerstore.com.au",
   },
   {
     title: "System Fingerprint Tool",
@@ -68,6 +81,59 @@ const PROJECTS: Project[] = [
     githubUrl: "https://github.com/jaineeldev/system-fingerprint-tool",
     accentColor: "99,102,241",
     variant: "terminal",
+    terminalLabel: "recon",
+    terminalLines: [
+      { prefix: ">", text: "scanning ports..." },
+      { prefix: "[+]", text: "port 22 open" },
+      { prefix: "[+]", text: "port 80 open" },
+      { prefix: "[+]", text: "fingerprint collected" },
+    ],
+  },
+  {
+    title: "Network Intrusion Detection System – Machine Learning (NIDS-ML)",
+    description:
+      "An ML-powered network intrusion detection system that captures live traffic and flags malicious connections in real time. Built collaboratively — I lead the security and networking side (packet capture, traffic handling, threat framing) while a friend drives the machine learning pipeline.",
+    features: [
+      "Live packet capture with Scapy",
+      "NSL-KDD trained classifier",
+      "Real-time threat prediction",
+      "Flask dashboard with auto-refresh",
+      "Modular capture, training, and inference pipeline",
+    ],
+    stack: ["Python", "Scikit-learn", "Scapy", "Flask", "Pandas", "NumPy"],
+    liveUrl: null,
+    githubUrl: "https://github.com/jaineeldev/nids-ml",
+    accentColor: "16,185,129",
+    variant: "terminal",
+    terminalLabel: "nids · live",
+    terminalLines: [
+      { prefix: ">", text: "capturing flows..." },
+      { prefix: "[*]", text: "1,284 packets" },
+      { prefix: "[+]", text: "predict: normal · 0.97" },
+      { prefix: "[!]", text: "anomaly: 192.168.1.42" },
+    ],
+    wip: true,
+    collab: true,
+  },
+  {
+    title: "DesktopBuddy",
+    description:
+      "An animated desktop mascot for Windows that reflects how your machine is feeling. The buddy reacts to CPU, RAM, and temperature in real time \u2014 shifting moods, surfacing stats, and adding a small bit of personality to the desktop.",
+    features: [
+      "State-driven mascot (idle, happy, sleepy, stressed)",
+      "Native C module for live CPU, RAM, and temperature",
+      "Interactive speech bubbles and stat HUD",
+      "System tray integration with persistent settings",
+      "Customizable name, scale, and opacity",
+    ],
+    stack: ["Electron", "React", "TypeScript", "Framer Motion", "Tailwind CSS", "C"],
+    liveUrl: null,
+    githubUrl: "https://github.com/jaineeldev/desktop_buddy",
+    accentColor: "236,72,153",
+    variant: "ui",
+    uiLabel: "buddy · phase 0",
+    uiKind: "mascot",
+    wip: true,
   },
 ];
 
@@ -224,7 +290,12 @@ function ProjectBlock({
                   <span className="w-2 h-2 rounded-full bg-fg/8" />
                   {project.variant === "terminal" && (
                     <span className="ml-auto text-[9px] font-mono tracking-[0.15em] text-fg/20 uppercase">
-                      recon
+                      {project.terminalLabel ?? "recon"}
+                    </span>
+                  )}
+                  {project.variant === "ui" && project.uiLabel && (
+                    <span className="ml-auto text-[9px] font-mono tracking-widest text-fg/25 lowercase truncate max-w-[60%]">
+                      {project.uiLabel}
                     </span>
                   )}
                 </div>
@@ -235,28 +306,132 @@ function ProjectBlock({
                     className="px-4 py-4 font-mono text-[10px] leading-relaxed"
                     style={{ textRendering: "geometricPrecision", WebkitFontSmoothing: "antialiased" }}
                   >
-                    <div className="flex gap-2 text-fg/55">
-                      <span className="text-accent/80 select-none">&gt;</span>
-                      <span>scanning ports...</span>
-                    </div>
-                    <div className="flex gap-2 text-fg/70">
-                      <span className="text-emerald-400/85 select-none">[+]</span>
-                      <span>port 22 open</span>
-                    </div>
-                    <div className="flex gap-2 text-fg/70">
-                      <span className="text-emerald-400/85 select-none">[+]</span>
-                      <span>port 80 open</span>
-                    </div>
-                    <div className="flex gap-2 text-fg/70">
-                      <span className="text-emerald-400/85 select-none">[+]</span>
-                      <span>fingerprint collected</span>
-                    </div>
+                    {(project.terminalLines ?? []).map((line, i) => {
+                      const prefixColor =
+                        line.prefix === "[+]"
+                          ? "text-emerald-400/85"
+                          : line.prefix === "[!]"
+                          ? "text-amber-400/90"
+                          : line.prefix === "[-]"
+                          ? "text-rose-400/85"
+                          : line.prefix === "[*]"
+                          ? "text-sky-400/80"
+                          : "text-accent/80";
+                      const textColor =
+                        line.prefix === ">" ? "text-fg/55" : "text-fg/70";
+                      return (
+                        <div key={i} className={`flex gap-2 ${textColor}`}>
+                          <span className={`${prefixColor} select-none`}>{line.prefix}</span>
+                          <span>{line.text}</span>
+                        </div>
+                      );
+                    })}
                     <div className="flex gap-2 text-fg/50 mt-1 items-center">
                       <span className="text-accent/80 select-none">&gt;</span>
                       <span
                         className="inline-block w-1.5 h-3 bg-fg/55"
                         style={{ animation: "preloader-dot-pulse 1s ease-in-out infinite" }}
                       />
+                    </div>
+                  </div>
+                ) : project.uiKind === "mascot" ? (
+                  /* Mascot + stat HUD mockup */
+                  <div className="px-3.5 py-3 space-y-2.5">
+                    {/* Mascot stage */}
+                    <div className="relative h-13 flex items-center justify-center">
+                      <div
+                        className="relative w-10 h-10 rounded-2xl flex items-end justify-center pb-2"
+                        style={{
+                          background: `linear-gradient(135deg, rgba(${project.accentColor},0.85) 0%, rgba(${project.accentColor},0.55) 100%)`,
+                          boxShadow: `0 4px 16px rgba(${project.accentColor},0.35), inset 0 1px 0 rgba(255,255,255,0.25)`,
+                        }}
+                      >
+                        {/* Eyes */}
+                        <div className="absolute top-3 left-1/2 -translate-x-1/2 flex gap-1.5">
+                          <span className="w-1 h-1 rounded-full bg-white/95" />
+                          <span className="w-1 h-1 rounded-full bg-white/95" />
+                        </div>
+                        {/* Mouth */}
+                        <span className="w-2 h-0.5 rounded-full bg-white/75" />
+                      </div>
+                      {/* Speech bubble */}
+                      <div
+                        className="absolute right-3 top-0 px-2 py-1 rounded-md text-[8px] font-mono"
+                        style={{
+                          background: "rgba(var(--fg-rgb),0.07)",
+                          border: "1px solid rgba(var(--fg-rgb),0.1)",
+                          color: "rgba(var(--fg-rgb),0.55)",
+                        }}
+                      >
+                        hi!
+                      </div>
+                    </div>
+                    {/* Stat strip */}
+                    <div className="space-y-1">
+                      {[
+                        { label: "cpu", pct: 38 },
+                        { label: "ram", pct: 62 },
+                        { label: "tmp", pct: 45 },
+                      ].map((s) => (
+                        <div key={s.label} className="flex items-center gap-2">
+                          <span className="text-[7px] font-mono uppercase tracking-widest text-fg/30 w-6">
+                            {s.label}
+                          </span>
+                          <div className="flex-1 h-1 rounded-full bg-fg/6 overflow-hidden">
+                            <div
+                              className="h-full rounded-full"
+                              style={{
+                                width: `${s.pct}%`,
+                                background: `rgba(${project.accentColor},0.55)`,
+                              }}
+                            />
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                ) : project.uiLabel ? (
+                  /* Generic website mockup */
+                  <div className="px-3.5 py-3.5 space-y-2.5">
+                    {/* Top nav */}
+                    <div className="flex items-center gap-1.5">
+                      <span
+                        className="w-3 h-1.5 rounded-sm"
+                        style={{ background: `rgba(${project.accentColor},0.35)` }}
+                      />
+                      <div className="ml-auto flex gap-1.5">
+                        <span className="w-4 h-1 rounded-full bg-fg/12" />
+                        <span className="w-4 h-1 rounded-full bg-fg/9" />
+                        <span className="w-4 h-1 rounded-full bg-fg/9" />
+                      </div>
+                    </div>
+                    {/* Hero block */}
+                    <div
+                      className="rounded-md p-2 space-y-1"
+                      style={{
+                        background: `linear-gradient(135deg, rgba(${project.accentColor},0.16) 0%, rgba(${project.accentColor},0.04) 100%)`,
+                        border: `1px solid rgba(${project.accentColor},0.12)`,
+                      }}
+                    >
+                      <div className="h-1.5 w-[60%] rounded-full bg-fg/22" />
+                      <div className="h-1 w-[42%] rounded-full bg-fg/12" />
+                      <div className="pt-1">
+                        <span
+                          className="inline-block h-1.5 w-10 rounded-full"
+                          style={{ background: `rgba(${project.accentColor},0.55)` }}
+                        />
+                      </div>
+                    </div>
+                    {/* Cards row */}
+                    <div className="grid grid-cols-2 gap-1.5">
+                      <div className="rounded-sm border border-fg/8 bg-fg/3 p-1.5 space-y-1">
+                        <div className="h-1 w-[65%] rounded-full bg-fg/15" />
+                        <div className="h-0.5 w-[45%] rounded-full bg-fg/8" />
+                      </div>
+                      <div className="rounded-sm border border-fg/8 bg-fg/3 p-1.5 space-y-1">
+                        <div className="h-1 w-[55%] rounded-full bg-fg/15" />
+                        <div className="h-0.5 w-[40%] rounded-full bg-fg/8" />
+                      </div>
                     </div>
                   </div>
                 ) : (
@@ -276,10 +451,57 @@ function ProjectBlock({
           <div
             className="flex-1 flex flex-col justify-center px-5 py-8 md:px-12 md:py-14"
           >
-            {/* Project number */}
-            <span className="text-[10px] font-mono tracking-[0.3em] uppercase text-fg/20 mb-4">
-              {String(index + 1).padStart(2, "0")}
-            </span>
+            {/* Project number + WIP badge */}
+            <div className="flex items-center gap-3 mb-4">
+              <span className="text-[10px] font-mono tracking-[0.3em] uppercase text-fg/20">
+                {String(index + 1).padStart(2, "0")}
+              </span>
+              {project.wip && (
+                <span
+                  className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full border text-[9px] font-mono tracking-[0.18em] uppercase"
+                  style={{
+                    borderColor: "rgba(245,158,11,0.25)",
+                    background: "rgba(245,158,11,0.06)",
+                    color: "rgba(245,158,11,0.85)",
+                  }}
+                >
+                  <span
+                    className="inline-block w-1 h-1 rounded-full"
+                    style={{
+                      background: "rgba(245,158,11,0.9)",
+                      boxShadow: "0 0 6px rgba(245,158,11,0.6)",
+                    }}
+                  />
+                  Work in progress
+                </span>
+              )}
+              {project.collab && (
+                <span
+                  className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full border text-[9px] font-mono tracking-[0.18em] uppercase"
+                  style={{
+                    borderColor: "rgba(37,99,235,0.30)",
+                    background: "rgba(37,99,235,0.08)",
+                    color: "rgba(96,165,250,0.95)",
+                    boxShadow: "0 0 12px rgba(37,99,235,0.12)",
+                  }}
+                >
+                  <svg
+                    className="w-2.5 h-2.5"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    strokeWidth={2}
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M17 20h5v-2a4 4 0 00-3-3.87M9 20H4v-2a4 4 0 013-3.87m6-3.13a4 4 0 11-8 0 4 4 0 018 0zm6 0a3 3 0 11-6 0 3 3 0 016 0z"
+                    />
+                  </svg>
+                  Collaboration
+                </span>
+              )}
+            </div>
 
             {/* Title */}
             <h3
@@ -525,9 +747,68 @@ export default function Projects() {
           ))}
         </div>
 
+        {/* Studies & Writeups */}
+        <motion.div
+          className="mt-24"
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, amount: 0.3 }}
+          transition={{ duration: 0.6, ease }}
+        >
+          <p className="text-center text-[10px] font-mono tracking-[0.3em] uppercase text-fg/25 mb-5">
+            Studies & Writeups
+          </p>
+          <a
+            href="https://github.com/jaineeldev/cybersecurity-assessments"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="group block rounded-xl border border-fg/8 hover:border-fg/18 bg-fg/2 hover:bg-fg/4 px-5 py-4 transition-all duration-300 max-w-2xl mx-auto"
+            style={{ boxShadow: "inset 0 1px 0 rgba(var(--fg-rgb),0.03)" }}
+          >
+            <div className="flex items-center gap-4">
+              <div
+                className="shrink-0 w-9 h-9 rounded-lg flex items-center justify-center"
+                style={{
+                  background: "rgba(99,102,241,0.08)",
+                  border: "1px solid rgba(99,102,241,0.18)",
+                }}
+              >
+                <svg className="w-4 h-4 text-indigo-300/80" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25" />
+                </svg>
+              </div>
+              <div className="flex-1 min-w-0">
+                <h4 className="text-[14px] font-medium text-fg/85 group-hover:text-fg/95 transition-colors">
+                  Cybersecurity Assessments
+                </h4>
+                <p className="text-[12px] text-fg/40 leading-snug mt-0.5">
+                  Refined writeups on cybersecurity legislation, policy, and algorithmic problem-solving.
+                </p>
+                <div className="flex flex-wrap gap-1.5 mt-2">
+                  <span className="text-[10px] font-mono tracking-wide text-fg/45 px-2 py-0.5 rounded-full border border-fg/8 bg-fg/3">
+                    Legislation & Policy
+                  </span>
+                  <span className="text-[10px] font-mono tracking-wide text-fg/45 px-2 py-0.5 rounded-full border border-fg/8 bg-fg/3">
+                    Algorithmic Solutions
+                  </span>
+                </div>
+              </div>
+              <svg
+                className="shrink-0 w-3.5 h-3.5 text-fg/25 group-hover:text-fg/60 transition-colors"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                strokeWidth={1.5}
+              >
+                <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 19.5l15-15m0 0H8.25m11.25 0v11.25" />
+              </svg>
+            </div>
+          </a>
+        </motion.div>
+
         {/* Coming soon footer */}
         <motion.p
-          className="text-center mt-20 text-[12px] font-mono tracking-[0.2em] text-fg/20"
+          className="text-center mt-16 text-[12px] font-mono tracking-[0.2em] text-fg/20"
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
           viewport={{ once: true, amount: 0.5 }}

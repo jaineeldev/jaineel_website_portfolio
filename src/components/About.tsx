@@ -217,7 +217,7 @@ export default function About() {
             viewport={{ once: true, amount: 0.5 }}
             transition={{ duration: 0.5, delay: 0.24, ease }}
           >
-            Security-focused developer building modern, reliable systems.
+            Building tools across security and the web — and the software in between.
           </motion.p>
         </div>
 

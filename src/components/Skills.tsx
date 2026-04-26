@@ -27,6 +27,7 @@ const SKILLS_GROUPS: { label: string; items: SkillItem[] }[] = [
       { name: "Tailwind CSS", desc: "Utility-first styling \u00b7 rapid prototyping" },
       { name: "Vite", desc: "Build tool \u00b7 fast dev server" },
       { name: "Framer Motion", desc: "Animation engine \u00b7 scroll-driven motion" },
+      { name: "Electron", desc: "Desktop apps \u00b7 web stack on the OS" },
     ],
   },
   {
@@ -34,7 +35,6 @@ const SKILLS_GROUPS: { label: string; items: SkillItem[] }[] = [
     items: [
       { name: "Node.js", desc: "JS runtime \u00b7 server-side logic" },
       { name: "Express", desc: "HTTP framework \u00b7 REST routing" },
-      { name: "PHP", desc: "Server-side scripting \u00b7 web backends" },
       { name: "REST APIs", desc: "Service design \u00b7 endpoint architecture" },
       { name: "SQL", desc: "Relational queries \u00b7 data modelling" },
     ],

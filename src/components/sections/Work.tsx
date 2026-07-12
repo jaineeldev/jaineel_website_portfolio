@@ -1,5 +1,7 @@
 "use client";
 
+import { useState } from "react";
+import Image from "next/image";
 import { motion } from "framer-motion";
 
 const EASE = [0.16, 1, 0.3, 1] as const;
@@ -18,72 +20,99 @@ type Project = {
   index: string;
   name: string;
   description: string;
-  status: "Live" | "WIP" | "Complete" | "Active";
-  year: string;
+  status: "Live" | "WIP" | "Complete" | "Active" | "Paused";
+  category: "Security" | "Web" | "Desktop";
+  range: string;
   href: string;
   tech: string[];
+  thumbnail: string;
   external?: boolean;
+  progress?: {
+    percent: number;
+    label: string;
+  };
 };
 
 const PROJECTS: Project[] = [
   {
     index: "01",
     name: "Velo",
-    description: "Client workflow platform for freelance devs — proposal goes in, project and invoice come out automatically. Biggest build to date.",
+    description:
+      "Client workflow platform for freelance devs — proposal goes in, project and invoice come out automatically. Auth, client intake, project boards, and Stripe-backed invoicing are shipped; automated proposal-to-project handoff is the last piece before launch.",
     status: "WIP",
-    year: "2026",
+    category: "Web",
+    range: "Mar 2026 —",
     href: "https://project-velo.vercel.app/",
     tech: ["Next.js", "TypeScript", "Postgres", "Clerk"],
+    thumbnail: "/projects/velo.png",
     external: true,
+    progress: {
+      percent: 80,
+      label: "Core workflow live — launching Q3",
+    },
   },
   {
     index: "02",
     name: "Hawthorne Corner Store",
-    description: "Local convenience store site — menu, hours, and ordering for a real small business with real customers.",
+    description:
+      "Live site for a Brisbane convenience store — digital menu, opening hours, and click-through ordering links, built for an actual owner and actual foot traffic. In production since 2025 and still the store's primary online presence.",
     status: "Live",
-    year: "2024",
+    category: "Web",
+    range: "2025 —",
     href: "https://hawthornecornerstore.com.au",
     tech: ["Next.js", "Tailwind", "Vercel"],
+    thumbnail: "/projects/hawthorne.png",
     external: true,
   },
   {
     index: "03",
-    name: "Portfolio v2",
-    description: "This site. Next.js, Framer Motion, and a deliberate restraint problem.",
-    status: "Live",
-    year: "2026",
-    href: "https://jaineel.dev",
-    tech: ["Next.js", "Framer Motion", "TypeScript"],
+    name: "System Fingerprint Tool",
+    description:
+      "Python GUI for security recon — multi-threaded scanner covering all 65,535 TCP ports plus common UDP services, host fingerprinting, and one-click CSV export. Threading cuts a full local sweep from minutes down to under 30 seconds.",
+    status: "Complete",
+    category: "Security",
+    range: "2025",
+    href: "https://github.com/jaineeldev/system-fingerprint-tool",
+    tech: ["Python", "Tkinter", "CSV"],
+    thumbnail: "/projects/system-fingerprint-tool.png",
     external: true,
   },
   {
     index: "04",
-    name: "NIDS-ML",
-    description: "Network intrusion detection system, ML-augmented. Built with Nicholas Ng.",
-    status: "WIP",
-    year: "2026",
-    href: "https://github.com/jaineeldev/nids-ml",
-    tech: ["Python", "Scikit-learn", "NumPy"],
+    name: "Typosquat / Phishing Domain Detector",
+    description:
+      "Flags lookalike domains registered to impersonate a brand — generates typosquat candidates via character omission, adjacent-key swaps, insertion, and homoglyph substitution, then scores each 0–100 using WHOIS registration, DNS/MX records, SSL certs, and content similarity. Ships as a CLI, a FastAPI web UI, and a standalone Windows .exe.",
+    status: "Complete",
+    category: "Security",
+    range: "2026",
+    href: "https://github.com/jaineeldev/typosquat-detector",
+    tech: ["Python", "FastAPI", "dnspython", "WHOIS"],
+    thumbnail: "/projects/typosquat-detector.png",
     external: true,
   },
   {
     index: "05",
-    name: "System Fingerprint Tool",
-    description: "Python GUI for security recon — host info plus multi-threaded port scanning, exports CSV.",
-    status: "Complete",
-    year: "2025",
-    href: "https://github.com/jaineeldev/system-fingerprint-tool",
-    tech: ["Python", "Tkinter", "CSV"],
+    name: "Portfolio v2",
+    description: "This site. Next.js, Framer Motion, and a deliberate restraint problem.",
+    status: "Live",
+    category: "Web",
+    range: "2026",
+    href: "https://jaineel.dev",
+    tech: ["Next.js", "Framer Motion", "TypeScript"],
+    thumbnail: "/projects/portfolio-v2.png",
     external: true,
   },
   {
     index: "06",
     name: "DesktopBuddy",
-    description: "Electron desktop mascot with a live system-stat HUD. Personality bundled in.",
-    status: "WIP",
-    year: "2026",
+    description:
+      "Electron desktop mascot with a live system HUD — CPU, RAM, disk, and network usage refreshed every few seconds, wrapped in a character with actual personality. Core HUD works; on hold while Velo and the Cert IV take priority.",
+    status: "Paused",
+    category: "Desktop",
+    range: "2026",
     href: "https://github.com/jaineeldev/desktop_buddy",
     tech: ["Electron", "TypeScript", "React"],
+    thumbnail: "/projects/desktopbuddy.png",
     external: true,
   },
 ];
@@ -107,6 +136,47 @@ function ArrowUpRight({ className = "" }: { className?: string }) {
   );
 }
 
+function ProjectThumbnail({ src, alt }: { src: string; alt: string }) {
+  const [failed, setFailed] = useState(false);
+
+  return (
+    <div className="relative aspect-[4/3] w-full overflow-hidden border border-border bg-fg-faint">
+      {!failed && (
+        <Image
+          src={src}
+          alt={alt}
+          fill
+          sizes="(min-width: 768px) 6rem, (min-width: 640px) 5.5rem, 3.5rem"
+          className="object-cover"
+          onError={() => setFailed(true)}
+        />
+      )}
+      {failed && (
+        <div className="absolute inset-0 flex items-center justify-center px-1">
+          <span className="text-center font-mono text-[7px] uppercase leading-tight tracking-[0.1em] text-fg-dim sm:text-[8px] sm:tracking-[0.14em] md:text-[9px]">
+            Coming
+            <br />
+            soon
+          </span>
+        </div>
+      )}
+    </div>
+  );
+}
+
+function ProgressBar({ percent, label }: { percent: number; label: string }) {
+  return (
+    <div className="mt-1 flex max-w-[28rem] flex-col gap-1.5">
+      <div className="h-[3px] w-full bg-fg-faint">
+        <div className="h-full bg-fg-dim" style={{ width: `${percent}%` }} />
+      </div>
+      <span className="font-mono text-[10px] uppercase tracking-[0.16em] text-fg-dim">
+        {label} · {percent}%
+      </span>
+    </div>
+  );
+}
+
 function ProjectRow({ project, i }: { project: Project; i: number }) {
   return (
     <motion.li
@@ -120,24 +190,36 @@ function ProjectRow({ project, i }: { project: Project; i: number }) {
         href={project.href}
         target={project.external ? "_blank" : undefined}
         rel={project.external ? "noopener noreferrer" : undefined}
-        className="group relative grid grid-cols-[1.75rem_4.25rem_1fr] items-start gap-x-3 px-1 py-5 transition-colors duration-[250ms] ease-[cubic-bezier(0.16,1,0.3,1)] before:absolute before:inset-y-0 before:left-0 before:w-px before:bg-accent before:opacity-0 before:transition-opacity before:duration-[250ms] before:ease-[cubic-bezier(0.16,1,0.3,1)] before:content-[''] hover:before:opacity-100 sm:grid-cols-[2.75rem_5rem_1fr_auto] sm:gap-x-8 sm:py-6 md:grid-cols-[3rem_5.5rem_1fr_auto] md:py-7"
+        className="group relative grid grid-cols-[3.5rem_1.75rem_4.25rem_1fr] items-start gap-x-3 px-1 py-5 transition-colors duration-[250ms] ease-[cubic-bezier(0.16,1,0.3,1)] before:absolute before:inset-y-0 before:left-0 before:w-px before:bg-accent before:opacity-0 before:transition-opacity before:duration-[250ms] before:ease-[cubic-bezier(0.16,1,0.3,1)] before:content-[''] hover:before:opacity-100 sm:grid-cols-[5.5rem_2.75rem_5rem_1fr_auto] sm:gap-x-8 sm:py-6 md:grid-cols-[6rem_3rem_5.5rem_1fr_auto] md:py-7"
       >
-        <span className="font-mono text-[10.5px] uppercase tracking-[0.22em] text-fg-dim sm:pt-[0.4rem]">
-          {project.index}
-        </span>
+        <ProjectThumbnail src={project.thumbnail} alt={`${project.name} preview`} />
 
-        {(() => {
-          const key = project.status.toUpperCase();
-          const s = STATUS_STYLES[key] ?? { bg: "transparent", text: "var(--color-fg-muted)", border: "var(--color-border)" };
-          return (
-            <span
-              className="inline-flex w-fit items-center self-start border px-1.5 py-[2px] font-mono text-[10px] font-medium uppercase tracking-[0.14em] sm:mt-[0.35rem]"
-              style={{ backgroundColor: s.bg, color: s.text, borderColor: s.border }}
-            >
-              {key}
-            </span>
-          );
-        })()}
+        <div className="flex flex-col gap-1 sm:pt-[0.4rem]">
+          <span className="font-mono text-[10.5px] uppercase tracking-[0.22em] text-fg-dim">
+            {project.index}
+          </span>
+          <span className="font-mono text-[9.5px] uppercase tracking-[0.16em] text-fg-faint">
+            {project.range}
+          </span>
+        </div>
+
+        <div className="flex flex-col gap-1.5 sm:mt-[0.35rem]">
+          {(() => {
+            const key = project.status.toUpperCase();
+            const s = STATUS_STYLES[key] ?? { bg: "transparent", text: "var(--color-fg-muted)", border: "var(--color-border)" };
+            return (
+              <span
+                className="inline-flex w-fit items-center self-start border px-1.5 py-[2px] font-mono text-[10px] font-medium uppercase tracking-[0.14em]"
+                style={{ backgroundColor: s.bg, color: s.text, borderColor: s.border }}
+              >
+                {key}
+              </span>
+            );
+          })()}
+          <span className="inline-flex w-fit items-center self-start border border-border px-1.5 py-[2px] font-mono text-[10px] font-medium uppercase tracking-[0.14em] text-fg-dim">
+            {project.category.toUpperCase()}
+          </span>
+        </div>
 
         <div className="flex min-w-0 flex-col gap-2">
           <h3
@@ -150,6 +232,15 @@ function ProjectRow({ project, i }: { project: Project; i: number }) {
           <p className="max-w-[62ch] text-[14px] leading-[1.55] text-fg-muted sm:text-[15px]">
             {project.description}
           </p>
+
+          {project.progress && <ProgressBar percent={project.progress.percent} label={project.progress.label} />}
+
+          {project.external && project.href.includes("vercel.app") && (
+            <span className="mt-0.5 inline-flex w-fit items-center gap-1.5 font-mono text-[10px] uppercase tracking-[0.16em] text-fg-dim transition-colors duration-[250ms] ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:text-accent">
+              {project.href.replace(/^https?:\/\//, "").replace(/\/$/, "")}
+              <ArrowUpRight className="h-[9px] w-[9px]" />
+            </span>
+          )}
 
           <div className="mt-1 flex flex-wrap items-center gap-x-2.5 gap-y-1 font-mono text-[10px] uppercase tracking-[0.18em] text-fg-dim">
             {project.tech.map((t, idx) => (
@@ -190,7 +281,7 @@ export default function Work() {
             Work
           </h2>
           <p className="mt-5 max-w-[44ch] text-[14.5px] leading-[1.55] text-fg-muted sm:mt-6 sm:text-[15px]">
-            Six projects. Some live, some still in progress — across web, security, and systems.
+            Six projects. Some live, some still in progress — across web and security.
           </p>
         </motion.header>
 

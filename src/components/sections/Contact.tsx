@@ -9,7 +9,6 @@ const EMAIL = "jaineelk.dev@gmail.com";
 const LINKS = [
   { label: "GitHub", href: "https://github.com/jaineeldev" },
   { label: "LinkedIn", href: "https://linkedin.com/in/jaineel-khatri" },
-  { label: "Ko-fi", href: "https://ko-fi.com/jaineeldev" },
 ];
 
 function CopyIcon({ copied }: { copied: boolean }) {

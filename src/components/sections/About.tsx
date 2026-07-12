@@ -15,7 +15,7 @@ const BLOCKS: Block[] = [
     body: (
       <>
         Finishing my Cert IV in Cybersecurity at TAFE Queensland (Sep 2026).
-        Building NIDS-ML and DesktopBuddy on the side. Learning C.
+        Building Velo on the side. Learning C.
       </>
     ),
   },

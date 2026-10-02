@@ -106,7 +106,7 @@ const PROJECTS: Project[] = [
     index: "06",
     name: "DesktopBuddy",
     description:
-      "Electron desktop mascot with a live system HUD — CPU, RAM, disk, and network usage refreshed every few seconds, wrapped in a character with actual personality. Core HUD works; on hold while Velo and the Cert IV take priority.",
+      "Electron desktop mascot with a live system HUD — CPU, RAM, disk, and network usage refreshed every few seconds, wrapped in a character with actual personality. Core HUD works; on hold while Velo takes priority.",
     status: "Paused",
     category: "Desktop",
     range: "2026",

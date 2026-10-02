@@ -193,7 +193,7 @@ export default function Hero() {
               </a>
 
               <a
-                href="/resume/Jaineel_Resume_Professional.pdf"
+                href="/resume/Jaineel_Khatri_Professionalv2.pdf"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-flex items-center gap-3 border border-border px-6 py-3.5 font-mono text-[11px] uppercase tracking-[0.22em] text-fg-muted transition-colors duration-[250ms] ease-[cubic-bezier(0.16,1,0.3,1)] hover:bg-[var(--cta-hover-bg)] hover:text-fg"

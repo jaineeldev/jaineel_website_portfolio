@@ -14,8 +14,8 @@ const BLOCKS: Block[] = [
     label: "Right now",
     body: (
       <>
-        Finishing my Cert IV in Cybersecurity at TAFE Queensland (Sep 2026).
-        Building Velo on the side. Learning C.
+        Cert IV in Cybersecurity at TAFE Queensland — done. Heading to QUT for
+        Computer Science. Building Velo on the side. Learning C.
       </>
     ),
   },

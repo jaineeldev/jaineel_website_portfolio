@@ -26,6 +26,7 @@ type Project = {
   href: string;
   tech: string[];
   thumbnail: string;
+  thumbnailFit?: "cover" | "contain";
   external?: boolean;
   progress?: {
     percent: number;
@@ -92,6 +93,20 @@ const PROJECTS: Project[] = [
   },
   {
     index: "05",
+    name: "DesktopBuddy",
+    description:
+      "Electron desktop mascot, procedurally generated from its name — ten body shapes, five eye styles, six moods, and eyes that follow your cursor. It runs as a transparent, click-through, always-on-top window, which is why it's Electron. The mascot and customisation panel work; the CPU/RAM HUD and dialogue are next.",
+    status: "WIP",
+    category: "Desktop",
+    range: "2026 —",
+    href: "https://github.com/jaineeldev/desktop_buddy",
+    tech: ["Electron", "TypeScript", "React", "Framer Motion"],
+    thumbnail: "/projects/desktopbuddy.svg",
+    thumbnailFit: "contain",
+    external: true,
+  },
+  {
+    index: "06",
     name: "Portfolio v2",
     description: "This site. Next.js, Framer Motion, and a deliberate restraint problem.",
     status: "Live",
@@ -100,19 +115,6 @@ const PROJECTS: Project[] = [
     href: "https://jaineel.dev",
     tech: ["Next.js", "Framer Motion", "TypeScript"],
     thumbnail: "/projects/portfolio-v2.png",
-    external: true,
-  },
-  {
-    index: "06",
-    name: "DesktopBuddy",
-    description:
-      "Electron desktop mascot with a live system HUD — CPU, RAM, disk, and network usage refreshed every few seconds, wrapped in a character with actual personality. Core HUD works; on hold while Velo takes priority.",
-    status: "Paused",
-    category: "Desktop",
-    range: "2026",
-    href: "https://github.com/jaineeldev/desktop_buddy",
-    tech: ["Electron", "TypeScript", "React"],
-    thumbnail: "/projects/desktopbuddy.png",
     external: true,
   },
 ];
@@ -136,7 +138,15 @@ function ArrowUpRight({ className = "" }: { className?: string }) {
   );
 }
 
-function ProjectThumbnail({ src, alt }: { src: string; alt: string }) {
+function ProjectThumbnail({
+  src,
+  alt,
+  fit = "cover",
+}: {
+  src: string;
+  alt: string;
+  fit?: "cover" | "contain";
+}) {
   const [failed, setFailed] = useState(false);
 
   return (
@@ -147,7 +157,7 @@ function ProjectThumbnail({ src, alt }: { src: string; alt: string }) {
           alt={alt}
           fill
           sizes="(min-width: 768px) 6rem, (min-width: 640px) 5.5rem, 3.5rem"
-          className="object-cover"
+          className={fit === "contain" ? "object-contain p-1.5" : "object-cover"}
           onError={() => setFailed(true)}
         />
       )}
@@ -192,7 +202,11 @@ function ProjectRow({ project, i }: { project: Project; i: number }) {
         rel={project.external ? "noopener noreferrer" : undefined}
         className="group relative grid grid-cols-[3.5rem_1.75rem_4.25rem_1fr] items-start gap-x-3 px-1 py-5 transition-colors duration-[250ms] ease-[cubic-bezier(0.16,1,0.3,1)] before:absolute before:inset-y-0 before:left-0 before:w-px before:bg-accent before:opacity-0 before:transition-opacity before:duration-[250ms] before:ease-[cubic-bezier(0.16,1,0.3,1)] before:content-[''] hover:before:opacity-100 sm:grid-cols-[5.5rem_2.75rem_5rem_1fr_auto] sm:gap-x-8 sm:py-6 md:grid-cols-[6rem_3rem_5.5rem_1fr_auto] md:py-7"
       >
-        <ProjectThumbnail src={project.thumbnail} alt={`${project.name} preview`} />
+        <ProjectThumbnail
+          src={project.thumbnail}
+          alt={`${project.name} preview`}
+          fit={project.thumbnailFit}
+        />
 
         <div className="flex flex-col gap-1 sm:pt-[0.4rem]">
           <span className="font-mono text-[10.5px] uppercase tracking-[0.22em] text-fg-dim">

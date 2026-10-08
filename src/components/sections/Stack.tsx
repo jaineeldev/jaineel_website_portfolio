@@ -39,7 +39,7 @@ const ROWS: Row[] = [
   },
   {
     category: "Currently learning",
-    items: ["C", "ML for network IDS", "Electron app architecture"],
+    items: ["C", "Electron app architecture"],
     learning: true,
   },
 ];

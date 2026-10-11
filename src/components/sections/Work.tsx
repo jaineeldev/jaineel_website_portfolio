@@ -25,13 +25,10 @@ type Project = {
   range: string;
   href: string;
   tech: string[];
-  thumbnail: string;
+  thumbnail?: string;
   thumbnailFit?: "cover" | "contain";
   external?: boolean;
-  progress?: {
-    percent: number;
-    label: string;
-  };
+  note?: string;
 };
 
 const PROJECTS: Project[] = [
@@ -39,7 +36,7 @@ const PROJECTS: Project[] = [
     index: "01",
     name: "Velo",
     description:
-      "Client workflow platform for freelance devs — proposal goes in, project and invoice come out automatically. Auth, client intake, project boards, and Stripe-backed invoicing are shipped; automated proposal-to-project handoff is the last piece before launch.",
+      "Client workflow platform for Australian freelance devs and agencies — proposals, approvals, milestones, invoicing, PDF export, and a client portal in one flow. The marketing site and waitlist are live; the product itself is still being built.",
     status: "WIP",
     category: "Web",
     range: "Mar 2026 —",
@@ -47,10 +44,7 @@ const PROJECTS: Project[] = [
     tech: ["Next.js", "TypeScript", "Postgres", "Clerk"],
     thumbnail: "/projects/velo.png",
     external: true,
-    progress: {
-      percent: 80,
-      label: "Core workflow live — launching Q3",
-    },
+    note: "In development — no launch date yet",
   },
   {
     index: "02",
@@ -75,7 +69,7 @@ const PROJECTS: Project[] = [
     range: "2025",
     href: "https://github.com/jaineeldev/system-fingerprint-tool",
     tech: ["Python", "Tkinter", "CSV"],
-    thumbnail: "/projects/system-fingerprint-tool.png",
+    // No thumbnail on purpose: it's a desktop GUI with no screenshot, so the row shows a monogram.
     external: true,
   },
   {
@@ -141,17 +135,20 @@ function ArrowUpRight({ className = "" }: { className?: string }) {
 function ProjectThumbnail({
   src,
   alt,
+  monogram,
   fit = "cover",
 }: {
-  src: string;
+  src?: string;
   alt: string;
+  monogram: string;
   fit?: "cover" | "contain";
 }) {
   const [failed, setFailed] = useState(false);
+  const showImage = Boolean(src) && !failed;
 
   return (
-    <div className="relative aspect-[4/3] w-full overflow-hidden border border-border bg-fg-faint">
-      {!failed && (
+    <div className="relative row-span-2 aspect-[4/3] w-full overflow-hidden border border-border bg-fg-faint sm:row-span-1">
+      {showImage && src && (
         <Image
           src={src}
           alt={alt}
@@ -161,28 +158,16 @@ function ProjectThumbnail({
           onError={() => setFailed(true)}
         />
       )}
-      {failed && (
-        <div className="absolute inset-0 flex items-center justify-center px-1">
-          <span className="text-center font-mono text-[7px] uppercase leading-tight tracking-[0.1em] text-fg-dim sm:text-[8px] sm:tracking-[0.14em] md:text-[9px]">
-            Coming
-            <br />
-            soon
+      {!showImage && (
+        <div className="absolute inset-0 flex items-center justify-center">
+          <span
+            aria-hidden
+            className="font-mono text-[12px] font-medium uppercase tracking-[0.18em] text-fg-dim sm:text-[14px] md:text-[16px]"
+          >
+            {monogram}
           </span>
         </div>
       )}
-    </div>
-  );
-}
-
-function ProgressBar({ percent, label }: { percent: number; label: string }) {
-  return (
-    <div className="mt-1 flex max-w-[28rem] flex-col gap-1.5">
-      <div className="h-[3px] w-full bg-fg-faint">
-        <div className="h-full bg-fg-dim" style={{ width: `${percent}%` }} />
-      </div>
-      <span className="font-mono text-[10px] uppercase tracking-[0.16em] text-fg-dim">
-        {label} · {percent}%
-      </span>
     </div>
   );
 }
@@ -200,24 +185,29 @@ function ProjectRow({ project, i }: { project: Project; i: number }) {
         href={project.href}
         target={project.external ? "_blank" : undefined}
         rel={project.external ? "noopener noreferrer" : undefined}
-        className="group relative grid grid-cols-[3.5rem_1.75rem_4.25rem_1fr] items-start gap-x-3 px-1 py-5 transition-colors duration-[250ms] ease-[cubic-bezier(0.16,1,0.3,1)] before:absolute before:inset-y-0 before:left-0 before:w-px before:bg-accent before:opacity-0 before:transition-opacity before:duration-[250ms] before:ease-[cubic-bezier(0.16,1,0.3,1)] before:content-[''] hover:before:opacity-100 sm:grid-cols-[5.5rem_2.75rem_5rem_1fr_auto] sm:gap-x-8 sm:py-6 md:grid-cols-[6rem_3rem_5.5rem_1fr_auto] md:py-7"
+        className="group relative grid grid-cols-[3.5rem_1fr] items-start gap-x-4 gap-y-3 px-1 py-5 transition-colors duration-[250ms] ease-[cubic-bezier(0.16,1,0.3,1)] before:absolute before:inset-y-0 before:left-0 before:w-px before:bg-accent before:opacity-0 before:transition-opacity before:duration-[250ms] before:ease-[cubic-bezier(0.16,1,0.3,1)] before:content-[''] hover:before:opacity-100 sm:grid-cols-[5.5rem_2.75rem_5rem_1fr_auto] sm:gap-x-8 sm:py-6 md:grid-cols-[6rem_3rem_5.5rem_1fr_auto] md:py-7"
       >
         <ProjectThumbnail
           src={project.thumbnail}
           alt={`${project.name} preview`}
+          monogram={project.name
+            .split(/\s+/)
+            .map((word) => word[0])
+            .join("")
+            .slice(0, 3)}
           fit={project.thumbnailFit}
         />
 
-        <div className="flex flex-col gap-1 sm:pt-[0.4rem]">
+        <div className="col-start-2 flex flex-row items-baseline gap-x-3 sm:col-start-auto sm:flex-col sm:gap-1 sm:pt-[0.4rem]">
           <span className="font-mono text-[10.5px] uppercase tracking-[0.22em] text-fg-dim">
             {project.index}
           </span>
-          <span className="font-mono text-[9.5px] uppercase tracking-[0.16em] text-fg-faint">
+          <span className="whitespace-nowrap font-mono text-[9.5px] uppercase tracking-[0.16em] text-fg-dim">
             {project.range}
           </span>
         </div>
 
-        <div className="flex flex-col gap-1.5 sm:mt-[0.35rem]">
+        <div className="col-start-2 flex flex-row flex-wrap gap-1.5 sm:col-start-auto sm:mt-[0.35rem] sm:flex-col">
           {(() => {
             const key = project.status.toUpperCase();
             const s = STATUS_STYLES[key] ?? { bg: "transparent", text: "var(--color-fg-muted)", border: "var(--color-border)" };
@@ -235,7 +225,7 @@ function ProjectRow({ project, i }: { project: Project; i: number }) {
           </span>
         </div>
 
-        <div className="flex min-w-0 flex-col gap-2">
+        <div className="col-span-2 flex min-w-0 flex-col gap-2 sm:col-span-1">
           <h3
             className="font-display font-semibold leading-[1.15] tracking-[-0.018em] text-fg transition-transform duration-[250ms] ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:translate-x-[6px]"
             style={{ fontSize: "clamp(1.125rem, 1.7vw, 1.4rem)" }}
@@ -247,7 +237,11 @@ function ProjectRow({ project, i }: { project: Project; i: number }) {
             {project.description}
           </p>
 
-          {project.progress && <ProgressBar percent={project.progress.percent} label={project.progress.label} />}
+          {project.note && (
+            <span className="font-mono text-[10px] uppercase tracking-[0.16em] text-fg-dim">
+              {project.note}
+            </span>
+          )}
 
           {project.external && project.href.includes("vercel.app") && (
             <span className="mt-0.5 inline-flex w-fit items-center gap-1.5 font-mono text-[10px] uppercase tracking-[0.16em] text-fg-dim transition-colors duration-[250ms] ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:text-accent">

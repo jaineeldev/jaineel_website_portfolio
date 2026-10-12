@@ -34,6 +34,21 @@ type Project = {
 const PROJECTS: Project[] = [
   {
     index: "01",
+    name: "DesktopBuddy",
+    description:
+      "Windows desktop pet whose face is generated from its name, so the same name always gives the same buddy. Fifteen moods, eyes that follow your cursor, and reactions to being petted, carried, shaken or left alone. Ships as an installer with automatic updates; it needs no admin rights and only contacts GitHub to check for updates.",
+    status: "Live",
+    category: "Desktop",
+    range: "2026 —",
+    href: "https://github.com/jaineeldev/desktop_buddy",
+    tech: ["Electron", "TypeScript", "React", "Framer Motion"],
+    thumbnail: "/projects/desktopbuddy.svg",
+    thumbnailFit: "contain",
+    external: true,
+    note: "v1.0.0 — free for Windows 10 and 11",
+  },
+  {
+    index: "02",
     name: "Velo",
     description:
       "Client workflow platform for Australian freelance devs and agencies — proposals, approvals, milestones, invoicing, PDF export, and a client portal in one flow. The marketing site and waitlist are live; the product itself is still being built.",
@@ -47,7 +62,7 @@ const PROJECTS: Project[] = [
     note: "In development — no launch date yet",
   },
   {
-    index: "02",
+    index: "03",
     name: "Hawthorne Corner Store",
     description:
       "Live site for a Brisbane convenience store — digital menu, opening hours, and click-through ordering links, built for an actual owner and actual foot traffic. In production since 2025 and still the store's primary online presence.",
@@ -60,7 +75,7 @@ const PROJECTS: Project[] = [
     external: true,
   },
   {
-    index: "03",
+    index: "04",
     name: "System Fingerprint Tool",
     description:
       "Python GUI for security recon — multi-threaded scanner covering all 65,535 TCP ports plus common UDP services, host fingerprinting, and one-click CSV export. Threading cuts a full local sweep from minutes down to under 30 seconds.",
@@ -73,7 +88,7 @@ const PROJECTS: Project[] = [
     external: true,
   },
   {
-    index: "04",
+    index: "05",
     name: "Typosquat / Phishing Domain Detector",
     description:
       "Flags lookalike domains registered to impersonate a brand — generates typosquat candidates via character omission, adjacent-key swaps, insertion, and homoglyph substitution, then scores each 0–100 using WHOIS registration, DNS/MX records, SSL certs, and content similarity. Ships as a CLI, a FastAPI web UI, and a standalone Windows .exe.",
@@ -83,20 +98,6 @@ const PROJECTS: Project[] = [
     href: "https://github.com/jaineeldev/typosquat-detector",
     tech: ["Python", "FastAPI", "dnspython", "WHOIS"],
     thumbnail: "/projects/typosquat-detector.png",
-    external: true,
-  },
-  {
-    index: "05",
-    name: "DesktopBuddy",
-    description:
-      "Electron desktop mascot, procedurally generated from its name — ten body shapes, five eye styles, six moods, and eyes that follow your cursor. It runs as a transparent, click-through, always-on-top window, which is why it's Electron. The mascot and customisation panel work; the CPU/RAM HUD and dialogue are next.",
-    status: "WIP",
-    category: "Desktop",
-    range: "2026 —",
-    href: "https://github.com/jaineeldev/desktop_buddy",
-    tech: ["Electron", "TypeScript", "React", "Framer Motion"],
-    thumbnail: "/projects/desktopbuddy.svg",
-    thumbnailFit: "contain",
     external: true,
   },
   {

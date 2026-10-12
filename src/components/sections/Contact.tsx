@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { motion } from "framer-motion";
+import Buddy from "@/components/Buddy";
 
 const EASE = [0.16, 1, 0.3, 1] as const;
 const EMAIL = "jaineelk.dev@gmail.com";
@@ -113,26 +114,37 @@ export default function Contact() {
           </button>
         </motion.div>
 
-        <motion.ul
-          initial={{ opacity: 0, filter: "blur(4px)" }}
-          whileInView={{ opacity: 1, filter: "blur(0px)" }}
-          viewport={{ once: true, amount: 0.5 }}
-          transition={{ duration: 0.8, ease: EASE, delay: 0.4 }}
-          className="mt-16 flex flex-wrap items-center gap-x-8 gap-y-3 font-mono text-[11px] uppercase tracking-[0.22em] sm:mt-20 sm:gap-x-10"
-        >
-          {LINKS.map((link) => (
-            <li key={link.href}>
-              <a
-                href={link.href}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-fg-muted transition-colors duration-300 hover:text-accent"
-              >
-                {link.label}
-              </a>
-            </li>
-          ))}
-        </motion.ul>
+        <div className="mt-16 flex flex-col gap-10 sm:mt-20 sm:flex-row sm:items-center sm:justify-between">
+          <motion.ul
+            initial={{ opacity: 0, filter: "blur(4px)" }}
+            whileInView={{ opacity: 1, filter: "blur(0px)" }}
+            viewport={{ once: true, amount: 0.5 }}
+            transition={{ duration: 0.8, ease: EASE, delay: 0.4 }}
+            className="flex flex-wrap items-center gap-x-8 gap-y-3 font-mono text-[11px] uppercase tracking-[0.22em] sm:gap-x-10"
+          >
+            {LINKS.map((link) => (
+              <li key={link.href}>
+                <a
+                  href={link.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-fg-muted transition-colors duration-300 hover:text-accent"
+                >
+                  {link.label}
+                </a>
+              </li>
+            ))}
+          </motion.ul>
+
+          <motion.div
+            initial={{ opacity: 0, y: 12, filter: "blur(4px)" }}
+            whileInView={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+            viewport={{ once: true, amount: 0.5 }}
+            transition={{ duration: 0.9, ease: EASE, delay: 0.5 }}
+          >
+            <Buddy className="h-24 w-24 sm:h-32 sm:w-32" />
+          </motion.div>
+        </div>
 
         <motion.div
           initial={{ opacity: 0, filter: "blur(4px)" }}

@@ -1,0 +1,96 @@
+"use client";
+
+import { useEffect, useRef } from "react";
+import {
+  animate,
+  motion,
+  useInView,
+  useMotionValue,
+  useReducedMotion,
+  useSpring,
+} from "framer-motion";
+
+const EASE = [0.16, 1, 0.3, 1] as const;
+
+// How far the eyes can drift (SVG units) and how far away the cursor still counts (px).
+const EYE_REACH = 3;
+const FOLLOW_RANGE = 360;
+
+// Paths come from the app's own icon (desktop_buddy/brand/icon.svg).
+const BODY =
+  "M77.62 53.7C76.98 79.12 76.48 79.56 49.35 78.87C22.21 78.19 21.74 77.72 22.38 52.3C23.02 26.88 23.52 26.44 50.65 27.13C77.79 27.81 78.26 28.28 77.62 53.7Z";
+const EYE_LEFT =
+  "M43.47 53.56C43.51 53.92 43.5 54.31 43.45 54.67C43.4 55.03 43.31 55.38 43.18 55.72C43.04 56.06 42.87 56.39 42.66 56.69C42.45 56.99 42.2 57.27 41.92 57.52C41.65 57.77 41.34 57.99 41.01 58.18C40.68 58.36 40.32 58.52 39.95 58.63C39.58 58.75 39.18 58.83 38.79 58.86C38.4 58.9 37.99 58.9 37.61 58.86C37.23 58.82 36.84 58.73 36.49 58.61C36.13 58.49 35.78 58.33 35.46 58.14C35.15 57.95 34.85 57.72 34.58 57.46C34.32 57.21 34.09 56.92 33.89 56.61C33.7 56.31 33.54 55.98 33.42 55.63C33.3 55.29 33.22 54.91 33.19 54.55C33.15 54.18 33.16 53.8 33.21 53.44C33.26 53.08 33.35 52.72 33.48 52.39C33.62 52.05 33.79 51.72 34 51.42C34.21 51.12 34.46 50.84 34.74 50.59C35.01 50.34 35.32 50.12 35.65 49.93C35.98 49.74 36.34 49.59 36.71 49.47C37.08 49.36 37.48 49.28 37.87 49.24C38.26 49.2 38.67 49.21 39.05 49.25C39.43 49.29 39.82 49.37 40.17 49.49C40.53 49.61 40.88 49.78 41.2 49.97C41.51 50.16 41.81 50.39 42.08 50.64C42.34 50.9 42.57 51.19 42.77 51.49C42.96 51.8 43.12 52.13 43.24 52.47C43.36 52.82 43.44 53.19 43.47 53.56Z";
+const EYE_RIGHT =
+  "M66.43 53.56C66.47 53.92 66.46 54.31 66.41 54.67C66.36 55.03 66.27 55.38 66.13 55.72C66 56.06 65.83 56.39 65.62 56.69C65.41 56.99 65.16 57.27 64.88 57.52C64.61 57.77 64.3 57.99 63.97 58.18C63.64 58.36 63.28 58.52 62.91 58.63C62.54 58.75 62.14 58.83 61.75 58.86C61.36 58.9 60.95 58.9 60.57 58.86C60.18 58.82 59.8 58.73 59.45 58.61C59.09 58.49 58.74 58.33 58.42 58.14C58.1 57.95 57.8 57.72 57.54 57.46C57.28 57.21 57.04 56.92 56.85 56.61C56.66 56.31 56.49 55.98 56.38 55.63C56.26 55.29 56.18 54.91 56.14 54.55C56.11 54.18 56.12 53.8 56.17 53.44C56.22 53.08 56.31 52.72 56.44 52.39C56.58 52.05 56.75 51.72 56.96 51.42C57.17 51.12 57.42 50.84 57.69 50.59C57.97 50.34 58.28 50.12 58.61 49.93C58.94 49.74 59.3 49.59 59.67 49.47C60.04 49.36 60.44 49.28 60.83 49.24C61.22 49.2 61.62 49.21 62.01 49.25C62.39 49.29 62.77 49.37 63.13 49.49C63.49 49.61 63.84 49.78 64.16 49.97C64.47 50.16 64.77 50.39 65.04 50.64C65.3 50.9 65.53 51.19 65.73 51.49C65.92 51.8 66.08 52.13 66.2 52.47C66.32 52.82 66.4 53.19 66.43 53.56Z";
+
+export default function Buddy({ className = "" }: { className?: string }) {
+  const ref = useRef<HTMLDivElement>(null);
+  const inView = useInView(ref);
+  const reduceMotion = useReducedMotion();
+
+  const lookX = useMotionValue(0);
+  const lookY = useMotionValue(0);
+  const eyeX = useSpring(lookX, { stiffness: 180, damping: 18, mass: 0.6 });
+  const eyeY = useSpring(lookY, { stiffness: 180, damping: 18, mass: 0.6 });
+  const eyeScale = useMotionValue(1);
+  const bob = useMotionValue(0);
+
+  // Eyes follow the cursor while the buddy is on screen. Touch input is ignored.
+  useEffect(() => {
+    if (reduceMotion || !inView) return;
+
+    const onMove = (e: PointerEvent) => {
+      if (e.pointerType === "touch") return;
+      const box = ref.current?.getBoundingClientRect();
+      if (!box) return;
+      const dx = e.clientX - (box.left + box.width / 2);
+      const dy = e.clientY - (box.top + box.height / 2);
+      const dist = Math.hypot(dx, dy) || 1;
+      const reach = Math.min(dist, FOLLOW_RANGE) / FOLLOW_RANGE;
+      lookX.set((dx / dist) * reach * EYE_REACH);
+      lookY.set((dy / dist) * reach * EYE_REACH * 0.7);
+    };
+
+    window.addEventListener("pointermove", onMove, { passive: true });
+    return () => window.removeEventListener("pointermove", onMove);
+  }, [reduceMotion, inView, lookX, lookY]);
+
+  // Blink at random intervals so it never looks mechanical.
+  useEffect(() => {
+    if (reduceMotion || !inView) return;
+
+    let timer: number;
+    const schedule = () => {
+      timer = window.setTimeout(() => {
+        animate(eyeScale, [1, 0.08, 1], { duration: 0.2, times: [0, 0.45, 1], ease: EASE });
+        schedule();
+      }, 2200 + Math.random() * 3800);
+    };
+    schedule();
+
+    return () => window.clearTimeout(timer);
+  }, [reduceMotion, inView, eyeScale]);
+
+  const pet = () => {
+    if (reduceMotion) return;
+    animate(eyeScale, [1, 0.35, 0.35, 1], { duration: 0.8, times: [0, 0.15, 0.7, 1], ease: EASE });
+    animate(bob, [0, -3, 0], { duration: 0.5, ease: EASE });
+  };
+
+  return (
+    <div ref={ref} aria-hidden onPointerDown={pet} className={className}>
+      <svg viewBox="20.02 23.02 59.96 59.96" className="h-full w-full overflow-visible">
+        <motion.g style={{ y: bob }}>
+          <path fill="#00d5ee" d={BODY} />
+          <motion.g style={{ x: eyeX, y: eyeY }}>
+            <motion.g style={{ scaleY: eyeScale, transformBox: "fill-box", transformOrigin: "50% 50%" }}>
+              <path fill="#041518" d={EYE_LEFT} />
+              <path fill="#041518" d={EYE_RIGHT} />
+            </motion.g>
+          </motion.g>
+        </motion.g>
+      </svg>
+    </div>
+  );
+}

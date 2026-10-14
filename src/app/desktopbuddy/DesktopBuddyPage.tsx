@@ -52,21 +52,34 @@ const FEATURES: { title: string; body: string[]; art: Art }[] = [
     art: {
       src: "/desktopbuddy/moods.gif",
       width: 800,
-      height: 236,
-      alt: "The default buddy going through its moods, each one breathing and blinking.",
+      height: 214,
+      alt: "Sora, the default buddy, in all fifteen moods, each one breathing and blinking.",
     },
   },
   {
     title: "Play",
     body: [
       "Press on it and it squishes. Pick it up and it swings along behind your cursor. Shake it and it gets dizzy.",
-      "Stroke your cursor back and forth over it for a belly rub, or push it past the edge of your screen and it tucks in to peek out. Now and then it has something to say.",
+      "Stroke your cursor back and forth over it for a belly rub and it melts. Now and then it has something to say.",
     ],
     art: {
       src: "/desktopbuddy/reactions.gif",
+      width: 480,
+      height: 340,
+      alt: "A cursor pets Sora, gives it a belly rub until it falls in love, picks it up so it swings along behind, then shakes it until it's dizzy.",
+    },
+  },
+  {
+    title: "Peeking",
+    body: [
+      "Push it past the edge of your screen and it tucks in halfway, leaning out to peek at you.",
+      "It only goes where you put it. It never wanders off on its own.",
+    ],
+    art: {
+      src: "/desktopbuddy/peek.gif",
       width: 440,
-      height: 300,
-      alt: "A cursor pets the buddy, picks it up so it swings along behind, then shakes it until it's dizzy.",
+      height: 330,
+      alt: "Sora is dragged past the edge of a screen, tucks in halfway, says Peekaboo and follows the cursor with its eyes.",
     },
   },
   {
@@ -77,9 +90,9 @@ const FEATURES: { title: string; body: string[]; art: Art }[] = [
     ],
     art: {
       src: "/desktopbuddy/customise.gif",
-      width: 360,
-      height: 360,
-      alt: "One buddy popping into a new look again and again: new shapes, eyes and colours.",
+      width: 546,
+      height: 592,
+      alt: "The settings panel beside Sora: renamed Pip, its face changes with every letter, then it gets a kitty shape, a pink colour and square eyes.",
     },
   },
 ];
@@ -229,7 +242,7 @@ export default function DesktopBuddyPage({ release }: { release: Release }) {
               height={175}
               unoptimized
               priority
-              alt="Nine different buddies breathing and blinking. One falls in love, one winks, one tilts its head, one gets dizzy, and the others turn to look."
+              alt="Nine different buddies breathing and blinking, with Sora in the middle. Sora falls in love, then the others take turns to wink, tilt their heads, get dizzy and look confused."
               className="h-auto w-full max-w-[960px]"
             />
           </motion.div>

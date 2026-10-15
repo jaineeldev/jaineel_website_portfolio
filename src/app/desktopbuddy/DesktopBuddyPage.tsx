@@ -1,9 +1,8 @@
 "use client";
 
-import Image from "next/image";
 import Link from "next/link";
-import { useEffect, useState } from "react";
-import { motion } from "framer-motion";
+import { useEffect, useRef, useState, useSyncExternalStore } from "react";
+import { motion, useReducedMotion } from "framer-motion";
 import Buddy from "@/components/Buddy";
 import { PRELOADER_DONE_EVENT, isPreloaderDone } from "@/components/Preloader";
 import ThemeToggle from "@/components/ThemeToggle";
@@ -12,6 +11,7 @@ import type { Release } from "./page";
 const EASE = [0.16, 1, 0.3, 1] as const;
 const PAGE_URL = "https://jaineel.dev/desktopbuddy";
 const GITHUB = "https://github.com/jaineeldev/desktop_buddy";
+const NAME = "DesktopBuddy";
 
 const HIDDEN = { opacity: 0, y: 14, filter: "blur(4px)" };
 const SHOWN = { opacity: 1, y: 0, filter: "blur(0px)" };
@@ -40,21 +40,28 @@ const TITLE = "font-display font-extrabold leading-[0.95] tracking-[-0.035em] te
 const TITLE_SIZE = { fontSize: "clamp(1.75rem, 4vw, 3.75rem)" };
 const BODY = "text-[15.5px] leading-[1.55] text-fg-muted sm:text-[17px] sm:leading-[1.5]";
 
-type Art = { src: string; width: number; height: number; alt: string };
+/**
+ * A looping clip of the real app, recorded at twice the size it's shown (sharp on high-DPI screens),
+ * once on each theme's background so it sits on the page with no frame around it.
+ * Files: /desktopbuddy/<file>-<dark|light>.mp4, with a .png of the first frame as its poster.
+ */
+type Clip = { file: string; width: number; height: number; alt: string };
 
-const FEATURES: { title: string; body: string[]; art: Art }[] = [
+const HERO_CLIP: Clip = {
+  file: "buddies",
+  width: 960,
+  height: 176,
+  alt: "Nine different buddies breathing and blinking, with Sora in the middle. Sora falls in love, then the others take turns to wink, tilt their heads, get dizzy and look confused.",
+};
+
+const FEATURES: { title: string; body: string[]; clip: Clip }[] = [
   {
     title: "Moods",
     body: [
       "It has fifteen moods, from happy and sleepy to smug and dizzy, and it slides from one to the next.",
       "Leave your computer for two minutes and it gets bored. Leave it for five and it dozes off. It wakes up when you come back.",
     ],
-    art: {
-      src: "/desktopbuddy/moods.gif",
-      width: 800,
-      height: 214,
-      alt: "Sora, the default buddy, in all fifteen moods, each one breathing and blinking.",
-    },
+    clip: { file: "moods", width: 800, height: 214, alt: "Sora, the default buddy, in all fifteen moods, each one breathing and blinking." },
   },
   {
     title: "Play",
@@ -62,8 +69,8 @@ const FEATURES: { title: string; body: string[]; art: Art }[] = [
       "Press on it and it squishes. Pick it up and it swings along behind your cursor. Shake it and it gets dizzy.",
       "Stroke your cursor back and forth over it for a belly rub and it melts. Now and then it has something to say.",
     ],
-    art: {
-      src: "/desktopbuddy/reactions.gif",
+    clip: {
+      file: "reactions",
       width: 480,
       height: 340,
       alt: "A cursor pets Sora, gives it a belly rub until it falls in love, picks it up so it swings along behind, then shakes it until it's dizzy.",
@@ -75,8 +82,8 @@ const FEATURES: { title: string; body: string[]; art: Art }[] = [
       "Push it past the edge of your screen and it tucks in halfway, leaning out to peek at you.",
       "It only goes where you put it. It never wanders off on its own.",
     ],
-    art: {
-      src: "/desktopbuddy/peek.gif",
+    clip: {
+      file: "peek",
       width: 440,
       height: 330,
       alt: "Sora is dragged past the edge of a screen, tucks in halfway, says Peekaboo and follows the cursor with its eyes.",
@@ -88,8 +95,8 @@ const FEATURES: { title: string; body: string[]; art: Art }[] = [
       "Right-click it to change its name, shape, eyes, colour and size. Six of the shapes are hand-drawn extras.",
       "Everything saves on your PC, and it stays exactly where you put it.",
     ],
-    art: {
-      src: "/desktopbuddy/customise.gif",
+    clip: {
+      file: "customise",
       width: 546,
       height: 592,
       alt: "The settings panel beside Sora: renamed Pip, its face changes with every letter, then it gets a kitty shape, a pink colour and square eyes.",
@@ -97,13 +104,81 @@ const FEATURES: { title: string; body: string[]; art: Art }[] = [
   },
 ];
 
-const PRIVACY = [
-  "It reads where your mouse pointer is, so its eyes can follow it.",
-  "It checks how long since you last used your keyboard or mouse, so it knows when you're away. It never sees what you type.",
-  "On a laptop, it reads the battery level and whether it's charging.",
-  "It connects to GitHub to check for updates, and nothing else. No accounts and no tracking.",
-  "It doesn't use your camera, microphone, location, clipboard or files.",
+const QUESTIONS: [string, string][] = [
+  [
+    "Is it safe?",
+    "Yes. It needs no admin rights and no special permissions. It reads where your mouse is and how long since you last used your keyboard or mouse, never what you type. It doesn't touch your camera, microphone, location, clipboard or files, and the only thing it connects to is GitHub, to check for updates. The code is open source, so anyone can check.",
+  ],
+  [
+    "Why does Windows warn me when I install it?",
+    "Windows shows “Windows protected your PC” for apps that aren't code-signed, and signing costs money every year. Click More info, then Run anyway. You only see it once, because after that it updates itself.",
+  ],
+  ["Will it slow my computer down?", "No. It sits quietly between moments. On my PC it uses about 2% of the processor while idle."],
+  [
+    "How do I close or hide it?",
+    "Right-click your buddy and press Quit DesktopBuddy at the bottom of its panel. To hide it for a bit, press Ctrl+Alt+B, and press it again to bring it back.",
+  ],
+  ["How do I uninstall it?", "Like any other app: open Settings, then Apps, find DesktopBuddy and uninstall it."],
+  ["Is there a Mac version?", "Not yet. Windows comes first, and a Mac version is on the list."],
 ];
+
+type Theme = "dark" | "light";
+const readTheme = (): Theme => (document.documentElement.getAttribute("data-theme") === "light" ? "light" : "dark");
+const watchTheme = (onChange: () => void) => {
+  const observer = new MutationObserver(onChange);
+  observer.observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
+  return () => observer.disconnect();
+};
+/** The site's theme, following the toggle. The server renders the dark default. */
+function useTheme(): Theme {
+  return useSyncExternalStore(watchTheme, readTheme, () => "dark");
+}
+
+/** A clip for the current theme. It plays only while on screen; with reduced motion it rests on its first frame. */
+function Loop({ clip, eager = false }: { clip: Clip; eager?: boolean }) {
+  const theme = useTheme();
+  const ref = useRef<HTMLVideoElement>(null);
+  const reduceMotion = useReducedMotion();
+
+  useEffect(() => {
+    const video = ref.current;
+    if (!video) return;
+    if (reduceMotion) {
+      video.pause();
+      return;
+    }
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) void video.play().catch(() => {});
+        else video.pause();
+      },
+      { threshold: 0.15 },
+    );
+    observer.observe(video);
+    return () => observer.disconnect();
+  }, [reduceMotion, theme]);
+
+  const src = `/desktopbuddy/${clip.file}-${theme}`;
+  return (
+    <video
+      key={theme}
+      ref={ref}
+      muted
+      loop
+      playsInline
+      preload={eager ? "auto" : "metadata"}
+      poster={`${src}.png`}
+      width={clip.width}
+      height={clip.height}
+      role="img"
+      aria-label={clip.alt}
+      className="block h-auto w-full"
+      style={{ maxWidth: clip.width }}
+    >
+      <source src={`${src}.mp4`} type="video/mp4" />
+    </video>
+  );
+}
 
 function ArrowRight({ className = "" }: { className?: string }) {
   return (
@@ -153,7 +228,7 @@ function Get({ release }: { release: Release }) {
 }
 
 function Details({ release }: { release: Release }) {
-  const facts = [release.version && `v${release.version}`, release.sizeMb && `${release.sizeMb} MB`, "Windows 10 and 11", "Free"];
+  const facts = [release.version && `v${release.version}`, release.sizeMb && `${release.sizeMb} MB`, "Windows 10 and 11", "Free and open source"];
   return (
     <>
       <p className="mt-6 font-mono text-[10.5px] uppercase tracking-[0.22em] text-fg-dim">
@@ -169,6 +244,7 @@ function Details({ release }: { release: Release }) {
 export default function DesktopBuddyPage({ release }: { release: Release }) {
   // Already done when arriving from another page of the site; otherwise wait for its signal.
   const [ready, setReady] = useState(isPreloaderDone);
+  const reduceMotion = useReducedMotion();
   useEffect(() => {
     if (ready) return;
     // It may have finished between the first render and now, before there was anything listening.
@@ -185,8 +261,12 @@ export default function DesktopBuddyPage({ release }: { release: Release }) {
     };
   }, [ready]);
 
+  // The name arrives a letter at a time, as the home greeting does, and Sora lands last as its full stop.
+  const letterDelay = (i: number) => 0.2 + i * 0.04;
+  const soraDelay = letterDelay(NAME.length) + 0.15;
+
   return (
-    <main className="relative flex min-h-svh flex-col bg-bg">
+    <main className="relative flex min-h-svh flex-col overflow-x-clip bg-bg">
       <motion.header
         {...opening(ready, 0.05)}
         className="flex items-center justify-between px-7 pt-6 sm:px-10 sm:pt-8 md:px-14 md:pt-10"
@@ -209,108 +289,130 @@ export default function DesktopBuddyPage({ release }: { release: Release }) {
         </div>
       </motion.header>
 
-      {/* The name, with Sora sitting where the full stop would be. */}
-      <section className="px-7 pb-16 pt-24 sm:px-10 sm:pb-20 sm:pt-28 md:px-14 md:pb-28 md:pt-32">
+      <section className="px-7 pb-16 pt-20 sm:px-10 sm:pb-20 sm:pt-24 md:px-14 md:pb-28 md:pt-28">
         <div className="w-full max-w-[1500px]">
-          <motion.div
-            {...opening(ready, 0.2)}
-            className="flex items-end gap-[0.08em]"
-            style={{ fontSize: "clamp(2.25rem, 6.5vw, 8rem)" }}
-          >
-            <h1 className="font-display font-extrabold leading-[0.9] tracking-[-0.045em] text-fg">
-              DesktopBuddy
+          <div className="flex items-end gap-[0.06em]" style={{ fontSize: "clamp(2.75rem, 10vw, 9.5rem)" }}>
+            <h1 aria-label={NAME} className="font-display font-extrabold leading-[0.9] tracking-[-0.045em] text-fg">
+              {NAME.split("").map((letter, i) => (
+                <motion.span
+                  key={i}
+                  aria-hidden
+                  className="inline-block"
+                  initial={{ opacity: 0, y: "0.25em", filter: "blur(4px)" }}
+                  animate={ready ? { opacity: 1, y: 0, filter: "blur(0px)" } : undefined}
+                  transition={{ duration: 0.7, ease: EASE, delay: letterDelay(i) }}
+                >
+                  {letter}
+                </motion.span>
+              ))}
             </h1>
-            <Buddy className="mb-[0.06em] h-[0.62em] w-[0.62em] shrink-0 cursor-pointer" />
-          </motion.div>
+            <motion.div
+              className="mb-[0.06em] shrink-0"
+              initial={{ opacity: 0, scale: 0.4, filter: "blur(4px)" }}
+              animate={ready ? { opacity: 1, scale: 1, filter: "blur(0px)" } : undefined}
+              transition={{ duration: 0.8, ease: EASE, delay: soraDelay }}
+            >
+              <Buddy className="h-[0.62em] w-[0.62em] cursor-pointer" />
+            </motion.div>
+          </div>
 
           <motion.p
-            {...opening(ready, 0.45)}
-            className="mt-5 max-w-[42ch] font-display text-[1rem] font-medium leading-[1.18] tracking-[-0.018em] text-fg-muted sm:mt-7 sm:max-w-[34ch] sm:text-[clamp(1.25rem,2.6vw,2rem)]"
+            {...opening(ready, soraDelay + 0.1)}
+            className="mt-6 max-w-[42ch] font-display text-[1.05rem] font-medium leading-[1.18] tracking-[-0.018em] text-fg-muted sm:mt-8 sm:max-w-[34ch] sm:text-[clamp(1.25rem,2.6vw,2rem)]"
           >
             A tiny creature that lives on your desktop. Give it a name and it grows a face of its own.
           </motion.p>
 
-          <motion.div {...opening(ready, 0.6)} className="mt-14 sm:mt-20">
+          <motion.div {...opening(ready, soraDelay + 0.25)} className="mt-12 sm:mt-16">
             <Get release={release} />
             <Details release={release} />
           </motion.div>
 
-          <motion.div {...opening(ready, 0.8)} className="mt-16 sm:mt-24">
-            <Image
-              src="/desktopbuddy/buddies.gif"
-              width={960}
-              height={175}
-              unoptimized
-              priority
-              alt="Nine different buddies breathing and blinking, with Sora in the middle. Sora falls in love, then the others take turns to wink, tilt their heads, get dizzy and look confused."
-              className="h-auto w-full max-w-[960px]"
-            />
+          <motion.div {...opening(ready, soraDelay + 0.4)} className="mt-16 sm:mt-24">
+            <Loop clip={HERO_CLIP} eager />
           </motion.div>
         </div>
       </section>
 
-      {FEATURES.map((feature) => (
-        <section key={feature.title} className={SECTION}>
-          <div className="grid w-full max-w-[1400px] grid-cols-1 gap-y-10 md:grid-cols-[minmax(0,26rem)_1fr] md:gap-x-16">
-            <div>
-              <motion.h2 {...onScroll()} className={TITLE} style={TITLE_SIZE}>
-                {feature.title}
-              </motion.h2>
-              {feature.body.map((line, i) => (
-                <motion.p key={line} {...onScroll(0.07 * (i + 1))} className={`mt-6 max-w-[48ch] ${BODY}`}>
-                  {line}
-                </motion.p>
-              ))}
+      {FEATURES.map((feature, i) => {
+        // Text and clip swap sides every other section on wider screens, so the page has a rhythm.
+        const flip = i % 2 === 1;
+        return (
+          <section key={feature.title} className={SECTION}>
+            <div
+              className={`grid w-full max-w-[1400px] grid-cols-1 items-center gap-y-10 md:gap-x-16 ${
+                flip ? "md:grid-cols-[1fr_minmax(0,26rem)]" : "md:grid-cols-[minmax(0,26rem)_1fr]"
+              }`}
+            >
+              <div className={flip ? "md:order-2" : undefined}>
+                <motion.h2 {...onScroll()} className={TITLE} style={TITLE_SIZE}>
+                  {feature.title}
+                </motion.h2>
+                {feature.body.map((line, j) => (
+                  <motion.p key={line} {...onScroll(0.07 * (j + 1))} className={`mt-6 max-w-[48ch] ${BODY}`}>
+                    {line}
+                  </motion.p>
+                ))}
+              </div>
+              <motion.div {...onScroll(0.14)} className={flip ? "md:order-1" : undefined}>
+                <Loop clip={feature.clip} />
+              </motion.div>
             </div>
-            <motion.div {...onScroll(0.14)} className="md:pt-3">
-              <Image
-                src={feature.art.src}
-                width={feature.art.width}
-                height={feature.art.height}
-                unoptimized
-                alt={feature.art.alt}
-                className="h-auto w-full"
-                style={{ maxWidth: feature.art.width }}
-              />
-            </motion.div>
-          </div>
-        </section>
-      ))}
+          </section>
+        );
+      })}
 
       <section className={SECTION}>
         <div className="w-full max-w-[1400px]">
           <motion.h2 {...onScroll()} className={TITLE} style={TITLE_SIZE}>
-            Privacy
+            Questions
           </motion.h2>
-          <ul className="mt-8 flex max-w-[60ch] flex-col gap-4">
-            {PRIVACY.map((line, i) => (
-              <motion.li key={line} {...onScroll(0.06 * i)} className={BODY}>
-                {line}
-              </motion.li>
+          <dl className="mt-10 flex max-w-[62ch] flex-col gap-9 sm:mt-14 sm:gap-10">
+            {QUESTIONS.map(([question, answer], i) => (
+              <motion.div key={question} {...onScroll(0.05 * i)}>
+                <dt className="font-display text-[clamp(1.125rem,1.7vw,1.4rem)] font-semibold leading-[1.2] tracking-[-0.015em] text-fg">
+                  {question}
+                </dt>
+                <dd className={`mt-3 ${BODY}`}>{answer}</dd>
+              </motion.div>
             ))}
-          </ul>
+          </dl>
         </div>
       </section>
 
-      <section className="px-7 pb-10 pt-16 sm:px-10 sm:pb-12 sm:pt-20 md:px-14 md:pb-14 md:pt-28">
+      <section className="relative px-7 pb-10 pt-16 sm:px-10 sm:pb-12 sm:pt-20 md:px-14 md:pb-14 md:pt-28">
+        {/* Sora, tucked in behind the edge of the page and peeking out, the way it does on a desktop. */}
+        <motion.div
+          className="pointer-events-auto absolute right-0 top-[18%] w-[clamp(84px,11vw,150px)]"
+          initial={reduceMotion ? false : { x: "100%", rotate: 0 }}
+          whileInView={{ x: "45%", rotate: -10 }}
+          viewport={{ once: true, amount: 0.6 }}
+          transition={{ duration: 1.1, ease: EASE, delay: 0.5 }}
+        >
+          <Buddy className="aspect-square w-full cursor-pointer" />
+        </motion.div>
+
         <div className="w-full max-w-[1400px]">
-          <motion.h2 {...onScroll()} className={TITLE} style={TITLE_SIZE}>
+          <motion.h2
+            initial={{ opacity: 0, y: 80, filter: "blur(10px)" }}
+            whileInView={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+            viewport={{ once: true, amount: 0.5 }}
+            transition={{ duration: 1.9, ease: EASE }}
+            className="font-display font-extrabold leading-[0.98] tracking-[-0.035em] text-fg"
+            style={{ fontSize: "clamp(2rem, 5vw, 4.5rem)" }}
+          >
             Free for Windows.
           </motion.h2>
-          <motion.div {...onScroll(0.08)} className="mt-10 sm:mt-12">
+          <motion.div {...onScroll(0.3)} className="mt-10 sm:mt-12">
             <Get release={release} />
             <Details release={release} />
           </motion.div>
-          <motion.p {...onScroll(0.14)} className={`mt-10 max-w-[52ch] ${BODY}`}>
-            Windows may say it doesn&apos;t recognise the app, because it isn&apos;t code-signed yet. Click More info, then Run
-            anyway. After that it keeps itself up to date.
-          </motion.p>
-          <motion.p {...onScroll(0.18)} className={`mt-4 max-w-[52ch] ${BODY}`}>
+          <motion.p {...onScroll(0.4)} className={`mt-10 max-w-[52ch] ${BODY}`}>
             I built DesktopBuddy with help from AI, and I&apos;m still adding to it. Bopping along to your music is next.
           </motion.p>
 
           <motion.div
-            {...onScroll(0.22)}
+            {...onScroll(0.45)}
             className="mt-20 flex flex-col gap-4 sm:mt-28 sm:flex-row sm:items-baseline sm:justify-between sm:gap-6"
           >
             <Link

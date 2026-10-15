@@ -11,7 +11,8 @@ export const metadata: Metadata = {
 // Checked again at most once an hour, so the download button follows new releases on its own.
 export const revalidate = 3600;
 
-const RELEASES = "https://github.com/jaineeldev/desktop_buddy/releases/latest";
+const REPO = "https://github.com/jaineeldev/desktop_buddy";
+const RELEASES = `${REPO}/releases/latest`;
 
 export type Release = {
   version: string | null;
@@ -19,28 +20,25 @@ export type Release = {
   sizeMb: number | null;
 };
 
-type GitHubRelease = {
-  tag_name?: string;
-  assets?: { name: string; browser_download_url: string; size: number }[];
-};
-
-// The newest installer. The file name carries the version, so it's looked up rather than written in.
+// The newest installer, from the latest.yml every release carries for the app's own updater. It's a
+// plain file download, so unlike GitHub's API (60 requests an hour, shared by everyone on a host's
+// address) it doesn't run out, and the page always agrees with what the app updates to.
 async function latestRelease(): Promise<Release> {
   try {
-    const res = await fetch(
-      "https://api.github.com/repos/jaineeldev/desktop_buddy/releases/latest",
-      { headers: { Accept: "application/vnd.github+json" }, next: { revalidate: 3600 } },
-    );
+    const res = await fetch(`${RELEASES}/download/latest.yml`, { next: { revalidate: 3600 } });
     if (!res.ok) throw new Error(`GitHub answered ${res.status}`);
-    const data: GitHubRelease = await res.json();
-    const setup = data.assets?.find((asset) => asset.name.endsWith("Setup.exe"));
+    const yml = await res.text();
+    const version = yml.match(/^version:\s*(\S+)/m)?.[1];
+    const file = yml.match(/^path:\s*(\S+)/m)?.[1];
+    const size = Number(yml.match(/^\s+size:\s*(\d+)/m)?.[1]);
+    if (!version || !file) throw new Error("latest.yml has no version or file");
     return {
-      version: data.tag_name?.replace(/^v/, "") ?? null,
-      download: setup?.browser_download_url ?? RELEASES,
-      sizeMb: setup ? Math.round(setup.size / 1_000_000) : null,
+      version,
+      download: `${REPO}/releases/download/v${version}/${file}`,
+      sizeMb: size ? Math.round(size / 1_000_000) : null,
     };
   } catch {
-    // GitHub unreachable or rate-limited: the release page always has the installer.
+    // GitHub unreachable: the release page always has the installer.
     return { version: null, download: RELEASES, sizeMb: null };
   }
 }

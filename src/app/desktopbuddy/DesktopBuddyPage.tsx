@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useRef, useState, useSyncExternalStore } from "react";
-import { motion, useReducedMotion } from "framer-motion";
+import { motion, useInView, useReducedMotion } from "framer-motion";
 import Buddy from "@/components/Buddy";
 import { PRELOADER_DONE_EVENT, isPreloaderDone } from "@/components/Preloader";
 import ThemeToggle from "@/components/ThemeToggle";
@@ -50,7 +50,7 @@ type Clip = { file: string; width: number; height: number; alt: string };
 const HERO_CLIP: Clip = {
   file: "buddies",
   width: 960,
-  height: 176,
+  height: 175,
   alt: "Nine different buddies breathing and blinking, with Sora in the middle. Sora falls in love, then the others take turns to wink, tilt their heads, get dizzy and look confused.",
 };
 
@@ -245,6 +245,9 @@ export default function DesktopBuddyPage({ release }: { release: Release }) {
   // Already done when arriving from another page of the site; otherwise wait for its signal.
   const [ready, setReady] = useState(isPreloaderDone);
   const reduceMotion = useReducedMotion();
+  // Sora starts out of sight past the edge, so it can't watch for itself; the closing section does.
+  const endRef = useRef<HTMLElement>(null);
+  const endInView = useInView(endRef, { once: true, amount: 0.35 });
   useEffect(() => {
     if (ready) return;
     // It may have finished between the first render and now, before there was anything listening.
@@ -380,13 +383,12 @@ export default function DesktopBuddyPage({ release }: { release: Release }) {
         </div>
       </section>
 
-      <section className="relative px-7 pb-10 pt-16 sm:px-10 sm:pb-12 sm:pt-20 md:px-14 md:pb-14 md:pt-28">
+      <section ref={endRef} className="relative px-7 pb-10 pt-16 sm:px-10 sm:pb-12 sm:pt-20 md:px-14 md:pb-14 md:pt-28">
         {/* Sora, tucked in behind the edge of the page and peeking out, the way it does on a desktop. */}
         <motion.div
           className="pointer-events-auto absolute right-0 top-[18%] w-[clamp(84px,11vw,150px)]"
-          initial={reduceMotion ? false : { x: "100%", rotate: 0 }}
-          whileInView={{ x: "45%", rotate: -10 }}
-          viewport={{ once: true, amount: 0.6 }}
+          initial={reduceMotion ? { x: "45%", rotate: -10 } : { x: "100%", rotate: 0 }}
+          animate={endInView ? { x: "45%", rotate: -10 } : undefined}
           transition={{ duration: 1.1, ease: EASE, delay: 0.5 }}
         >
           <Buddy className="aspect-square w-full cursor-pointer" />

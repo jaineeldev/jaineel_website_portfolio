@@ -43,14 +43,18 @@ const BODY = "text-[15.5px] leading-[1.55] text-fg-muted sm:text-[17px] sm:leadi
 /**
  * A looping clip of the real app, recorded at twice the size it's shown (sharp on high-DPI screens),
  * once on each theme's background so it sits on the page with no frame around it.
- * Files: /desktopbuddy/<file>-<dark|light>.mp4, with a .png of the first frame as its poster.
+ * Files: /desktopbuddy/<file>-<dark|light>.mp4, with a .webp of the frame it starts on as its poster.
+ * `show` is the widest it's drawn (up to twice its size, still sharp); `start` is a lively moment to
+ * begin on, rather than the loop's quiet start.
  */
-type Clip = { file: string; width: number; height: number; alt: string };
+type Clip = { file: string; width: number; height: number; show: number; start: number; alt: string };
 
 const HERO_CLIP: Clip = {
   file: "buddies",
   width: 960,
   height: 175,
+  show: 1280,
+  start: 1,
   alt: "Nine different buddies breathing and blinking, with Sora in the middle. Sora falls in love, then the others take turns to wink, tilt their heads, get dizzy and look confused.",
 };
 
@@ -61,7 +65,7 @@ const FEATURES: { title: string; body: string[]; clip: Clip }[] = [
       "It has fifteen moods, from happy and sleepy to smug and dizzy, and it slides from one to the next.",
       "Leave your computer for two minutes and it gets bored. Leave it for five and it dozes off. It wakes up when you come back.",
     ],
-    clip: { file: "moods", width: 800, height: 214, alt: "Sora, the default buddy, in all fifteen moods, each one breathing and blinking." },
+    clip: { file: "moods", width: 800, height: 214, show: 960, start: 0, alt: "Sora, the default buddy, in all fifteen moods, each one breathing and blinking." },
   },
   {
     title: "Play",
@@ -73,6 +77,8 @@ const FEATURES: { title: string; body: string[]; clip: Clip }[] = [
       file: "reactions",
       width: 480,
       height: 340,
+      show: 760,
+      start: 5,
       alt: "A cursor pets Sora, gives it a belly rub until it falls in love, picks it up so it swings along behind, then shakes it until it's dizzy.",
     },
   },
@@ -86,6 +92,8 @@ const FEATURES: { title: string; body: string[]; clip: Clip }[] = [
       file: "peek",
       width: 440,
       height: 330,
+      show: 700,
+      start: 3.5,
       alt: "Sora is dragged past the edge of a screen, tucks in halfway, says Peekaboo and follows the cursor with its eyes.",
     },
   },
@@ -99,6 +107,8 @@ const FEATURES: { title: string; body: string[]; clip: Clip }[] = [
       file: "customise",
       width: 546,
       height: 592,
+      show: 600,
+      start: 6,
       alt: "The settings panel beside Sora: renamed Pip, its face changes with every letter, then it gets a kitty shape, a pink colour and square eyes.",
     },
   },
@@ -167,13 +177,16 @@ function Loop({ clip, eager = false }: { clip: Clip; eager?: boolean }) {
       loop
       playsInline
       preload={eager ? "auto" : "metadata"}
-      poster={`${src}.png`}
+      poster={`${src}.webp`}
+      onLoadedMetadata={(e) => {
+        if (clip.start && e.currentTarget.currentTime < 0.01) e.currentTarget.currentTime = clip.start;
+      }}
       width={clip.width}
       height={clip.height}
       role="img"
       aria-label={clip.alt}
       className="block h-auto w-full"
-      style={{ maxWidth: clip.width }}
+      style={{ maxWidth: clip.show }}
     >
       <source src={`${src}.mp4`} type="video/mp4" />
     </video>
@@ -343,7 +356,7 @@ export default function DesktopBuddyPage({ release }: { release: Release }) {
         return (
           <section key={feature.title} className={SECTION}>
             <div
-              className={`grid w-full max-w-[1400px] grid-cols-1 items-center gap-y-10 md:gap-x-16 ${
+              className={`grid w-full max-w-[1500px] grid-cols-1 items-center gap-y-10 md:gap-x-16 ${
                 flip ? "md:grid-cols-[1fr_minmax(0,26rem)]" : "md:grid-cols-[minmax(0,26rem)_1fr]"
               }`}
             >

@@ -4,7 +4,7 @@ import DesktopBuddyPage from "./DesktopBuddyPage";
 export const metadata: Metadata = {
   title: "DesktopBuddy",
   description:
-    "A tiny creature that lives on your Windows desktop. It watches your cursor, reacts when you play with it, and looks like no one else's. Free.",
+    "A tiny creature that lives on your Windows desktop. It watches your cursor, reacts when you play with it, bops to your music and looks like no one else's. Free.",
   alternates: { canonical: "/desktopbuddy" },
 };
 

@@ -89,6 +89,36 @@ const FEATURES: { title: string; body: string[]; clip: Clip }[] = [
     },
   },
   {
+    title: "Music",
+    body: [
+      "When music plays, it bops along to the beat with little notes floating up.",
+      "Spotify, your browser and most players all count. It goes by the media info Windows already has, and never listens to the audio.",
+    ],
+    clip: {
+      file: "music",
+      width: 440,
+      height: 300,
+      show: 780,
+      start: 5.5,
+      alt: "A little now-playing card switches to playing. Sora smiles, says Ooh, I like this one, and bops along with gold music notes floating up, until the music stops.",
+    },
+  },
+  {
+    title: "Movie night",
+    body: [
+      "When a video plays, it grabs a bucket of popcorn and watches with you, gasping at the good bits.",
+      "When a game or video goes full screen, it steps out of the way until you're done.",
+    ],
+    clip: {
+      file: "watching",
+      width: 440,
+      height: 300,
+      show: 780,
+      start: 3,
+      alt: "Sora watches a night sky in a video window, eating from a striped bucket of popcorn. A shooting star crosses the screen and Sora gasps, Ooh, what happens next?",
+    },
+  },
+  {
     title: "Peeking",
     body: [
       "Push it past the edge of your screen and it tucks in halfway, leaning out to peek at you.",
@@ -123,7 +153,7 @@ const FEATURES: { title: string; body: string[]; clip: Clip }[] = [
 const QUESTIONS: [string, string][] = [
   [
     "Is it safe?",
-    "Yes. It needs no admin rights and no special permissions. It reads where your mouse is and how long since you last used your keyboard or mouse, never what you type. It doesn't touch your camera, microphone, location, clipboard or files, and the only thing it connects to is GitHub, to check for updates. The code is open source, so anyone can check.",
+    "Yes. It needs no admin rights and no special permissions. It reads where your mouse is and how long since you last used your keyboard or mouse, never what you type. It can tell when music or a video is playing, from Windows' own media info, but never listens to the audio. It doesn't touch your camera, microphone, location, clipboard or files, and the only thing it connects to is GitHub, to check for updates. The code is open source, so anyone can check.",
   ],
   [
     "Why does Windows warn me when I install it?",
@@ -429,7 +459,7 @@ export default function DesktopBuddyPage({ release }: { release: Release }) {
             <Details release={release} />
           </motion.div>
           <motion.p {...onScroll(0.4)} className={`mt-10 max-w-[52ch] md:mx-auto md:text-balance ${BODY}`}>
-            I built DesktopBuddy with help from AI, and I&apos;m still adding to it. Bopping along to your music is next.
+            I built DesktopBuddy with help from AI, and I&apos;m still adding to it. Reacting to how hard your PC is working is next.
           </motion.p>
 
           <motion.div

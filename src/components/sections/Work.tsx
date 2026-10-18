@@ -1,8 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useId, useRef, useState } from "react";
 import Image from "next/image";
-import { motion } from "framer-motion";
+import Link from "next/link";
+import { AnimatePresence, motion } from "framer-motion";
+import Buddy from "@/components/Buddy";
 
 const EASE = [0.16, 1, 0.3, 1] as const;
 
@@ -29,7 +31,14 @@ type Project = {
   thumbnailFit?: "cover" | "contain";
   external?: boolean;
   note?: string;
+  // More than one place to go: clicking the row opens a popup to pick one (href stays the default
+  // for ctrl/middle-click and no-JS).
+  choices?: Choice[];
+  // Sora sits after the name in that popup, as it does on the DesktopBuddy page.
+  mascot?: boolean;
 };
+
+type Choice = { label: string; detail: string; href: string; external?: boolean };
 
 const PROJECTS: Project[] = [
   {
@@ -40,12 +49,21 @@ const PROJECTS: Project[] = [
     status: "Live",
     category: "Desktop",
     range: "2026 —",
-    href: "https://github.com/jaineeldev/desktop_buddy",
+    href: "/desktopbuddy",
     tech: ["Electron", "TypeScript", "React", "Framer Motion"],
     thumbnail: "/projects/desktopbuddy.svg",
     thumbnailFit: "contain",
-    external: true,
-    note: "v1.0.0 — free for Windows 10 and 11",
+    note: "Free for Windows 10 and 11",
+    choices: [
+      { label: "Website", detail: "jaineel.dev/desktopbuddy", href: "/desktopbuddy" },
+      {
+        label: "GitHub",
+        detail: "jaineeldev/desktop_buddy",
+        href: "https://github.com/jaineeldev/desktop_buddy",
+        external: true,
+      },
+    ],
+    mascot: true,
   },
   {
     index: "02",
@@ -133,6 +151,185 @@ function ArrowUpRight({ className = "" }: { className?: string }) {
   );
 }
 
+function ArrowRight({ className = "" }: { className?: string }) {
+  return (
+    <svg
+      className={className}
+      width="14"
+      height="14"
+      viewBox="0 0 14 14"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.25"
+      strokeLinecap="square"
+      aria-hidden
+    >
+      <path d="M2.5 7h9" />
+      <path d="M7.5 3l4 4-4 4" />
+    </svg>
+  );
+}
+
+function Cross({ className = "" }: { className?: string }) {
+  return (
+    <svg
+      className={className}
+      width="14"
+      height="14"
+      viewBox="0 0 14 14"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.25"
+      strokeLinecap="square"
+      aria-hidden
+    >
+      <path d="M3.5 3.5l7 7" />
+      <path d="M10.5 3.5l-7 7" />
+    </svg>
+  );
+}
+
+const CHOICE_ROW =
+  "group relative flex items-center justify-between gap-6 px-6 py-5 outline-none transition-colors duration-[250ms] ease-[cubic-bezier(0.16,1,0.3,1)] before:absolute before:inset-y-0 before:left-0 before:w-px before:bg-accent before:opacity-0 before:transition-opacity before:duration-[250ms] before:ease-[cubic-bezier(0.16,1,0.3,1)] before:content-[''] hover:bg-[var(--cta-hover-bg)] hover:before:opacity-100 focus-visible:bg-[var(--cta-hover-bg)] focus-visible:before:opacity-100 sm:px-8";
+
+/**
+ * The popup for a project with more than one place to go. It's a real modal dialog: focus stays
+ * inside, Esc or a click outside closes it, and focus goes back to the row afterwards.
+ */
+function ChoiceDialog({ project, onClose }: { project: Project | null; onClose: () => void }) {
+  const ref = useRef<HTMLDialogElement>(null);
+  const firstRef = useRef<HTMLAnchorElement>(null);
+  const titleId = useId();
+
+  useEffect(() => {
+    const dialog = ref.current;
+    if (!project || !dialog || dialog.open) return;
+    dialog.showModal();
+    firstRef.current?.focus();
+  }, [project]);
+
+  // The page behind stays put while it's open, without hiding the scrollbar (which shifts the page).
+  useEffect(() => {
+    const dialog = ref.current;
+    if (!dialog) return;
+    const hold = (e: Event) => e.preventDefault();
+    dialog.addEventListener("wheel", hold, { passive: false });
+    dialog.addEventListener("touchmove", hold, { passive: false });
+    return () => {
+      dialog.removeEventListener("wheel", hold);
+      dialog.removeEventListener("touchmove", hold);
+    };
+  }, []);
+
+  return (
+    <dialog
+      ref={ref}
+      aria-labelledby={titleId}
+      // Esc: play the closing animation first, then close for real once it's done.
+      onCancel={(e) => {
+        e.preventDefault();
+        onClose();
+      }}
+      onClose={onClose}
+      className="fixed inset-0 m-0 size-full max-h-none max-w-none bg-transparent p-0 text-fg backdrop:bg-transparent open:flex open:items-center open:justify-center"
+    >
+      <AnimatePresence onExitComplete={() => ref.current?.close()}>
+        {project && (
+          <motion.div
+            key="scrim"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.3, ease: EASE }}
+            onClick={onClose}
+            className="absolute inset-0 bg-[var(--scrim)]"
+          />
+        )}
+        {project?.choices && (
+          <motion.div
+            key="panel"
+            initial={{ opacity: 0, y: 14, scale: 0.985, filter: "blur(4px)" }}
+            animate={{ opacity: 1, y: 0, scale: 1, filter: "blur(0px)" }}
+            exit={{ opacity: 0, y: 8, scale: 0.99, filter: "blur(2px)", transition: { duration: 0.2, ease: EASE } }}
+            transition={{ duration: 0.5, ease: EASE }}
+            className="relative w-[min(30rem,calc(100vw-2.5rem))] border border-border-strong bg-bg"
+          >
+            <div className="flex items-start justify-between gap-6 px-6 pb-7 pt-6 sm:px-8 sm:pt-7">
+              <div className="min-w-0">
+                <span className="font-mono text-[10.5px] uppercase tracking-[0.22em] text-fg-dim">
+                  {project.index} — {project.category}
+                </span>
+                <h3
+                  id={titleId}
+                  className="mt-4 flex items-end gap-[0.12em] font-display font-extrabold leading-[0.95] tracking-[-0.035em] text-fg"
+                  style={{ fontSize: "clamp(1.75rem, 4vw, 2.5rem)" }}
+                >
+                  {project.name}
+                  {project.mascot && <Buddy className="mb-[0.06em] h-[0.62em] w-[0.62em] shrink-0 cursor-pointer" />}
+                </h3>
+                <p className="mt-3 text-[14px] leading-[1.55] text-fg-muted sm:text-[15px]">
+                  Where would you like to go?
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={onClose}
+                aria-label="Close"
+                className="-mr-2 -mt-1 p-2 text-fg-dim outline-none transition-colors duration-[250ms] ease-[cubic-bezier(0.16,1,0.3,1)] hover:text-fg focus-visible:text-accent"
+              >
+                <Cross />
+              </button>
+            </div>
+
+            <ul>
+              {project.choices.map((choice, i) => {
+                const inner = (
+                  <>
+                    <span className="flex min-w-0 flex-col gap-1.5 transition-transform duration-[250ms] ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:translate-x-[6px] group-focus-visible:translate-x-[6px]">
+                      <span className="font-display text-[1.25rem] font-semibold leading-[1.15] tracking-[-0.018em] text-fg">
+                        {choice.label}
+                      </span>
+                      <span className="truncate font-mono text-[10px] uppercase tracking-[0.16em] text-fg-dim">
+                        {choice.detail}
+                      </span>
+                    </span>
+                    {choice.external ? (
+                      <ArrowUpRight className="shrink-0 text-fg-dim transition-colors duration-[250ms] ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:text-accent group-focus-visible:text-accent" />
+                    ) : (
+                      <ArrowRight className="shrink-0 text-fg-dim transition-colors duration-[250ms] ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:text-accent group-focus-visible:text-accent" />
+                    )}
+                  </>
+                );
+                return (
+                  <li key={choice.href} className="border-t border-border">
+                    {choice.external ? (
+                      // Opens in a new tab, so the popup is closed by the time they come back.
+                      <a
+                        ref={i === 0 ? firstRef : undefined}
+                        href={choice.href}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        onClick={onClose}
+                        className={CHOICE_ROW}
+                      >
+                        {inner}
+                      </a>
+                    ) : (
+                      <Link ref={i === 0 ? firstRef : undefined} href={choice.href} className={CHOICE_ROW}>
+                        {inner}
+                      </Link>
+                    )}
+                  </li>
+                );
+              })}
+            </ul>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </dialog>
+  );
+}
+
 function ProjectThumbnail({
   src,
   alt,
@@ -173,7 +370,7 @@ function ProjectThumbnail({
   );
 }
 
-function ProjectRow({ project, i }: { project: Project; i: number }) {
+function ProjectRow({ project, i, onChoose }: { project: Project; i: number; onChoose: (project: Project) => void }) {
   return (
     <motion.li
       initial={{ opacity: 0, y: 24, filter: "blur(4px)" }}
@@ -186,6 +383,13 @@ function ProjectRow({ project, i }: { project: Project; i: number }) {
         href={project.href}
         target={project.external ? "_blank" : undefined}
         rel={project.external ? "noopener noreferrer" : undefined}
+        aria-haspopup={project.choices ? "dialog" : undefined}
+        onClick={(e) => {
+          // A plain click asks where to go; ctrl, shift or middle-click still opens the link itself.
+          if (!project.choices || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+          e.preventDefault();
+          onChoose(project);
+        }}
         className="group relative grid grid-cols-[3.5rem_1fr] items-start gap-x-4 gap-y-3 px-1 py-5 transition-colors duration-[250ms] ease-[cubic-bezier(0.16,1,0.3,1)] before:absolute before:inset-y-0 before:left-0 before:w-px before:bg-accent before:opacity-0 before:transition-opacity before:duration-[250ms] before:ease-[cubic-bezier(0.16,1,0.3,1)] before:content-[''] hover:before:opacity-100 sm:grid-cols-[5.5rem_2.75rem_5rem_1fr_auto] sm:gap-x-8 sm:py-6 md:grid-cols-[6rem_3rem_5.5rem_1fr_auto] md:py-7"
       >
         <ProjectThumbnail
@@ -270,6 +474,7 @@ function ProjectRow({ project, i }: { project: Project; i: number }) {
 }
 
 export default function Work() {
+  const [choosing, setChoosing] = useState<Project | null>(null);
   return (
     <section
       id="work"
@@ -296,10 +501,11 @@ export default function Work() {
 
         <ul className="border-t border-[var(--work-divider)]">
           {PROJECTS.map((p, i) => (
-            <ProjectRow key={p.index} project={p} i={i} />
+            <ProjectRow key={p.index} project={p} i={i} onChoose={setChoosing} />
           ))}
         </ul>
       </div>
+      <ChoiceDialog project={choosing} onClose={() => setChoosing(null)} />
     </section>
   );
 }

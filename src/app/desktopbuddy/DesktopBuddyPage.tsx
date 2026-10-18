@@ -32,13 +32,19 @@ const onScroll = (delay = 0) => ({
 
 // No display value here: each use sets its own, so the phone and desktop buttons can swap cleanly.
 const PRIMARY =
-  "group items-center gap-3 border border-transparent bg-fg px-6 py-3.5 font-mono text-[11px] uppercase tracking-[0.22em] text-bg transition duration-[250ms] ease-[cubic-bezier(0.16,1,0.3,1)] hover:border-accent/30 hover:brightness-110";
+  "group items-center gap-3 border border-transparent bg-fg px-6 py-3.5 font-mono text-[0.6875rem] uppercase tracking-[0.22em] text-bg transition duration-[250ms] ease-[cubic-bezier(0.16,1,0.3,1)] hover:border-accent/30 hover:brightness-110";
 const SECONDARY =
-  "inline-flex items-center gap-3 border border-border px-6 py-3.5 font-mono text-[11px] uppercase tracking-[0.22em] text-fg-muted transition-colors duration-[250ms] ease-[cubic-bezier(0.16,1,0.3,1)] hover:bg-[var(--cta-hover-bg)] hover:text-fg";
+  "inline-flex items-center gap-3 border border-border px-6 py-3.5 font-mono text-[0.6875rem] uppercase tracking-[0.22em] text-fg-muted transition-colors duration-[250ms] ease-[cubic-bezier(0.16,1,0.3,1)] hover:bg-[var(--cta-hover-bg)] hover:text-fg";
 const SECTION = "px-7 py-16 sm:px-10 sm:py-20 md:px-14 md:py-28";
+// One column for every section, centred, so the page sits in the middle of a wide screen and every
+// section starts on the same edge.
+const COLUMN = "mx-auto w-full max-w-[93.75rem]";
+// Up to 1920 px wide the page is its usual size; past that everything sized in rem (text, spacing,
+// the column, the clips) grows with the screen, so a big monitor gets a bigger page, not an emptier one.
+const PAGE_SCALE = "html{font-size:clamp(16px,0.8333vw,22px)}";
 const TITLE = "font-display font-extrabold leading-[0.95] tracking-[-0.035em] text-fg";
 const TITLE_SIZE = { fontSize: "clamp(1.75rem, 4vw, 3.75rem)" };
-const BODY = "text-[15.5px] leading-[1.55] text-fg-muted sm:text-[17px] sm:leading-[1.5]";
+const BODY = "text-[0.96875rem] leading-[1.55] text-fg-muted sm:text-[1.0625rem] sm:leading-[1.5]";
 
 /**
  * A looping clip of the real app, recorded at twice the size it's shown (sharp on high-DPI screens),
@@ -77,7 +83,7 @@ const FEATURES: { title: string; body: string[]; clip: Clip }[] = [
       file: "reactions",
       width: 480,
       height: 340,
-      show: 760,
+      show: 840,
       start: 5,
       alt: "A cursor pets Sora, gives it a belly rub until it falls in love, picks it up so it swings along behind, then shakes it until it's dizzy.",
     },
@@ -92,7 +98,7 @@ const FEATURES: { title: string; body: string[]; clip: Clip }[] = [
       file: "peek",
       width: 440,
       height: 330,
-      show: 700,
+      show: 780,
       start: 3.5,
       alt: "Sora is dragged past the edge of a screen, tucks in halfway, says Peekaboo and follows the cursor with its eyes.",
     },
@@ -185,8 +191,8 @@ function Loop({ clip, eager = false }: { clip: Clip; eager?: boolean }) {
       height={clip.height}
       role="img"
       aria-label={clip.alt}
-      className="block h-auto w-full"
-      style={{ maxWidth: clip.show }}
+      className="mx-auto block h-auto w-full"
+      style={{ maxWidth: `${clip.show / 16}rem` }}
     >
       <source src={`${src}.mp4`} type="video/mp4" />
     </video>
@@ -213,7 +219,7 @@ function ArrowRight({ className = "" }: { className?: string }) {
 }
 
 // On a phone the installer is no use, so the main button there copies the page's link instead.
-function Get({ release }: { release: Release }) {
+function Get({ release, centred = false }: { release: Release; centred?: boolean }) {
   const [copied, setCopied] = useState(false);
   const copy = async () => {
     try {
@@ -225,7 +231,7 @@ function Get({ release }: { release: Release }) {
     }
   };
   return (
-    <div className="flex flex-col items-start gap-3 sm:flex-row sm:items-center sm:gap-5">
+    <div className={`flex flex-col items-start gap-3 sm:flex-row sm:items-center sm:gap-5 ${centred ? "md:justify-center" : ""}`}>
       <a href={release.download} className={`${PRIMARY} hidden sm:inline-flex`}>
         <span>Download for Windows</span>
         <ArrowRight className="transition-transform duration-[250ms] ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:translate-x-1" />
@@ -244,7 +250,7 @@ function Details({ release }: { release: Release }) {
   const facts = [release.version && `v${release.version}`, release.sizeMb && `${release.sizeMb} MB`, "Windows 10 and 11", "Free and open source"];
   return (
     <>
-      <p className="mt-6 font-mono text-[10.5px] uppercase tracking-[0.22em] text-fg-dim">
+      <p className="mt-6 font-mono text-[0.65625rem] uppercase tracking-[0.22em] text-fg-dim">
         {facts.filter(Boolean).join(" · ")}
       </p>
       <p className={`mt-4 max-w-[42ch] sm:hidden ${BODY}`}>
@@ -283,31 +289,31 @@ export default function DesktopBuddyPage({ release }: { release: Release }) {
 
   return (
     <main className="relative flex min-h-svh flex-col overflow-x-clip bg-bg">
-      <motion.header
-        {...opening(ready, 0.05)}
-        className="flex items-center justify-between px-7 pt-6 sm:px-10 sm:pt-8 md:px-14 md:pt-10"
-      >
-        <Link
-          href="/"
-          className="font-mono text-[11px] font-medium uppercase tracking-[0.18em] text-fg transition-colors duration-300 hover:text-accent"
-          aria-label="Back to jaineel.dev"
-        >
-          JK.
-        </Link>
-        <div className="flex items-center gap-7 sm:gap-8">
+      <style>{PAGE_SCALE}</style>
+      <motion.header {...opening(ready, 0.05)} className="px-7 pt-6 sm:px-10 sm:pt-8 md:px-14 md:pt-10">
+        <div className={`${COLUMN} flex items-center justify-between`}>
           <Link
-            href="/#work"
-            className="font-mono text-[11px] uppercase tracking-[0.18em] text-fg-muted transition-colors duration-300 hover:text-accent"
+            href="/"
+            className="font-mono text-[0.6875rem] font-medium uppercase tracking-[0.18em] text-fg transition-colors duration-300 hover:text-accent"
+            aria-label="Back to jaineel.dev"
           >
-            Work
+            JK.
           </Link>
-          <ThemeToggle />
+          <div className="flex items-center gap-7 sm:gap-8">
+            <Link
+              href="/#work"
+              className="font-mono text-[0.6875rem] uppercase tracking-[0.18em] text-fg-muted transition-colors duration-300 hover:text-accent"
+            >
+              Work
+            </Link>
+            <ThemeToggle />
+          </div>
         </div>
       </motion.header>
 
       <section className="px-7 pb-16 pt-20 sm:px-10 sm:pb-20 sm:pt-24 md:px-14 md:pb-28 md:pt-28">
-        <div className="w-full max-w-[1500px]">
-          <div className="flex items-end gap-[0.06em]" style={{ fontSize: "clamp(2.75rem, 10vw, 9.5rem)" }}>
+        <div className={`${COLUMN} md:text-center`}>
+          <div className="flex items-end gap-[0.06em] md:justify-center" style={{ fontSize: "clamp(2.75rem, 10vw, 9.5rem)" }}>
             <h1 aria-label={NAME} className="font-display font-extrabold leading-[0.9] tracking-[-0.045em] text-fg">
               {NAME.split("").map((letter, i) => (
                 <motion.span
@@ -334,13 +340,13 @@ export default function DesktopBuddyPage({ release }: { release: Release }) {
 
           <motion.p
             {...opening(ready, soraDelay + 0.1)}
-            className="mt-6 max-w-[42ch] font-display text-[1.05rem] font-medium leading-[1.18] tracking-[-0.018em] text-fg-muted sm:mt-8 sm:max-w-[34ch] sm:text-[clamp(1.25rem,2.6vw,2rem)]"
+            className="mt-6 max-w-[42ch] font-display text-[1.05rem] font-medium leading-[1.18] tracking-[-0.018em] text-fg-muted sm:mt-8 sm:max-w-[34ch] md:mx-auto md:text-balance sm:text-[clamp(1.25rem,2.6vw,2rem)]"
           >
             A tiny creature that lives on your desktop. Give it a name and it grows a face of its own.
           </motion.p>
 
           <motion.div {...opening(ready, soraDelay + 0.25)} className="mt-12 sm:mt-16">
-            <Get release={release} />
+            <Get release={release} centred />
             <Details release={release} />
           </motion.div>
 
@@ -356,7 +362,7 @@ export default function DesktopBuddyPage({ release }: { release: Release }) {
         return (
           <section key={feature.title} className={SECTION}>
             <div
-              className={`grid w-full max-w-[1500px] grid-cols-1 items-center gap-y-10 md:gap-x-16 ${
+              className={`grid ${COLUMN} grid-cols-1 items-center gap-y-10 md:gap-x-16 ${
                 flip ? "md:grid-cols-[1fr_minmax(0,26rem)]" : "md:grid-cols-[minmax(0,26rem)_1fr]"
               }`}
             >
@@ -379,11 +385,11 @@ export default function DesktopBuddyPage({ release }: { release: Release }) {
       })}
 
       <section className={SECTION}>
-        <div className="w-full max-w-[1400px]">
+        <div className={COLUMN}>
           <motion.h2 {...onScroll()} className={TITLE} style={TITLE_SIZE}>
             Questions
           </motion.h2>
-          <dl className="mt-10 flex max-w-[62ch] flex-col gap-9 sm:mt-14 sm:gap-10">
+          <dl className="mt-10 grid grid-cols-1 gap-9 sm:mt-14 sm:gap-10 md:grid-cols-2 md:gap-x-16 xl:grid-cols-3">
             {QUESTIONS.map(([question, answer], i) => (
               <motion.div key={question} {...onScroll(0.05 * i)}>
                 <dt className="font-display text-[clamp(1.125rem,1.7vw,1.4rem)] font-semibold leading-[1.2] tracking-[-0.015em] text-fg">
@@ -407,7 +413,7 @@ export default function DesktopBuddyPage({ release }: { release: Release }) {
           <Buddy className="aspect-square w-full cursor-pointer" />
         </motion.div>
 
-        <div className="w-full max-w-[1400px]">
+        <div className={`${COLUMN} md:text-center`}>
           <motion.h2
             initial={{ opacity: 0, y: 80, filter: "blur(10px)" }}
             whileInView={{ opacity: 1, y: 0, filter: "blur(0px)" }}
@@ -419,10 +425,10 @@ export default function DesktopBuddyPage({ release }: { release: Release }) {
             Free for Windows.
           </motion.h2>
           <motion.div {...onScroll(0.3)} className="mt-10 sm:mt-12">
-            <Get release={release} />
+            <Get release={release} centred />
             <Details release={release} />
           </motion.div>
-          <motion.p {...onScroll(0.4)} className={`mt-10 max-w-[52ch] ${BODY}`}>
+          <motion.p {...onScroll(0.4)} className={`mt-10 max-w-[52ch] md:mx-auto md:text-balance ${BODY}`}>
             I built DesktopBuddy with help from AI, and I&apos;m still adding to it. Bopping along to your music is next.
           </motion.p>
 
@@ -432,14 +438,14 @@ export default function DesktopBuddyPage({ release }: { release: Release }) {
           >
             <Link
               href="/"
-              className="group inline-flex items-baseline gap-3 font-mono text-[11px] uppercase tracking-[0.22em] text-fg-muted transition-colors duration-300 hover:text-accent"
+              className="group inline-flex items-baseline gap-3 font-mono text-[0.6875rem] uppercase tracking-[0.22em] text-fg-muted transition-colors duration-300 hover:text-accent"
             >
               <span>Back to jaineel.dev</span>
               <span aria-hidden className="transition-transform duration-300 group-hover:translate-x-1">
                 →
               </span>
             </Link>
-            <span className="font-mono text-[10.5px] uppercase tracking-[0.22em] text-fg-dim">
+            <span className="font-mono text-[0.65625rem] uppercase tracking-[0.22em] text-fg-dim">
               © {new Date().getFullYear()} Jaineel Khatri
             </span>
           </motion.div>

@@ -1,17 +1,17 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useRef, useState, useSyncExternalStore } from "react";
-import { motion, useInView, useReducedMotion } from "framer-motion";
+import { useEffect, useId, useRef, useState, useSyncExternalStore } from "react";
+import { AnimatePresence, motion, useInView, useReducedMotion } from "framer-motion";
 import Buddy from "@/components/Buddy";
 import { PRELOADER_DONE_EVENT, isPreloaderDone } from "@/components/Preloader";
 import ThemeToggle from "@/components/ThemeToggle";
 import type { Release } from "./page";
 
 const EASE = [0.16, 1, 0.3, 1] as const;
-const PAGE_URL = "https://jaineel.dev/desktopbuddy";
-const GITHUB = "https://github.com/jaineeldev/desktop_buddy";
-const NAME = "DesktopBuddy";
+const PAGE_URL = "https://jaineel.dev/blimo";
+const GITHUB = "https://github.com/jaineeldev/blimo_app";
+const NAME = "Blimo";
 
 const HIDDEN = { opacity: 0, y: 14, filter: "blur(4px)" };
 const SHOWN = { opacity: 1, y: 0, filter: "blur(0px)" };
@@ -33,8 +33,10 @@ const onScroll = (delay = 0) => ({
 // No display value here: each use sets its own, so the phone and desktop buttons can swap cleanly.
 const PRIMARY =
   "group items-center gap-3 border border-transparent bg-fg px-6 py-3.5 font-mono text-[0.6875rem] uppercase tracking-[0.22em] text-bg transition duration-[250ms] ease-[cubic-bezier(0.16,1,0.3,1)] hover:border-accent/30 hover:brightness-110";
-const SECONDARY =
-  "inline-flex items-center gap-3 border border-border px-6 py-3.5 font-mono text-[0.6875rem] uppercase tracking-[0.22em] text-fg-muted transition-colors duration-[250ms] ease-[cubic-bezier(0.16,1,0.3,1)] hover:bg-[var(--cta-hover-bg)] hover:text-fg";
+// The outlined button, again with no display value (the other platform's download hides on a phone).
+const OUTLINE =
+  "items-center gap-3 border border-border px-6 py-3.5 font-mono text-[0.6875rem] uppercase tracking-[0.22em] text-fg-muted transition-colors duration-[250ms] ease-[cubic-bezier(0.16,1,0.3,1)] hover:bg-[var(--cta-hover-bg)] hover:text-fg";
+const SECONDARY = `inline-flex ${OUTLINE}`;
 const SECTION = "px-7 py-16 sm:px-10 sm:py-20 md:px-14 md:py-28";
 // One column for every section, centred, so the page sits in the middle of a wide screen and every
 // section starts on the same edge.
@@ -49,7 +51,7 @@ const BODY = "text-[0.96875rem] leading-[1.55] text-fg-muted sm:text-[1.0625rem]
 /**
  * A looping clip of the real app, recorded at twice the size it's shown (sharp on high-DPI screens),
  * once on each theme's background so it sits on the page with no frame around it.
- * Files: /desktopbuddy/<file>-<dark|light>.mp4, with a .webp of the frame it starts on as its poster.
+ * Files: /blimo/<file>-<dark|light>.mp4, with a .webp of the frame it starts on as its poster.
  * `show` is the widest it's drawn (up to twice its size, still sharp); `start` is a lively moment to
  * begin on, rather than the loop's quiet start.
  */
@@ -68,10 +70,10 @@ const FEATURES: { title: string; body: string[]; clip: Clip }[] = [
   {
     title: "Moods",
     body: [
-      "It has fifteen moods, from happy and sleepy to smug and dizzy, and it slides from one to the next.",
+      "It has twenty-one moods, from happy and sleepy to shy, proud and dizzy, and it slides from one to the next.",
       "Leave your computer for two minutes and it gets bored. Leave it for five and it dozes off. It wakes up when you come back.",
     ],
-    clip: { file: "moods", width: 800, height: 214, show: 960, start: 0, alt: "Sora, the default buddy, in all fifteen moods, each one breathing and blinking." },
+    clip: { file: "moods", width: 800, height: 322, show: 960, start: 0, alt: "Sora, the default buddy, in all twenty-one moods, each one breathing and blinking." },
   },
   {
     title: "Play",
@@ -91,16 +93,16 @@ const FEATURES: { title: string; body: string[]; clip: Clip }[] = [
   {
     title: "Music",
     body: [
-      "When music plays, it bops along to the beat with little notes floating up.",
-      "Spotify, your browser and most players all count. It goes by the media info Windows already has, and never listens to the audio.",
+      "When music plays, it bops along with little notes floating up. Turn on bop to the beat and it listens for the tempo, so every bop lands in time.",
+      "Turn on show what's playing and hovering over it shows the song. Spotify, your browser and most players all count.",
     ],
     clip: {
       file: "music",
       width: 440,
-      height: 300,
+      height: 360,
       show: 780,
       start: 5.5,
-      alt: "A little now-playing card switches to playing. Sora smiles, says Ooh, I like this one, and bops along with gold music notes floating up, until the music stops.",
+      alt: "A little now-playing card switches to playing. Sora smiles, says Ooh, I like this one, and bops along with gold music notes floating up. The cursor hovers over it and two pills appear underneath: the computer's stats, and the song, Veridis Quo by Daft Punk.",
     },
   },
   {
@@ -108,6 +110,7 @@ const FEATURES: { title: string; body: string[]; clip: Clip }[] = [
     body: [
       "When a video plays, it grabs a bucket of popcorn and watches with you, gasping at the good bits.",
       "When a game or video goes full screen, it steps out of the way until you're done.",
+      "Music and movie night are on Windows for now.",
     ],
     clip: {
       file: "watching",
@@ -116,6 +119,21 @@ const FEATURES: { title: string; body: string[]; clip: Clip }[] = [
       show: 780,
       start: 3,
       alt: "Sora watches a night sky in a video window, eating from a striped bucket of popcorn. A shooting star crosses the screen and Sora gasps, Ooh, what happens next?",
+    },
+  },
+  {
+    title: "Your PC",
+    body: [
+      "Hover over it to see how hard your computer is working: the processor, the memory and, on Windows, the graphics card.",
+      "When your computer works flat out for a while it gets stressed, and when the memory is nearly full it feels stuffed. It relaxes when things calm down.",
+    ],
+    clip: {
+      file: "stats",
+      width: 440,
+      height: 330,
+      show: 780,
+      start: 6,
+      alt: "The cursor hovers over Sora and a pill underneath shows CPU, RAM and GPU. The CPU jumps to 97% and Sora looks stressed, saying Your computer's working really hard! Then the memory fills to 94% and it puffs up, stuffed, before relaxing when things calm down.",
     },
   },
   {
@@ -153,7 +171,7 @@ const FEATURES: { title: string; body: string[]; clip: Clip }[] = [
 const QUESTIONS: [string, string][] = [
   [
     "Is it safe?",
-    "Yes. It needs no admin rights and no special permissions. It reads where your mouse is and how long since you last used your keyboard or mouse, never what you type. It can tell when music or a video is playing, from Windows' own media info, but never listens to the audio. It doesn't touch your camera, microphone, location, clipboard or files, and the only thing it connects to is GitHub, to check for updates. The code is open source, so anyone can check.",
+    "Yes. It needs no admin rights and no special permissions. It reads where your mouse is and how long since you last used your keyboard or mouse, never what you type. It can tell when music or a video is playing, from Windows' own media info. It only listens to the music if you turn on bop to the beat, and only reads the song's name if you turn on show what's playing, and nothing it hears or reads is kept or sent. It doesn't touch your camera, microphone, location, clipboard or files, and the only thing it connects to is GitHub, to check for updates. The code is open source, so anyone can check.",
   ],
   [
     "Why does Windows warn me when I install it?",
@@ -162,10 +180,13 @@ const QUESTIONS: [string, string][] = [
   ["Will it slow my computer down?", "No. It sits quietly between moments. On my PC it uses about 2% of the processor while idle."],
   [
     "How do I close or hide it?",
-    "Right-click your buddy and press Quit DesktopBuddy at the bottom of its panel. To hide it for a bit, press Ctrl+Alt+B, and press it again to bring it back.",
+    "Right-click your buddy and press Quit Blimo at the bottom of its panel. To hide it for a bit, press Ctrl+Alt+B (Option+Command+B on a Mac), and press it again to bring it back.",
   ],
-  ["How do I uninstall it?", "Like any other app: open Settings, then Apps, find DesktopBuddy and uninstall it."],
-  ["Is there a Mac version?", "Not yet. Windows comes first, and a Mac version is on the list."],
+  ["How do I uninstall it?", "Like any other app. On Windows, open Settings, then Apps, find Blimo and uninstall it. On a Mac, drag it from Applications to the Bin."],
+  [
+    "Is there a Mac version?",
+    "Yes, since 1.2. It isn't signed by Apple yet, so the first time you open it, macOS stops it: open System Settings, then Privacy & Security, and click Open Anyway. On a Mac it lives in the menu bar and tells you when there's a new version rather than updating itself. Music and movie night are Windows only for now. The Mac version is new, so if anything looks off, let me know on GitHub.",
+  ],
 ];
 
 type Theme = "dark" | "light";
@@ -204,7 +225,7 @@ function Loop({ clip, eager = false }: { clip: Clip; eager?: boolean }) {
     return () => observer.disconnect();
   }, [reduceMotion, theme]);
 
-  const src = `/desktopbuddy/${clip.file}-${theme}`;
+  const src = `/blimo/${clip.file}-${theme}`;
   return (
     <video
       key={theme}
@@ -248,9 +269,166 @@ function ArrowRight({ className = "" }: { className?: string }) {
   );
 }
 
-// On a phone the installer is no use, so the main button there copies the page's link instead.
+function Cross({ className = "" }: { className?: string }) {
+  return (
+    <svg
+      className={className}
+      width="14"
+      height="14"
+      viewBox="0 0 14 14"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.25"
+      strokeLinecap="square"
+      aria-hidden
+    >
+      <path d="M3.5 3.5l7 7" />
+      <path d="M10.5 3.5l-7 7" />
+    </svg>
+  );
+}
+
+const noChange = () => () => {};
+/** A Mac (not an iPad, which says it's one too), so its download goes first. Windows until the page knows. */
+function useOnMac(): boolean {
+  return useSyncExternalStore(
+    noChange,
+    () => /Mac/.test(navigator.userAgent) && navigator.maxTouchPoints < 2,
+    () => false,
+  );
+}
+
+type Platform = "windows" | "mac";
+
+/** A platform's download: where it is, its file's name (when the link is to the file itself) and its size. */
+function downloadOf(release: Release, platform: Platform) {
+  const { download, sizeMb } = platform === "mac" && release.mac ? release.mac : release;
+  const file = download.match(/[^/]+\.(?:exe|dmg)$/)?.[0] ?? null;
+  return { download, file, sizeMb };
+}
+
+// Three steps from the download to a buddy saying hello. `file` is the installer's name, if it's known.
+const STEPS: Record<Platform, (file: string | null) => string[]> = {
+  windows: (file) => [
+    `Open ${file ?? "the Setup.exe file"} from your downloads.`,
+    "If Windows shows “Windows protected your PC”, click More info, then Run anyway. That's only because the installer isn't signed yet.",
+    "Follow the installer, and your new buddy wakes up and says hello. From then on, it keeps itself up to date.",
+  ],
+  mac: (file) => [
+    `Open ${file ?? "the .dmg file"} from your downloads and drag Blimo into Applications.`,
+    "Open Blimo from Applications. The first time, macOS stops it, because it isn't signed by Apple yet.",
+    "Open System Settings, then Privacy & Security, scroll down and click Open Anyway. You only do this once. Your buddy lives in the menu bar.",
+  ],
+};
+
+/**
+ * How to install, for the computer just downloaded for, while the download gets going. A real modal
+ * dialog, like the Work section's: focus stays inside, and Esc or a click outside closes it.
+ */
+function InstallDialog({ platform, release, onClose }: { platform: Platform | null; release: Release; onClose: () => void }) {
+  const ref = useRef<HTMLDialogElement>(null);
+  const closeRef = useRef<HTMLButtonElement>(null);
+  const titleId = useId();
+  // Kept while it animates away, so it doesn't go blank on the way out.
+  const [shown, setShown] = useState<Platform>("windows");
+  if (platform && platform !== shown) setShown(platform);
+  const { download, file, sizeMb } = downloadOf(release, shown);
+
+  useEffect(() => {
+    const dialog = ref.current;
+    if (!platform || !dialog || dialog.open) return;
+    dialog.showModal();
+    closeRef.current?.focus();
+  }, [platform]);
+
+  return (
+    <dialog
+      ref={ref}
+      aria-labelledby={titleId}
+      // Esc: play the closing animation first, then close for real once it's done.
+      onCancel={(e) => {
+        e.preventDefault();
+        onClose();
+      }}
+      onClose={onClose}
+      className="fixed inset-0 m-0 size-full max-h-none max-w-none bg-transparent p-0 text-left text-fg backdrop:bg-transparent open:flex open:items-center open:justify-center"
+    >
+      <AnimatePresence onExitComplete={() => ref.current?.close()}>
+        {platform && (
+          <motion.div
+            key="scrim"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.3, ease: EASE }}
+            onClick={onClose}
+            className="absolute inset-0 bg-[var(--scrim)]"
+          />
+        )}
+        {platform && (
+          <motion.div
+            key="panel"
+            initial={{ opacity: 0, y: 14, scale: 0.985, filter: "blur(4px)" }}
+            animate={{ opacity: 1, y: 0, scale: 1, filter: "blur(0px)" }}
+            exit={{ opacity: 0, y: 8, scale: 0.99, filter: "blur(2px)", transition: { duration: 0.2, ease: EASE } }}
+            transition={{ duration: 0.5, ease: EASE }}
+            className="relative w-[min(32rem,calc(100vw-2.5rem))] border border-border-strong bg-bg"
+          >
+            <div className="flex items-start justify-between gap-6 px-6 pb-7 pt-6 sm:px-8 sm:pt-7">
+              <div className="min-w-0">
+                <span className="font-mono text-[10.5px] uppercase tracking-[0.22em] text-fg-dim">
+                  {[release.version && `Blimo v${release.version}`, sizeMb && `${sizeMb} MB`].filter(Boolean).join(" · ")}
+                </span>
+                <h3
+                  id={titleId}
+                  className="mt-4 font-display font-extrabold leading-[0.95] tracking-[-0.035em] text-fg"
+                  style={{ fontSize: "clamp(1.75rem, 4vw, 2.5rem)" }}
+                >
+                  {shown === "mac" ? "Installing on a Mac" : "Installing on Windows"}
+                </h3>
+                <p className="mt-3 text-[14px] leading-[1.55] text-fg-muted sm:text-[15px]">Your download has started.</p>
+              </div>
+              <button
+                ref={closeRef}
+                type="button"
+                onClick={onClose}
+                aria-label="Close"
+                className="-mr-2 -mt-1 p-2 text-fg-dim outline-none transition-colors duration-[250ms] ease-[cubic-bezier(0.16,1,0.3,1)] hover:text-fg focus-visible:text-accent"
+              >
+                <Cross />
+              </button>
+            </div>
+
+            <ol>
+              {STEPS[shown](file).map((step, i) => (
+                <li key={step} className="flex gap-5 border-t border-border px-6 py-5 sm:px-8">
+                  <span className="pt-[0.2em] font-mono text-[10.5px] tracking-[0.16em] text-fg-dim">{String(i + 1).padStart(2, "0")}</span>
+                  <span className="text-[14px] leading-[1.55] text-fg-muted sm:text-[15px]">{step}</span>
+                </li>
+              ))}
+            </ol>
+
+            <p className="border-t border-border px-6 py-5 font-mono text-[10.5px] uppercase tracking-[0.22em] text-fg-dim sm:px-8">
+              Didn&apos;t start?{" "}
+              <a href={download} className="text-fg-muted underline-offset-4 transition-colors duration-300 hover:text-accent hover:underline">
+                Download again
+              </a>
+            </p>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </dialog>
+  );
+}
+
+// Both downloads, yours first and filled in, each opening the steps for that computer as it starts. On
+// a phone an installer is no use, so the main button there copies the page's link instead.
 function Get({ release, centred = false }: { release: Release; centred?: boolean }) {
   const [copied, setCopied] = useState(false);
+  const [installing, setInstalling] = useState<Platform | null>(null);
+  const onMac = useOnMac();
+  // Windows alone until a release has a Mac version.
+  const platforms: Platform[] = !release.mac ? ["windows"] : onMac ? ["mac", "windows"] : ["windows", "mac"];
   const copy = async () => {
     try {
       await navigator.clipboard.writeText(PAGE_URL);
@@ -261,36 +439,48 @@ function Get({ release, centred = false }: { release: Release; centred?: boolean
     }
   };
   return (
-    <div className={`flex flex-col items-start gap-3 sm:flex-row sm:items-center sm:gap-5 ${centred ? "md:justify-center" : ""}`}>
-      <a href={release.download} className={`${PRIMARY} hidden sm:inline-flex`}>
-        <span>Download for Windows</span>
-        <ArrowRight className="transition-transform duration-[250ms] ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:translate-x-1" />
-      </a>
+    <div className={`flex flex-col items-start gap-3 sm:flex-row sm:flex-wrap sm:items-center sm:gap-5 ${centred ? "md:justify-center" : ""}`}>
+      {platforms.map((platform, i) => (
+        <a
+          key={platform}
+          href={downloadOf(release, platform).download}
+          // The link itself starts the download; the steps open alongside it.
+          onClick={() => setInstalling(platform)}
+          className={`${i === 0 ? PRIMARY : OUTLINE} hidden sm:inline-flex`}
+        >
+          <span>{platform === "mac" ? "Download for Mac" : "Download for Windows"}</span>
+          {i === 0 && <ArrowRight className="transition-transform duration-[250ms] ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:translate-x-1" />}
+        </a>
+      ))}
       <button type="button" onClick={copy} className={`${PRIMARY} inline-flex sm:hidden`}>
-        <span>{copied ? "Link copied" : "Copy link for your PC"}</span>
+        <span>{copied ? "Link copied" : "Copy link for your computer"}</span>
       </button>
       <a href={GITHUB} target="_blank" rel="noopener noreferrer" className={SECONDARY}>
         <span>View on GitHub</span>
       </a>
+      <InstallDialog platform={installing} release={release} onClose={() => setInstalling(null)} />
     </div>
   );
 }
 
 function Details({ release }: { release: Release }) {
-  const facts = [release.version && `v${release.version}`, release.sizeMb && `${release.sizeMb} MB`, "Windows 10 and 11", "Free and open source"];
+  const facts = [
+    release.version && `v${release.version}`,
+    "Windows 10 and 11",
+    release.mac && "macOS, Apple Silicon and Intel",
+    "Free and open source",
+  ];
   return (
     <>
-      <p className="mt-6 font-mono text-[0.65625rem] uppercase tracking-[0.22em] text-fg-dim">
-        {facts.filter(Boolean).join(" · ")}
-      </p>
+      <p className="mt-6 font-mono text-[0.65625rem] uppercase tracking-[0.22em] text-fg-dim">{facts.filter(Boolean).join(" · ")}</p>
       <p className={`mt-4 max-w-[42ch] sm:hidden ${BODY}`}>
-        DesktopBuddy runs on Windows. Open jaineel.dev/desktopbuddy on your PC to get it.
+        Blimo runs on Windows and Mac. Open jaineel.dev/blimo on your computer to get it.
       </p>
     </>
   );
 }
 
-export default function DesktopBuddyPage({ release }: { release: Release }) {
+export default function BlimoPage({ release }: { release: Release }) {
   // Already done when arriving from another page of the site; otherwise wait for its signal.
   const [ready, setReady] = useState(isPreloaderDone);
   const reduceMotion = useReducedMotion();
@@ -452,14 +642,14 @@ export default function DesktopBuddyPage({ release }: { release: Release }) {
             className="font-display font-extrabold leading-[0.98] tracking-[-0.035em] text-fg"
             style={{ fontSize: "clamp(2rem, 5vw, 4.5rem)" }}
           >
-            Free for Windows.
+            Free for Windows and Mac.
           </motion.h2>
           <motion.div {...onScroll(0.3)} className="mt-10 sm:mt-12">
             <Get release={release} centred />
             <Details release={release} />
           </motion.div>
           <motion.p {...onScroll(0.4)} className={`mt-10 max-w-[52ch] md:mx-auto md:text-balance ${BODY}`}>
-            I built DesktopBuddy with help from AI, and I&apos;m still adding to it. Reacting to how hard your PC is working is next.
+            I built Blimo (first called DesktopBuddy) with help from AI, and I&apos;m still adding to it.
           </motion.p>
 
           <motion.div

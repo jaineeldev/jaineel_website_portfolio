@@ -34,7 +34,7 @@ type Project = {
   // More than one place to go: clicking the row opens a popup to pick one (href stays the default
   // for ctrl/middle-click and no-JS).
   choices?: Choice[];
-  // Sora sits after the name in that popup, as it does on the DesktopBuddy page.
+  // Sora sits after the name in that popup, as it does on the Blimo page.
   mascot?: boolean;
 };
 
@@ -43,23 +43,23 @@ type Choice = { label: string; detail: string; href: string; external?: boolean 
 const PROJECTS: Project[] = [
   {
     index: "01",
-    name: "DesktopBuddy",
+    name: "Blimo",
     description:
-      "Windows desktop pet whose face is generated from its name, so the same name always gives the same buddy. Fifteen moods, eyes that follow your cursor, and reactions to being petted, carried, shaken or left alone. Ships as an installer with automatic updates; it needs no admin rights and only contacts GitHub to check for updates.",
+      "Desktop pet for Windows and Mac whose face is generated from its name, so the same name always gives the same buddy. Twenty-one moods, eyes that follow your cursor, and reactions to being petted, carried, shaken or left alone. Ships as an installer that updates itself on Windows; it needs no admin rights and only contacts GitHub to check for updates.",
     status: "Live",
     category: "Desktop",
     range: "2026 —",
-    href: "/desktopbuddy",
+    href: "/blimo",
     tech: ["Electron", "TypeScript", "React", "Framer Motion"],
-    thumbnail: "/projects/desktopbuddy.svg",
+    thumbnail: "/projects/blimo.svg",
     thumbnailFit: "contain",
-    note: "Free for Windows 10 and 11",
+    note: "Free for Windows and Mac",
     choices: [
-      { label: "Website", detail: "jaineel.dev/desktopbuddy", href: "/desktopbuddy" },
+      { label: "Website", detail: "jaineel.dev/blimo", href: "/blimo" },
       {
         label: "GitHub",
-        detail: "jaineeldev/desktop_buddy",
-        href: "https://github.com/jaineeldev/desktop_buddy",
+        detail: "jaineeldev/blimo_app",
+        href: "https://github.com/jaineeldev/blimo_app",
         external: true,
       },
     ],

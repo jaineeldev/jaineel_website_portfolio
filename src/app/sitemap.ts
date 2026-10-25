@@ -11,7 +11,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
       priority: 1,
     },
     {
-      url: `${base}/desktopbuddy`,
+      url: `${base}/blimo`,
       lastModified,
       changeFrequency: "monthly",
       priority: 0.8,

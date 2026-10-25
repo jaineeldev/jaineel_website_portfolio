@@ -15,7 +15,7 @@ const BLOCKS: Block[] = [
     body: (
       <>
         Cert IV in Cybersecurity at TAFE Queensland — done. Heading to QUT for
-        Computer Science. DesktopBuddy 1.0 is out and I&apos;m still building on
+        Computer Science. Blimo (once DesktopBuddy) is out and I&apos;m still building on
         it, with Velo on the side. Learning C.
       </>
     ),

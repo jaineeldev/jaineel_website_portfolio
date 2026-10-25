@@ -8,8 +8,15 @@ const nextConfig: NextConfig = {
       // Temporary (307) rather than permanent, so it's free to point somewhere else later.
       {
         source: "/buddy",
-        destination: "/desktopbuddy",
+        destination: "/blimo",
         permanent: false,
+      },
+      // DesktopBuddy was renamed Blimo in 1.2, and its page moved with it. Permanent, so old links and
+      // search results follow.
+      {
+        source: "/desktopbuddy",
+        destination: "/blimo",
+        permanent: true,
       },
     ];
   },

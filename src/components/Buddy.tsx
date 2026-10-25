@@ -16,7 +16,7 @@ const EASE = [0.16, 1, 0.3, 1] as const;
 const EYE_REACH = 3;
 const FOLLOW_RANGE = 360;
 
-// Paths come from the app's own icon (desktop_buddy/brand/icon.svg).
+// Paths come from the app's own icon (blimo_app/brand/icon.svg).
 const BODY =
   "M77.62 53.7C76.98 79.12 76.48 79.56 49.35 78.87C22.21 78.19 21.74 77.72 22.38 52.3C23.02 26.88 23.52 26.44 50.65 27.13C77.79 27.81 78.26 28.28 77.62 53.7Z";
 const EYE_LEFT =

@@ -31,7 +31,11 @@ async function getAccessToken(): Promise<string | null> {
     }),
     cache: "no-store",
   });
-  if (!res.ok) return null;
+  if (!res.ok) {
+    // Say so in the server log, so a revoked or expired token (they last 180 days) isn't mistaken for silence.
+    console.warn(`Spotify token request failed (HTTP ${res.status}). Run scripts/spotify-refresh-token.mjs for a new one.`);
+    return null;
+  }
   const data = (await res.json()) as TokenResponse;
   return data.access_token ?? null;
 }

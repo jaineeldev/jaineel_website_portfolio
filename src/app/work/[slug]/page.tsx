@@ -9,7 +9,8 @@ import { latestBlimoVersion } from "@/lib/blimo";
 import { rise } from "@/lib/rise";
 
 export const revalidate = 3600;
-export const dynamicParams = false;
+// Unknown slugs are turned away by notFound() below. Not `dynamicParams = false`: on Cloudflare (OpenNext, no
+// incremental cache) that makes every project page a 404, because the prerendered copies can't be looked up.
 
 type Props = { params: Promise<{ slug: string }> };
 

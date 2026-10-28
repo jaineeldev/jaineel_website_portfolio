@@ -1,44 +1,24 @@
 import Link from "next/link";
+import SiteHeader from "@/components/SiteHeader";
 
 export default function NotFound() {
   return (
-    <main className="relative flex min-h-svh flex-col bg-bg px-7 sm:px-10 md:px-14">
-      <header className="flex items-start justify-between pt-6 sm:pt-8 md:pt-10">
-        <div className="font-mono text-[11px] font-medium uppercase tracking-[0.18em] text-fg">
-          JK.
-        </div>
-        <Link
-          href="/"
-          className="font-mono text-[11px] uppercase tracking-[0.18em] text-fg-muted transition-colors duration-300 hover:text-accent"
-        >
-          Home
-        </Link>
-      </header>
+    <main className="mx-auto w-full max-w-[680px] px-5 pb-20 pt-12 sm:px-8 sm:pb-24 sm:pt-20">
+      <SiteHeader />
 
-      <div className="flex flex-1 items-center">
-        <div className="w-full max-w-[1400px]">
-          <h1
-            className="font-display font-bold leading-[0.95] tracking-[-0.04em] text-fg"
-            style={{ fontSize: "clamp(3rem, 10vw, 8rem)" }}
-          >
-            Lost signal.
-          </h1>
+      <h1 className="mt-16 text-balance font-display text-[clamp(2.2rem,7vw,3.2rem)] font-bold leading-none tracking-[-0.03em] text-fg sm:mt-24">
+        Lost signal.
+      </h1>
+      <p className="mt-5 max-w-[32em] text-[1.1rem] leading-[1.5] text-fg-muted">
+        This page doesn&apos;t exist, or it moved. Head home and take a different path.
+      </p>
 
-          <p className="mt-8 max-w-[42ch] text-[15.5px] leading-[1.55] text-fg-muted sm:mt-10 sm:text-[17px] sm:leading-[1.5]">
-            This page doesn&apos;t exist, or it moved. Head home and take a different path.
-          </p>
-
-          <Link
-            href="/"
-            className="mt-10 inline-flex items-baseline gap-3 font-mono text-[11px] uppercase tracking-[0.22em] text-fg-muted transition-colors duration-300 hover:text-accent"
-          >
-            <span>Return home</span>
-            <span aria-hidden>→</span>
-          </Link>
-        </div>
-      </div>
-
-      <div className="pb-6 sm:pb-8 md:pb-10" />
+      <Link
+        href="/"
+        className="link-draw mt-8 inline-flex gap-2 font-mono text-[11px] uppercase tracking-[0.14em] text-fg-muted transition-colors duration-300 hover:text-accent"
+      >
+        <span aria-hidden>←</span> Return home
+      </Link>
     </main>
   );
 }

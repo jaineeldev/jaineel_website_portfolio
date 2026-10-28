@@ -1,14 +1,9 @@
 # Deployment
 
-The site is configured to deploy in two places. Vercel remains the live
-production target until the Cloudflare cutover is verified.
+The site is hosted on Cloudflare only. Pushing to `master` triggers the
+Cloudflare build, which deploys it.
 
-## Vercel (current production)
-
-No changes — `next build` still runs, `@vercel/analytics` and
-`@vercel/speed-insights` are still wired in. Pushing to `main` deploys.
-
-## Cloudflare Workers (new path, in preparation)
+## Cloudflare Workers
 
 Cloudflare Pages projects now sit on top of the unified Workers platform.
 This project uses the official [`@opennextjs/cloudflare`](https://opennext.js.org/cloudflare)
@@ -18,7 +13,7 @@ adapter — Cloudflare deprecated the older `@cloudflare/next-on-pages` package.
 
 | File | Purpose |
 |---|---|
-| `wrangler.toml` | Worker config: name `jaineel-dev`, points at `.open-next/worker.js`, enables `nodejs_compat`. |
+| `wrangler.toml` | Worker config: name `jaineelportfolio`, points at `.open-next/worker.js`, enables `nodejs_compat`. |
 | `open-next.config.ts` | OpenNext build config — currently minimal (no R2/KV/D1 bindings). |
 | `next.config.ts` | Calls `initOpenNextCloudflareForDev()` so `next dev` exercises the Workers runtime locally. |
 | `.dev.vars.example` | Template for local Workers env vars (Spotify creds). Copy to `.dev.vars`. |
@@ -31,12 +26,12 @@ npm run cf:preview   # build + run via wrangler dev locally
 npm run cf:deploy    # build + wrangler deploy to Cloudflare
 ```
 
-The existing `npm run build` (plain `next build`) is untouched so the Vercel
-deployment keeps working.
+`npm run build` (plain `next build`) is a quick check that the app compiles; it
+doesn't produce the Cloudflare bundle.
 
 ### Cloudflare dashboard setup
 
-1. **Create a Workers (or Pages) project** named `jaineel-dev` and connect the
+1. **Create a Workers (or Pages) project** named `jaineelportfolio` (it has to match `name` in `wrangler.toml`) and connect the
    repo. Cloudflare will detect the framework, but override the defaults:
    - **Build command:** `npx opennextjs-cloudflare build`
    - **Build output directory:** `.open-next`
@@ -75,6 +70,6 @@ closest local approximation of production behaviour.
   API and works because `wrangler.toml` enables the `nodejs_compat` flag.
 - No `export const runtime = "edge"` annotations are needed — OpenNext runs
   routes under Node compatibility on Workers.
-- Vercel-specific packages (`@vercel/analytics`, `@vercel/speed-insights`)
-  are no-ops on Cloudflare; they can stay until the Vercel deployment is
-  fully decommissioned.
+- `@vercel/analytics` and `@vercel/speed-insights` are still in `layout.tsx`, but
+  they only report on Vercel, so on Cloudflare they do nothing. They can be
+  removed if you don't plan to host on Vercel again.

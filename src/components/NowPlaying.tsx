@@ -17,6 +17,8 @@ export default function NowPlaying() {
     let cancelled = false;
 
     async function load() {
+      // Nobody is looking at a hidden tab, so don't spend Spotify requests on it.
+      if (document.hidden) return;
       try {
         const res = await fetch("/api/spotify/now-playing", {
           cache: "no-store",
@@ -51,17 +53,17 @@ export default function NowPlaying() {
           animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
           exit={{ opacity: 0, y: 8, filter: "blur(4px)" }}
           transition={{ duration: 0.7, ease: EASE }}
-          className="inline-flex max-w-full items-center gap-3 font-mono text-[10.5px] uppercase tracking-[0.22em]"
+          className="flex max-w-full items-center gap-2.5 font-mono text-[10.5px] uppercase tracking-[0.14em]"
         >
-          <span
-            aria-hidden
-            className="status-dot inline-block h-1.5 w-1.5 rounded-full bg-accent"
-          />
-          <span className="text-fg-dim">Now playing</span>
-          <span className="text-fg-faint" aria-hidden>·</span>
-          <span className="truncate text-fg-muted normal-case tracking-normal">
+          <span aria-hidden className="eq text-fg-muted">
+            <i />
+            <i />
+            <i />
+          </span>
+          <span className="flex-none text-fg-dim">Listening to</span>
+          <span className="truncate normal-case tracking-normal text-fg-muted">
             <span className="text-fg">{playing.title}</span>
-            <span className="mx-2 text-fg-faint" aria-hidden>—</span>
+            <span className="mx-1.5 text-fg-dim" aria-hidden>·</span>
             <span>{playing.artist}</span>
           </span>
         </motion.div>

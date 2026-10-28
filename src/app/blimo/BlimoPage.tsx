@@ -4,7 +4,6 @@ import Link from "next/link";
 import { useEffect, useId, useRef, useState, useSyncExternalStore } from "react";
 import { AnimatePresence, motion, useInView, useReducedMotion } from "framer-motion";
 import Buddy from "@/components/Buddy";
-import { PRELOADER_DONE_EVENT, isPreloaderDone } from "@/components/Preloader";
 import ThemeToggle from "@/components/ThemeToggle";
 import type { Release } from "./page";
 
@@ -16,8 +15,7 @@ const NAME = "Blimo";
 const HIDDEN = { opacity: 0, y: 14, filter: "blur(4px)" };
 const SHOWN = { opacity: 1, y: 0, filter: "blur(0px)" };
 
-// The page opens in sequence once the preloader is out of the way, as the home Hero does;
-// everything further down materialises as it scrolls into view.
+// The page opens in sequence as it loads; everything further down materialises as it scrolls into view.
 const opening = (ready: boolean, delay: number) => ({
   initial: HIDDEN,
   animate: ready ? SHOWN : HIDDEN,
@@ -481,27 +479,11 @@ function Details({ release }: { release: Release }) {
 }
 
 export default function BlimoPage({ release }: { release: Release }) {
-  // Already done when arriving from another page of the site; otherwise wait for its signal.
-  const [ready, setReady] = useState(isPreloaderDone);
+  const ready = true;
   const reduceMotion = useReducedMotion();
   // Sora starts out of sight past the edge, so it can't watch for itself; the closing section does.
   const endRef = useRef<HTMLElement>(null);
   const endInView = useInView(endRef, { once: true, amount: 0.35 });
-  useEffect(() => {
-    if (ready) return;
-    // It may have finished between the first render and now, before there was anything listening.
-    if (isPreloaderDone()) {
-      const frame = window.requestAnimationFrame(() => setReady(true));
-      return () => window.cancelAnimationFrame(frame);
-    }
-    const onReady = () => setReady(true);
-    window.addEventListener(PRELOADER_DONE_EVENT, onReady);
-    const safety = window.setTimeout(() => setReady(true), 4000);
-    return () => {
-      window.removeEventListener(PRELOADER_DONE_EVENT, onReady);
-      window.clearTimeout(safety);
-    };
-  }, [ready]);
 
   // The name arrives a letter at a time, as the home greeting does, and Sora lands last as its full stop.
   const letterDelay = (i: number) => 0.2 + i * 0.04;

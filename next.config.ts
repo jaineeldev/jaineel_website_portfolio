@@ -1,6 +1,9 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  // Lets <ViewTransition> (layout.tsx) fade between pages on client-side navigation.
+  experimental: { viewTransition: true },
+
   // Short links to share. Kept here so they work on Vercel and on the Cloudflare build alike.
   async redirects() {
     return [

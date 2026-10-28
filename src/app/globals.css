@@ -2,97 +2,47 @@
 
 /* ─── Theme tokens — dark default ─── */
 @theme {
-  --color-bg: #161616;
-  --color-fg: #EDEAE2;
-  --color-fg-muted: rgba(237, 234, 226, 0.58);
-  --color-fg-dim: rgba(237, 234, 226, 0.34);
-  --color-fg-faint: rgba(237, 234, 226, 0.14);
-  --color-border: rgba(237, 234, 226, 0.10);
-  --color-border-strong: rgba(237, 234, 226, 0.18);
-  --color-accent: #3B82F6;
+  --color-bg: #0d1214;
+  --color-raise: #141b1e;
+  --color-fg: #e8eeec;
+  --color-fg-muted: #9fadab;
+  --color-fg-dim: #8a9895;
+  --color-fg-faint: rgba(232, 238, 236, 0.14);
+  --color-border: rgba(232, 238, 236, 0.13);
+  --color-border-strong: rgba(232, 238, 236, 0.2);
+  /* Blimo's cyan. Used for hover, focus and the mascot, nowhere as a fill. */
+  --color-accent: #00d5ee;
 
   --font-display: var(--font-funnel-display), ui-sans-serif, system-ui, sans-serif;
   --font-mono: var(--font-geist-mono), ui-monospace, "SFMono-Regular", monospace;
   --font-sans: var(--font-funnel-sans), ui-sans-serif, system-ui, sans-serif;
 
   --ease-fluid: cubic-bezier(0.16, 1, 0.3, 1);
-  --ease-out-expo: cubic-bezier(0.19, 1, 0.22, 1);
 }
 
 /* ─── Component-scoped tokens — default to dark values ─── */
 :root {
-  --pill-bg: var(--color-fg-faint);
-  --pill-border: var(--color-border-strong);
   --work-divider: var(--color-border);
   --cta-hover-bg: rgba(255, 255, 255, 0.05);
   --scrim: rgba(8, 8, 8, 0.62);
-
-  --status-live-bg: rgba(34, 197, 94, 0.12);
-  --status-live-text: #22c55e;
-  --status-live-border: rgba(34, 197, 94, 0.25);
-
-  --status-wip-bg: rgba(251, 191, 36, 0.12);
-  --status-wip-text: #fbbf24;
-  --status-wip-border: rgba(251, 191, 36, 0.25);
-
-  --status-complete-bg: rgba(96, 165, 250, 0.12);
-  --status-complete-text: #60a5fa;
-  --status-complete-border: rgba(96, 165, 250, 0.25);
-
-  --status-active-bg: rgba(168, 85, 247, 0.12);
-  --status-active-text: #a855f7;
-  --status-active-border: rgba(168, 85, 247, 0.25);
-
-  --status-collab-bg: rgba(6, 182, 212, 0.12);
-  --status-collab-text: #06b6d4;
-  --status-collab-border: rgba(6, 182, 212, 0.25);
-
-  --status-paused-bg: rgba(239, 68, 68, 0.12);
-  --status-paused-text: #ef4444;
-  --status-paused-border: rgba(239, 68, 68, 0.25);
 }
 
 /* ─── Light mode override ─── */
 :root[data-theme="light"] {
-  --color-bg: #E8E8E4;
-  --color-fg: #0F0F0F;
-  --color-fg-muted: rgba(15, 15, 15, 0.66);
-  --color-fg-dim: rgba(15, 15, 15, 0.46);
-  --color-fg-faint: rgba(15, 15, 15, 0.14);
-  --color-border: rgba(15, 15, 15, 0.14);
-  --color-border-strong: rgba(15, 15, 15, 0.22);
+  --color-bg: #f1f4f3;
+  --color-raise: #e3e9e7;
+  --color-fg: #0e1517;
+  --color-fg-muted: #4a595d;
+  --color-fg-dim: #526165;
+  --color-fg-faint: rgba(14, 21, 23, 0.14);
+  --color-border: rgba(14, 21, 23, 0.16);
+  --color-border-strong: rgba(14, 21, 23, 0.24);
+  /* A darker cyan, so hover text keeps its contrast on the pale background. */
+  --color-accent: #00616f;
 
-  /* Stack pills — explicit values for visibility on warm grey bg */
-  --pill-bg: rgba(0, 0, 0, 0.04);
-  --pill-border: rgba(0, 0, 0, 0.12);
-
-  /* Work row hairlines */
   --work-divider: rgba(0, 0, 0, 0.08);
-
-  /* Secondary CTA hover surface — ink-on-paper tint */
   --cta-hover-bg: rgba(0, 0, 0, 0.05);
-
-  /* Popup scrim — lighter, so the page still reads behind it */
   --scrim: rgba(15, 15, 15, 0.28);
-
-  /* Status badges — darker text + stronger borders for legibility */
-  --status-live-text: #15803d;
-  --status-live-border: rgba(34, 197, 94, 0.5);
-
-  --status-wip-text: #b45309;
-  --status-wip-border: rgba(251, 191, 36, 0.55);
-
-  --status-complete-text: #1d4ed8;
-  --status-complete-border: rgba(96, 165, 250, 0.55);
-
-  --status-active-text: #7e22ce;
-  --status-active-border: rgba(168, 85, 247, 0.5);
-
-  --status-collab-text: #0e7490;
-  --status-collab-border: rgba(6, 182, 212, 0.55);
-
-  --status-paused-text: #b91c1c;
-  --status-paused-border: rgba(239, 68, 68, 0.5);
 }
 
 /* ─── Base ─── */
@@ -114,11 +64,18 @@ body {
   color: var(--color-fg);
   font-family: var(--font-sans);
   font-feature-settings: "ss01", "ss02", "kern";
+  line-height: 1.6;
 }
 
 ::selection {
   background-color: var(--color-fg);
   color: var(--color-bg);
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 3px;
+  border-radius: 2px;
 }
 
 ::-webkit-scrollbar { width: 6px; height: 6px; }
@@ -131,20 +88,111 @@ body {
   background: var(--color-fg-dim);
 }
 
-/* ─── Status dot: subtle accent pulse ─── */
-@keyframes status-dot-pulse {
-  0%, 100% { opacity: 1;    box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.0);  }
-  50%      { opacity: 0.78; box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.14); }
+/* ─── A capture with a dark and a light version: show the one that matches the theme ─── */
+.themed-dark { display: block; }
+.themed-light { display: none; }
+:root[data-theme="light"] .themed-dark { display: none; }
+:root[data-theme="light"] .themed-light { display: block; }
+
+/* ─── Load-in: each block settles in turn. Pure CSS, so the page still shows without JavaScript. ─── */
+@keyframes rise {
+  from { opacity: 0; transform: translateY(12px); filter: blur(4px); }
+  to   { opacity: 1; transform: none;             filter: none; }
 }
 
-.status-dot {
-  animation: status-dot-pulse 2.4s var(--ease-fluid) infinite;
+.rise {
+  animation: rise 0.8s var(--ease-fluid) both;
+  animation-delay: calc(var(--i, 0) * 90ms + var(--pre, 0s));
 }
 
-/* ─── Preloader skip (no FOUC on repeat visits or reduced-motion users) ─── */
-.jk-skip-preload .jk-preloader-root {
-  display: none !important;
+/* The home page waits for the preloader to clear; every other page, and repeat visits, don't. */
+.has-preloader { --pre: 1s; }
+.jk-skip-preload .has-preloader { --pre: 0s; }
+
+/* ─── Preloader: "JK." and a line that fills, once per session, home page only. Pure CSS, so it clears itself
+   even without JavaScript. The inline script in <head> adds .jk-skip-preload for repeat visits and for
+   anyone who prefers reduced motion. ─── */
+@keyframes jk-preloader-fill { to { transform: scaleX(1); } }
+@keyframes jk-preloader-out { to { opacity: 0; visibility: hidden; } }
+
+.jk-preloader {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--color-bg);
+  animation: jk-preloader-out 0.45s var(--ease-fluid) 0.95s forwards;
 }
+.jk-preloader__inner { display: flex; flex-direction: column; align-items: center; gap: 1.25rem; }
+.jk-preloader__mark {
+  font-family: var(--font-mono);
+  font-size: 44px;
+  font-weight: 500;
+  line-height: 1;
+  letter-spacing: -0.01em;
+  color: var(--color-fg);
+}
+.jk-preloader__rail {
+  position: relative;
+  display: block;
+  width: 200px;
+  height: 1px;
+  overflow: hidden;
+  background: var(--color-fg-faint);
+}
+.jk-preloader__fill {
+  position: absolute;
+  inset: 0;
+  background: var(--color-fg);
+  transform: scaleX(0);
+  transform-origin: left center;
+  animation: jk-preloader-fill 0.8s var(--ease-fluid) 0.1s forwards;
+}
+.jk-skip-preload .jk-preloader { display: none; }
+
+/* ─── Equalizer: three bars that rise and fall, beside the "listening to" line ─── */
+@keyframes eq-bar {
+  0%, 100% { transform: scaleY(0.3); }
+  50%      { transform: scaleY(1); }
+}
+.eq { display: inline-flex; align-items: flex-end; gap: 2px; height: 11px; flex: none; }
+.eq i {
+  display: block;
+  width: 2px;
+  height: 100%;
+  background: currentColor;
+  transform-origin: bottom;
+  animation: eq-bar 1.1s ease-in-out infinite;
+}
+.eq i:nth-child(2) { animation-duration: 0.9s; animation-delay: -0.35s; }
+.eq i:nth-child(3) { animation-duration: 1.3s; animation-delay: -0.7s; }
+
+/* ─── Page change: the old page fades out quickly, then the new one settles in with the usual .rise stagger.
+   The header is named in SiteHeader, so it stays put while the content changes. ─── */
+@keyframes page-fade-out { to { opacity: 0; } }
+::view-transition-old(.page-out) { animation: page-fade-out 160ms var(--ease-fluid) both; }
+::view-transition-new(.page-in) { animation: none; }
+::view-transition-group(site-header) { animation: none; z-index: 100; }
+::view-transition-old(site-header) { display: none; }
+::view-transition-new(site-header) { animation: none; }
+
+/* ─── Links: a thin underline draws in from the left on hover and focus ─── */
+.link-draw { position: relative; display: inline-block; }
+.link-draw::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -3px;
+  height: 1px;
+  background: currentColor;
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition: transform 350ms var(--ease-fluid);
+}
+.link-draw:hover::after, .link-draw:focus-visible::after { transform: scaleX(1); }
 
 /* ─── Reduced motion ─── */
 @media (prefers-reduced-motion: reduce) {
@@ -154,4 +202,11 @@ body {
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
   }
+  .rise { animation-delay: 0s !important; }
+  .jk-preloader { display: none; }
+  ::view-transition-old(*), ::view-transition-new(*), ::view-transition-group(*) {
+    animation-duration: 0s !important;
+    animation-delay: 0s !important;
+  }
+  .link-draw::after { transition: none; }
 }

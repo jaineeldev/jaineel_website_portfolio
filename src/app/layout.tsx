@@ -3,7 +3,6 @@ import { Funnel_Display, Funnel_Sans, Geist_Mono } from "next/font/google";
 import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import MotionProvider from "@/components/MotionProvider";
-import Preloader from "@/components/Preloader";
 import "./globals.css";
 
 const funnelDisplay = Funnel_Display({
@@ -24,13 +23,14 @@ const geistMono = Geist_Mono({
   display: "swap",
 });
 
+const SITE_TITLE = "Jaineel Khatri — Developer & Cybersecurity Student, Brisbane";
 const SITE_DESCRIPTION =
-  "Jaineel Khatri — cybersecurity student in Brisbane, Australia, heading into a Computer Science degree at QUT. Portfolio of practical projects across web, security tooling, and systems.";
+  "Jaineel Khatri is a developer and cybersecurity student in Brisbane, Australia. Projects include Blimo, a desktop pet for Windows and Mac, and a client workflow app, Velo. Open to junior security and fullstack roles.";
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://jaineel.dev"),
   title: {
-    default: "Jaineel Khatri — Cybersecurity Student & Developer, Brisbane",
+    default: SITE_TITLE,
     template: "%s · Jaineel Khatri",
   },
   description: SITE_DESCRIPTION,
@@ -43,21 +43,23 @@ export const metadata: Metadata = {
     "Jaineel",
     "Khatri",
     "cybersecurity student",
+    "software developer",
     "Brisbane",
     "Australia",
     "QUT",
     "TAFE Queensland",
-    "Computer Science",
+    "Cert IV in Cybersecurity",
     "developer portfolio",
     "Next.js",
     "TypeScript",
-    "security tooling",
+    "Electron",
+    "Blimo",
   ],
   alternates: {
     canonical: "/",
   },
   openGraph: {
-    title: "Jaineel Khatri — Cybersecurity Student & Developer, Brisbane",
+    title: SITE_TITLE,
     description: SITE_DESCRIPTION,
     url: "https://jaineel.dev",
     siteName: "Jaineel Khatri",
@@ -66,7 +68,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Jaineel Khatri — Cybersecurity Student & Developer, Brisbane",
+    title: SITE_TITLE,
     description: SITE_DESCRIPTION,
   },
   robots: {
@@ -89,7 +91,7 @@ const personJsonLd = {
   familyName: "Khatri",
   url: "https://jaineel.dev",
   image: "https://jaineel.dev/opengraph-image",
-  jobTitle: "Cybersecurity Student",
+  jobTitle: "Developer and cybersecurity student",
   description: SITE_DESCRIPTION,
   address: {
     "@type": "PostalAddress",
@@ -103,8 +105,6 @@ const personJsonLd = {
   ],
   knowsAbout: [
     "Cybersecurity",
-    "Network intrusion detection",
-    "Threat modelling",
     "Web development",
     "TypeScript",
     "Next.js",
@@ -130,8 +130,8 @@ const websiteJsonLd = {
 
 export const viewport: Viewport = {
   themeColor: [
-    { media: "(prefers-color-scheme: dark)", color: "#161616" },
-    { media: "(prefers-color-scheme: light)", color: "#E8E8E4" },
+    { media: "(prefers-color-scheme: dark)", color: "#0d1214" },
+    { media: "(prefers-color-scheme: light)", color: "#f1f4f3" },
   ],
   width: "device-width",
   initialScale: 1,
@@ -142,7 +142,7 @@ const themeInitScript = `
 `.trim();
 
 const preloaderSkipScript = `
-(function(){try{var seen=sessionStorage.getItem('jk_preloader_seen')==='1';var reduced=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;if(seen||reduced)document.documentElement.classList.add('jk-skip-preload');}catch(e){}})();
+(function(){try{var seen=sessionStorage.getItem('jk_preloader_seen')==='1';var reduced=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;if(seen||reduced||location.pathname!=='/'){document.documentElement.classList.add('jk-skip-preload');if(!seen)sessionStorage.setItem('jk_preloader_seen','1');}}catch(e){}})();
 `.trim();
 
 const consoleEggScript = `
@@ -155,6 +155,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
+      data-scroll-behavior="smooth"
       className={`${funnelDisplay.variable} ${funnelSans.variable} ${geistMono.variable}`}
       suppressHydrationWarning
     >
@@ -172,10 +173,7 @@ export default function RootLayout({
         />
       </head>
       <body className="bg-bg text-fg antialiased font-sans">
-        <MotionProvider>
-          <Preloader />
-          {children}
-        </MotionProvider>
+        <MotionProvider>{children}</MotionProvider>
         <Analytics />
         <SpeedInsights />
       </body>

@@ -179,6 +179,115 @@ export const projects: Project[] = [
     ],
   },
   {
+    slug: "irtx",
+    name: "Incident Response Exercise",
+    kind: "Security",
+    status: "Complete",
+    meta: "Complete · Aug 2026 · Cert IV group project",
+    summary: "Led the red team in a six-person exercise that tested an incident response plan. The blue team caught two of three attacks.",
+    tags: ["Red team", "Metasploit", "Incident response"],
+    lead: "A six-person incident response exercise for a fictional company, RightPoint, run as three red-versus-blue pairs on an isolated lab network. I led the red team and wrote the playbook for the phishing attack.",
+    facts: [
+      ["Role", "Red team lead"],
+      ["Team", "Six: three red, three blue, with the teacher observing as a purple team"],
+      ["Attacks", "Phishing with a reverse TCP payload, a vsftpd 2.3.4 backdoor, a denial of service"],
+      ["Lab", "Isolated Kali Linux, Metasploitable 2 and Ubuntu machines"],
+      ["Live run", "28 August 2026, inside a two-hour window"],
+      ["Measured against", "NIST SP 800-61"],
+    ],
+    sections: [
+      {
+        label: "My attack",
+        items: [
+          "A single phishing email, relayed through the blue team’s mail server, linking to a Linux reverse TCP payload built with msfvenom and served from Kali.",
+          "A blue team member playing the target had to click the link, download the file and run it. That opened a Meterpreter session on my listener.",
+          "Proof of access was two harmless commands, getuid and sysinfo. The session was closed straight after.",
+          "Each step went into an attack log with the message ID, payload hash and timestamps, so the blue team’s logs could be matched against mine afterwards.",
+        ],
+      },
+      {
+        label: "A decision I’d defend",
+        lead: "No evasion. The payload stayed plain, with no encoders.",
+        text: "The exercise measured whether the blue team could detect and respond, not whether I could slip past them. The rules in my playbook also limited us to one attempt, no persistence, no lateral movement and no data theft without approval, and kept every action inside the lab.",
+      },
+      {
+        label: "What happened",
+        items: [
+          "The blue team caught two of the three attacks. The vsftpd backdoor was spotted within a minute, from traffic on port 6200 and a root shell started by the vsftpd process.",
+          "My phishing payload ran at 08:30 and was identified at 08:42. It was contained at 08:58.",
+          "The denial of service was not detected.",
+          "The blue team caught post-exploitation behaviour, such as the command-and-control connection and the backdoor shells. It did not catch the delivery: the phishing email, or the exploit traffic aimed at the FTP service.",
+          "Observers noted the blue team spent more time reading raw logs than using its alerting dashboards.",
+        ],
+      },
+      {
+        label: "What I’d change",
+        items: [
+          "Test the lab before the live run. Static IP addresses made the network fragile, and fixing it cost about 15 minutes of a two-hour window.",
+          "Keep the playbooks and the real lab configuration in step, so nobody re-checks basic connectivity on the day.",
+          "Pair any firewall change made for an attack with a written teardown step, so cleanup isn’t left to memory.",
+          "Practise the communication plan properly. Skipping it in rehearsal forced a full reset of the practice run.",
+          "Put more weight on people. One urgent-sounding pretext was enough to get the payload run.",
+        ],
+      },
+      {
+        label: "Where it came from",
+        text: "A Cert IV in Cybersecurity group assessment. I authored the red team playbook and the reporting templates, and contributed to the project charter and the closure reports. The classmates and the teacher aren’t named here.",
+      },
+    ],
+  },
+  {
+    slug: "cloud-security-plan",
+    name: "Cloud Security Plan",
+    kind: "Security",
+    status: "Complete",
+    meta: "Complete · Cert IV assessment",
+    summary: "A security upgrade plan for a fictional coffee franchise’s single-server AWS ordering site, within a AU$200,000 budget.",
+    tags: ["AWS", "CloudFormation", "Security design"],
+    lead: "A cloud security plan for Rossco’s Coffee, a fictional five-store franchise running its online ordering site on one AWS server: what was wrong, what to build instead, how to move over without downtime, and what to do when something breaks.",
+    facts: [
+      ["Scenario", "A fictional franchise with five stores and over 800 customers"],
+      ["Budget", "AU$200,000"],
+      ["Platform", "AWS, deployed with CloudFormation"],
+      ["Covers", "Evaluation, upgrade plan, testing and migration, monitoring, cloud incident response"],
+      ["Framework", "NIST four-phase incident response model"],
+    ],
+    sections: [
+      {
+        label: "What I found",
+        items: [
+          "One small EC2 instance ran the website, the application and the database. A single point of failure.",
+          "Web and SSH access were open to the whole internet, and the site used plain HTTP, so logins and payment details travelled unencrypted.",
+          "The database root password was hard-coded in the CloudFormation user-data script.",
+          "One shared IAM user, no multi-factor authentication and no least-privilege roles, so nobody was accountable for what was done.",
+          "No web application firewall, load balancer, backups, disaster recovery or data loss prevention.",
+        ],
+      },
+      {
+        label: "What I proposed",
+        items: [
+          "Web servers in an Auto Scaling Group across two Availability Zones, behind a load balancer that ends HTTPS.",
+          "A web application firewall on the load balancer, aimed at the fake orders the business was seeing, plus a network firewall.",
+          "The database in a private subnet, encrypted at rest and in transit, with a standby in the other zone.",
+          "Individual IAM roles with multi-factor authentication, and CloudTrail recording every action.",
+        ],
+      },
+      {
+        label: "A decision I’d defend",
+        lead: "Managed AWS services, in one region.",
+        text: "Rossco’s has no security team and a fixed budget, so every control uses a managed service instead of custom tooling. I ruled out a second region as not worth the cost for five stores. Two Availability Zones cover the likelier failure, one instance or one zone going down.",
+      },
+      {
+        label: "Moving over safely",
+        text: "A blue-green move inside AWS. The old environment keeps serving customers until the new one has passed testing, and traffic can be switched back if it doesn’t. Development, staging and production use the same CloudFormation templates, so the security settings match at every stage.",
+      },
+      {
+        label: "Where it came from",
+        text: "Built for an assessment in my Cert IV in Cybersecurity, against a case study business.",
+      },
+    ],
+  },
+  {
     slug: "fingerprint",
     name: "System Fingerprint Tool",
     kind: "Security",

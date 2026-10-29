@@ -92,7 +92,7 @@ export const projects: Project[] = [
       },
       {
         label: "How it was built",
-        text: "Built with help from AI coding assistants, and still being added to.",
+        text: "I designed the architecture. AI coding assistants helped write the code, and it’s still being added to.",
       },
       {
         label: "Releases",
@@ -215,7 +215,10 @@ export const projects: Project[] = [
         label: "How it works",
         text: "Tick the items you want, run the collection, then Save / Append to add a new row to the inventory CSV. The port scan splits 1 to 65,535 across 200 threads with a 0.15 second timeout per port. The computer name is always included.",
       },
-      { label: "Where it came from", text: "Built for an assessment in my Cert IV in Cybersecurity." },
+      {
+        label: "Where it came from",
+        text: "Built for an assessment in my Cert IV in Cybersecurity, so some of its limits come from the assessment’s rules rather than my own tuning.",
+      },
     ],
   },
 ];

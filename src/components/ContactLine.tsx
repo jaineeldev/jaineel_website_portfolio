@@ -3,7 +3,7 @@
 import { useRef, useState } from "react";
 
 const EMAIL = "jaineelk.dev@gmail.com";
-const RESUME = "/resume/Jaineel_Khatri_Professionalv2.pdf";
+const RESUME = "/resume/Jaineel_Khatri_Resume.pdf";
 
 const LINK =
   "link-draw font-mono text-[11px] uppercase tracking-[0.14em] text-fg-muted transition-colors duration-300 hover:text-accent";

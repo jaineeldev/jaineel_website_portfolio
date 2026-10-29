@@ -115,7 +115,7 @@ export const projects: Project[] = [
     status: "In development",
     meta: "In development · Started Mar 2026",
     summary: "Client workflow for Australian freelance devs and agencies.",
-    tags: ["Next.js", "Postgres", "Clerk"],
+    tags: ["Next.js", "Supabase", "Postgres"],
     lead: "Client workflow for Australian freelance devs and agencies: proposals, approvals, milestones, invoicing, PDF export and a client portal in one flow.",
     image: {
       src: "/projects/velo.png",
@@ -125,7 +125,7 @@ export const projects: Project[] = [
       caption: "The Velo marketing site.",
     },
     facts: [
-      ["Stack", "Next.js, TypeScript, Postgres, Clerk"],
+      ["Stack", "Next.js, TypeScript, Supabase (auth and Postgres), Resend, Stripe"],
       ["Status", "In development"],
       ["Launch", "Not scheduled"],
     ],

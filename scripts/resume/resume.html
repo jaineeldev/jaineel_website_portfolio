@@ -1,0 +1,189 @@
+<!doctype html>
+<html lang="en-AU">
+<head>
+<meta charset="utf-8">
+<title>Jaineel Khatri – Résumé</title>
+<!--
+  Source for public/resume/Jaineel_Khatri_Resume.pdf. Edit this file, then run scripts/resume/build.mjs.
+  Keep it in step with src/content/projects.ts: every claim here has to be one the site (and the repos) back up.
+-->
+<style>
+  @page { size: A4; margin: 13mm 15mm 12mm; }
+  * { box-sizing: border-box; }
+  html { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  body {
+    margin: 0;
+    font-family: Calibri, "Segoe UI", Arial, sans-serif;
+    font-size: 10pt;
+    line-height: 1.32;
+    color: #111;
+  }
+  h1 { margin: 0; font-size: 25pt; line-height: 1; letter-spacing: 0.04em; font-weight: 700; text-align: center; }
+  .contact { margin-top: 5px; text-align: center; font-size: 9.5pt; color: #333; }
+  .contact span + span::before { content: "|"; margin: 0 7px; color: #999; }
+  h2 {
+    margin: 12px 0 5px;
+    padding-bottom: 2px;
+    border-bottom: 0.75pt solid #111;
+    font-size: 10pt;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+  p { margin: 0; }
+  .row { display: flex; justify-content: space-between; gap: 12px; align-items: baseline; }
+  .when { white-space: nowrap; color: #333; }
+  .title { font-weight: 700; }
+  .stack { font-weight: 400; color: #333; }
+  .entry { margin-top: 7px; break-inside: avoid; }
+  .entry:first-of-type { margin-top: 0; }
+  ul { margin: 2px 0 0; padding-left: 15px; }
+  li { margin: 1px 0; padding-left: 1px; }
+  .skills p { margin-top: 2px; }
+  .skills b { font-weight: 700; }
+  .note { color: #333; }
+</style>
+</head>
+<body>
+
+<h1>JAINEEL KHATRI</h1>
+<div class="contact">
+  <span>Brisbane, QLD</span><span>0493 153 251</span><span>jaineelk.dev@gmail.com</span>
+</div>
+<div class="contact" style="margin-top:1px">
+  <span>linkedin.com/in/jaineel-khatri</span><span>jaineel.dev</span><span>github.com/jaineeldev</span>
+</div>
+
+<h2>Summary</h2>
+<p>
+  Developer and cybersecurity graduate. Completed the Certificate IV in Cyber Security at TAFE Queensland in September 2026
+  and starts a Bachelor of Information Technology (Computer Science) at QUT in 2027. Ships software end to end: Blimo, a
+  desktop app released for Windows and Mac, and Velo, a client workflow platform in development. Cert IV work includes a
+  red team incident response exercise, an AWS cloud security plan and a Python port-scanning tool. Customer-facing work
+  since 2021. Looking for junior security, IT or fullstack roles, part-time or casual alongside study.
+</p>
+
+<h2>Technical skills</h2>
+<div class="skills">
+  <p><b>Security &amp; networking:</b> Kali Linux, Metasploit, Hydra, Wireshark, Nmap, Metasploitable 2, DVWA, TCP/IP, DNS, DHCP, firewall configuration, vulnerability assessment</p>
+  <p><b>Systems &amp; cloud:</b> Linux (Debian/Ubuntu), Windows, AWS (EC2, VPC, CloudFormation, Application Load Balancer), virtual machine labs</p>
+  <p><b>Programming:</b> TypeScript, JavaScript, Python, SQL, Bash, C (learning)</p>
+  <p><b>Web &amp; tooling:</b> React, Next.js, Electron, Tailwind CSS, PostgreSQL, Supabase, Stripe, Git and GitHub, Vercel, Cloudflare</p>
+  <p><b>Professional:</b> Technical documentation, incident reporting, stakeholder communication, escalation and triage</p>
+</div>
+
+<h2>Projects</h2>
+
+<div class="entry">
+  <div class="row"><span><span class="title">Blimo</span> – Desktop app for Windows and Mac <span class="stack">| Electron, React, TypeScript</span></span><span class="when">Oct 2026</span></div>
+  <ul>
+    <li>Built and released a desktop pet whose face is generated from its name, with 21 moods, a customise panel and reactions to music, video and idle time. Version 1.2 supports Windows 10/11 and macOS (Apple Silicon and Intel).</li>
+    <li>Chose Electron for the transparent, click-through, always-on-top window the product depends on. Shipped an installer that updates itself from GitHub Releases without admin rights.</li>
+    <li>Designed it to read only cursor position and idle time, never keystroke content, and to contact GitHub only to check for updates. Built with help from AI coding assistants.</li>
+  </ul>
+</div>
+
+<div class="entry">
+  <div class="row"><span><span class="title">Velo</span> – Client workflow platform <span class="stack">| Next.js, TypeScript, Supabase, Postgres</span></span><span class="when">Started Mar 2026</span></div>
+  <ul>
+    <li>Building a full-stack platform for Australian freelance developers and agencies: proposals, client approval links, milestones, invoicing with PDF export and a client portal.</li>
+    <li>Implemented Supabase authentication with middleware route guards, an operator admin panel, transactional email through Resend and Stripe Checkout for invoice payments.</li>
+    <li>Added rate limiting, security event logging and signature-verified Stripe webhooks. Marketing site and waitlist are live; the product is in development with no launch date.</li>
+  </ul>
+</div>
+
+<div class="entry">
+  <div class="row"><span><span class="title">Hawthorne Corner Store</span> – Website for a local business <span class="stack">| React, Vite, Tailwind CSS</span></span><span class="when">2025 – Present</span></div>
+  <ul>
+    <li>Built and maintain the site for a Brisbane convenience store: opening hours with live open or closed status, click to call, directions, reviews and in-store services. In production since 2025.</li>
+  </ul>
+</div>
+
+<div class="entry">
+  <div class="row"><span><span class="title">System Fingerprint Tool</span> – Cert IV assessment <span class="stack">| Python, Tkinter</span></span><span class="when">2025</span></div>
+  <ul>
+    <li>Wrote a desktop tool that collects a machine's details (name, IP and MAC address, processor, operating system, internet speed), scans all 65,535 local TCP ports across 200 threads and appends the results to a CSV inventory.</li>
+  </ul>
+</div>
+
+<div class="entry">
+  <div class="row"><span><span class="title">Incident Response Team Exercise</span> – Red Team Lead <span class="stack">| Cert IV in Cyber Security, team project</span></span><span class="when"></span></div>
+  <ul>
+    <li>Led the red team in a six-person simulated incident response engagement for a fictional client, attacking an isolated Kali Linux and Metasploitable 2 lab network against an opposing blue team.</li>
+    <li>Ran SSH brute force attacks with Hydra and reverse TCP payload attacks with Metasploit, documenting each step with evidence for blue team analysis.</li>
+    <li>Wrote the Project Charter, Rules of Engagement and attack playbooks, and presented findings in a formal debrief and closure report.</li>
+  </ul>
+</div>
+
+<div class="entry">
+  <div class="row"><span><span class="title">Cloud Security Plan</span> – AWS migration <span class="stack">| Cert IV in Cyber Security, AWS, CloudFormation</span></span><span class="when"></span></div>
+  <ul>
+    <li>Assessed a case study business's AWS environment, defined in CloudFormation, and designed a hardened upgrade with a network firewall, application load balancer, multi-subnet architecture and segmented security groups.</li>
+    <li>Produced testing and migration, monitoring and maintenance, and cloud incident response plans, including a containment, eradication and recovery matrix.</li>
+  </ul>
+</div>
+
+<div class="entry">
+  <div class="row"><span><span class="title">jaineel.dev</span> – Personal portfolio <span class="stack">| Next.js, TypeScript, Tailwind CSS</span></span><span class="when"></span></div>
+  <ul>
+    <li>Designed and built this site and a project page for each of the above, deployed on Cloudflare.</li>
+  </ul>
+</div>
+
+<h2>Experience</h2>
+
+<div class="entry">
+  <div class="row"><span><span class="title">Bartender</span>, Pig N Whistle</span><span class="when">April 2022 – Present</span></div>
+  <ul>
+    <li>Maintain compliance with liquor licensing and RSA obligations in a high-volume Brisbane venue, including refusal of service and incident documentation.</li>
+    <li>Assess risk and de-escalate situations in real time, making judgement calls under pressure with limited information.</li>
+    <li>Coordinate with team members across a busy service floor while handling cash and point of sale systems accurately.</li>
+  </ul>
+</div>
+
+<div class="entry">
+  <div class="row"><span><span class="title">Customer Service Team Member</span>, Coles Supermarkets</span><span class="when">September 2021 – January 2022</span></div>
+  <ul>
+    <li>Triaged customer and operational issues, resolving what could be handled on the spot and escalating the rest to the appropriate department.</li>
+    <li>Worked to documented procedures in a fast-moving retail environment, prioritising competing tasks during peak trade.</li>
+  </ul>
+</div>
+
+<div class="entry">
+  <div class="row"><span><span class="title">Sales &amp; Operations Assistant</span>, KFC</span><span class="when">January 2021 – July 2021</span></div>
+  <ul>
+    <li>Processed orders through point of sale and order management systems with accuracy under consistent time pressure.</li>
+    <li>Followed standardised food safety and operational escalation procedures in a KPI-driven environment.</li>
+  </ul>
+</div>
+
+<h2>Education</h2>
+
+<div class="entry">
+  <div class="row"><span><span class="title">Bachelor of Information Technology (Computer Science)</span>, Queensland University of Technology</span><span class="when">Commencing 2027</span></div>
+</div>
+
+<div class="entry">
+  <div class="row"><span><span class="title">22603VIC Certificate IV in Cyber Security</span>, TAFE Queensland (South Bank)</span><span class="when">October 2025 – September 2026</span></div>
+  <ul>
+    <li>Network security infrastructure, breach detection and incident response, penetration testing fundamentals, cloud security, risk management frameworks and secure network design.</li>
+  </ul>
+</div>
+
+<div class="entry">
+  <div class="row"><span><span class="title">Queensland Certificate of Education</span>, Balmoral State High School</span><span class="when">2021</span></div>
+  <ul>
+    <li>Mathematics, English, Physics, Aerospace Systems and Digital Solutions.</li>
+  </ul>
+</div>
+
+<h2>Licences &amp; certifications</h2>
+<ul style="margin-top:0">
+  <li>AVI30316 Certificate III in Aviation (Remote Pilot – Visual Line of Sight)</li>
+</ul>
+
+<h2>References</h2>
+<p>Rob Freeman – character reference. Contact details available on request.</p>
+
+</body>
+</html>

@@ -21,6 +21,12 @@ const nextConfig: NextConfig = {
         destination: "/blimo",
         permanent: true,
       },
+      // The résumé was renamed when it was rewritten; the old file is gone, so links to it still land.
+      {
+        source: "/resume/Jaineel_Khatri_Professionalv2.pdf",
+        destination: "/resume/Jaineel_Khatri_Resume.pdf",
+        permanent: true,
+      },
     ];
   },
 };

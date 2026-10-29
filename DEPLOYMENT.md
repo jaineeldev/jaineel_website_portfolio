@@ -70,6 +70,6 @@ closest local approximation of production behaviour.
   API and works because `wrangler.toml` enables the `nodejs_compat` flag.
 - No `export const runtime = "edge"` annotations are needed — OpenNext runs
   routes under Node compatibility on Workers.
-- `@vercel/analytics` and `@vercel/speed-insights` are still in `layout.tsx`, but
-  they only report on Vercel, so on Cloudflare they do nothing. They can be
-  removed if you don't plan to host on Vercel again.
+- The Vercel Analytics and Speed Insights packages were removed: their scripts
+  404 on Cloudflare. For visitor numbers, turn on Cloudflare Web Analytics in the
+  dashboard (Analytics & Logs, Web Analytics); it needs no code for a proxied site.

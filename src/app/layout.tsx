@@ -1,7 +1,5 @@
 import type { Metadata, Viewport } from "next";
 import { Funnel_Display, Funnel_Sans, Geist_Mono } from "next/font/google";
-import { Analytics } from "@vercel/analytics/next";
-import { SpeedInsights } from "@vercel/speed-insights/next";
 import MotionProvider from "@/components/MotionProvider";
 import "./globals.css";
 
@@ -174,8 +172,6 @@ export default function RootLayout({
       </head>
       <body className="bg-bg text-fg antialiased font-sans">
         <MotionProvider>{children}</MotionProvider>
-        <Analytics />
-        <SpeedInsights />
       </body>
     </html>
   );

@@ -22,7 +22,7 @@ const BACKGROUND: { what: string; note?: string; when: string; soft?: boolean }[
     when: "Planned 2027",
   },
   { what: "Balmoral State High School", when: "2016 to 2021" },
-  { what: "AVI30316 remote pilot licence", when: "Licence", soft: true },
+  { what: "Certificate III in Aviation (Remote Pilot)", when: "AVI30316", soft: true },
 ];
 
 export default async function Home() {

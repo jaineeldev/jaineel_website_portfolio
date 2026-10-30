@@ -23,7 +23,7 @@ const geistMono = Geist_Mono({
 
 const SITE_TITLE = "Jaineel Khatri — Developer & Cybersecurity Student, Brisbane";
 const SITE_DESCRIPTION =
-  "Jaineel Khatri is a developer and cybersecurity student in Brisbane, Australia. Projects include Blimo, a desktop pet for Windows and Mac, and a client workflow app, Velo. Open to junior security and fullstack roles.";
+  "Jaineel Khatri is a developer and cybersecurity student in Brisbane, Australia. Projects include Blimo, a desktop pet for Windows and Mac, and a client workflow app, Velo. Open to entry-level IT roles, including security and fullstack.";
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://jaineel.dev"),

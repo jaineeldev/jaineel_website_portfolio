@@ -1,7 +1,7 @@
 import { ImageResponse } from "next/og";
 
 export const alt =
-  "Jaineel Khatri — developer and cybersecurity student in Brisbane. Open to junior security and fullstack roles.";
+  "Jaineel Khatri — developer and cybersecurity student in Brisbane. Open to entry-level IT roles, including security and fullstack.";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
@@ -93,7 +93,7 @@ export default async function Image() {
           }}
         >
           <span style={{ display: "flex" }}>jaineel.dev</span>
-          <span style={{ display: "flex" }}>Brisbane · Open to junior security and fullstack roles</span>
+          <span style={{ display: "flex" }}>Brisbane · Open to entry-level IT roles</span>
         </div>
       </div>
     ),

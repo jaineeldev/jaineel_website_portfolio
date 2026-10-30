@@ -42,7 +42,7 @@ export default async function Home() {
           I build and ship software, with a growing focus on security.{" "}
           <span className="text-fg-muted">
             I finished a Cert IV in Cybersecurity this year and plan to start a Bachelor of Information Technology at
-            QUT in 2027, majoring in Computer Science. Based in Brisbane, open to junior security and fullstack roles.
+            QUT in 2027, majoring in Computer Science. Based in Brisbane, open to entry-level IT roles, including security and fullstack.
           </span>
         </p>
 

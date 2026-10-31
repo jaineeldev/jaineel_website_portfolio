@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import ContactLine from "@/components/ContactLine";
 import ProjectImage from "@/components/ProjectImage";
 import SiteHeader from "@/components/SiteHeader";
+import StatusBadge from "@/components/StatusBadge";
 import { getProject, projects, type ProjectSection } from "@/content/projects";
 import { latestBlimoVersion } from "@/lib/blimo";
 import { rise } from "@/lib/rise";
@@ -92,7 +93,9 @@ export default async function ProjectPage({ params }: Props) {
         <h1 className="mt-9 text-balance font-display text-[clamp(2.2rem,7vw,3.2rem)] font-bold leading-none tracking-[-0.03em] text-fg">
           {project.name}
         </h1>
-        <p className="mt-2.5 font-mono text-[11px] uppercase tracking-[0.14em] text-fg-dim">{meta}</p>
+        <p className="mt-3 flex flex-wrap items-center gap-x-2.5 gap-y-1 font-mono text-[11px] uppercase tracking-[0.14em] text-fg-dim">
+          <StatusBadge status={meta} />
+        </p>
         <p className="mt-5 max-w-[32em] text-[1.2rem] leading-[1.5] text-fg">{project.lead}</p>
       </div>
 

@@ -22,6 +22,17 @@
 
 /* ─── Component-scoped tokens — default to dark values ─── */
 :root {
+  /* Status colours: used only on the status label (.status), never as UI accents. */
+  --status-live: #22c55e;
+  --status-live-bg: rgba(34, 197, 94, 0.12);
+  --status-live-border: rgba(34, 197, 94, 0.3);
+  --status-wip: #fbbf24;
+  --status-wip-bg: rgba(251, 191, 36, 0.12);
+  --status-wip-border: rgba(251, 191, 36, 0.3);
+  --status-done: #60a5fa;
+  --status-done-bg: rgba(96, 165, 250, 0.12);
+  --status-done-border: rgba(96, 165, 250, 0.3);
+
   --work-divider: var(--color-border);
   --cta-hover-bg: rgba(255, 255, 255, 0.05);
   --scrim: rgba(8, 8, 8, 0.62);
@@ -39,6 +50,17 @@
   --color-border-strong: rgba(14, 21, 23, 0.24);
   /* A darker cyan, so hover text keeps its contrast on the pale background. */
   --color-accent: #00616f;
+
+  /* Darker text on the pale ground, so each status keeps its contrast (all above 4.5:1). */
+  --status-live: #166534;
+  --status-live-bg: rgba(34, 197, 94, 0.12);
+  --status-live-border: rgba(22, 101, 52, 0.45);
+  --status-wip: #92400e;
+  --status-wip-bg: rgba(251, 191, 36, 0.16);
+  --status-wip-border: rgba(146, 64, 14, 0.45);
+  --status-done: #1d4ed8;
+  --status-done-bg: rgba(59, 130, 246, 0.1);
+  --status-done-border: rgba(29, 78, 216, 0.4);
 
   --work-divider: rgba(0, 0, 0, 0.08);
   --cta-hover-bg: rgba(0, 0, 0, 0.05);
@@ -93,6 +115,22 @@ body {
 .themed-light { display: none; }
 :root[data-theme="light"] .themed-dark { display: none; }
 :root[data-theme="light"] .themed-light { display: block; }
+
+/* ─── Status label: Live, In development, Complete. Sharp corners, tinted, with the word always shown. ─── */
+.status {
+  display: inline-flex;
+  align-items: center;
+  padding: 1px 6px;
+  border: 1px solid var(--color-border);
+  font-family: var(--font-mono);
+  font-size: 10px;
+  line-height: 1.6;
+  letter-spacing: 0.12em;
+  color: var(--color-fg-muted);
+}
+.status--live { color: var(--status-live); background: var(--status-live-bg); border-color: var(--status-live-border); }
+.status--wip { color: var(--status-wip); background: var(--status-wip-bg); border-color: var(--status-wip-border); }
+.status--done { color: var(--status-done); background: var(--status-done-bg); border-color: var(--status-done-border); }
 
 /* ─── Load-in: each block settles in turn. Pure CSS, so the page still shows without JavaScript. ─── */
 @keyframes rise {

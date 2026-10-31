@@ -4,6 +4,7 @@ import LocalTime from "@/components/LocalTime";
 import NowPlaying from "@/components/NowPlaying";
 import Preloader from "@/components/Preloader";
 import SiteHeader from "@/components/SiteHeader";
+import StatusBadge from "@/components/StatusBadge";
 import WorkThumb from "@/components/WorkThumb";
 import { projects } from "@/content/projects";
 import { latestBlimoVersion } from "@/lib/blimo";
@@ -50,10 +51,11 @@ export default async function Home() {
           <h2 id="now-heading" className={LABEL}>
             Now
           </h2>
-          <p className="max-w-[36em] text-fg-muted">
-            {minor ? `Blimo ${minor} is out for Windows and Mac.` : "Blimo is out for Windows and Mac."} Velo is in
-            development. Learning C.
-          </p>
+          <ul className="grid max-w-[36em] gap-1 text-fg-muted">
+            <li>{minor ? `Blimo ${minor} is out for Windows and Mac.` : "Blimo is out for Windows and Mac."}</li>
+            <li>Velo is in development.</li>
+            <li>Learning C.</li>
+          </ul>
           {/* Only while something is playing. The height is reserved, so the page doesn't move when it appears. */}
           <div className="mt-3 h-5">
             <NowPlaying />
@@ -83,8 +85,9 @@ export default async function Home() {
                             →
                           </span>
                         </span>
-                        <span className="whitespace-nowrap text-right font-mono text-[10.5px] uppercase tracking-[0.08em] text-fg-dim">
-                          {p.kind} · {status}
+                        <span className="flex items-center gap-2 whitespace-nowrap font-mono text-[10.5px] uppercase tracking-[0.08em] text-fg-dim">
+                          {p.kind}
+                          <StatusBadge status={status} />
                         </span>
                       </span>
                       <span className="mt-0.5 block text-[15px] leading-[1.5] text-fg-muted">{p.summary}</span>

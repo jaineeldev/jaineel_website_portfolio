@@ -3,7 +3,7 @@ import { blimo, hawthorne, velo } from "@/lib/og/assets";
 import { MASCOT_BODY, MASCOT_COLOURS, MASCOT_EYES, MASCOT_VIEWBOX } from "@/lib/mascot";
 
 export const alt =
-  "Jaineel Khatri, developer and cybersecurity student in Brisbane, with screenshots of Blimo, Velo and the Hawthorne Corner Store site.";
+  "Jaineel Khatri. Student, developer, cybersecurity. Brisbane. With screenshots of Blimo, Velo and the Hawthorne Corner Store site.";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
@@ -76,7 +76,8 @@ export default async function Image() {
           style={{
             display: "flex",
             flexDirection: "column",
-            width: 640,
+            // Ends 72 px before the frames, so the role line fits on one row.
+            width: 676,
             height: "100%",
             padding: "72px 0 64px 72px",
           }}
@@ -106,16 +107,16 @@ export default async function Image() {
           <div
             style={{
               display: "flex",
-              marginTop: 30,
-              maxWidth: 560,
+              marginTop: 32,
               fontSize: 36,
               fontWeight: 500,
               letterSpacing: "-0.015em",
-              lineHeight: 1.22,
+              whiteSpace: "nowrap",
+              lineHeight: 1.2,
               color: "#9fadab",
             }}
           >
-            I build and ship software, with a growing focus on security.
+            Student · Developer · Cybersecurity
           </div>
 
           <div

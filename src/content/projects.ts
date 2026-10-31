@@ -31,6 +31,8 @@ export type Project = {
   /** The opening sentence of the project's own page. */
   lead: string;
   image?: ProjectImage;
+  /** A small cut of the capture for the home list (see scripts/make-thumbs.mjs). Only where a real capture exists. */
+  thumb?: { src: string; srcLight?: string };
   facts: [label: string, value: string][];
   links?: { label: string; href: string }[];
   sections: ProjectSection[];
@@ -59,6 +61,7 @@ export const projects: Project[] = [
       caption: "The 21 moods, from the app.",
       scroll: true,
     },
+    thumb: { src: "/work/thumbs/blimo-dark.webp", srcLight: "/work/thumbs/blimo-light.webp" },
     facts: [
       ["Platform", "Windows 10 and 11, macOS (Apple Silicon and Intel)"],
       ["Stack", "Electron, React, TypeScript, Framer Motion"],
@@ -124,6 +127,7 @@ export const projects: Project[] = [
       alt: "The Velo marketing site",
       caption: "The Velo marketing site.",
     },
+    thumb: { src: "/work/thumbs/velo.webp" },
     facts: [
       ["Stack", "Next.js, TypeScript, Supabase (auth and Postgres), Resend, Stripe"],
       ["Status", "In development"],
@@ -157,6 +161,7 @@ export const projects: Project[] = [
       alt: "The Hawthorne Corner Store website",
       caption: "The live site.",
     },
+    thumb: { src: "/work/thumbs/hawthorne.webp" },
     facts: [
       ["Stack", "React, Vite, Tailwind, Vercel"],
       ["Status", "In production since 2025"],
@@ -303,6 +308,7 @@ export const projects: Project[] = [
       alt: "The System Fingerprint Tool window",
       caption: "The desktop app.",
     },
+    thumb: { src: "/work/thumbs/fingerprint.webp" },
     facts: [
       ["Stack", "Python, Tkinter"],
       ["Items", "Eight, seven optional"],

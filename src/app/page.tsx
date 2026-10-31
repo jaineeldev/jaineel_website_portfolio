@@ -4,6 +4,7 @@ import LocalTime from "@/components/LocalTime";
 import NowPlaying from "@/components/NowPlaying";
 import Preloader from "@/components/Preloader";
 import SiteHeader from "@/components/SiteHeader";
+import WorkThumb from "@/components/WorkThumb";
 import { projects } from "@/content/projects";
 import { latestBlimoVersion } from "@/lib/blimo";
 import { rise } from "@/lib/rise";
@@ -35,16 +36,15 @@ export default async function Home() {
       <main className="has-preloader mx-auto w-full max-w-[680px] px-5 pb-20 pt-12 sm:px-8 sm:pb-24 sm:pt-20">
         <SiteHeader heading />
 
-        <p
-          className="rise mt-10 max-w-[34em] text-[1.05rem] leading-[1.5] text-fg sm:mt-16 sm:text-[1.3rem]"
-          style={rise(1)}
-        >
-          I build and ship software, with a growing focus on security.{" "}
-          <span className="text-fg-muted">
+        <div className="rise mt-12 sm:mt-20" style={rise(1)}>
+          <p className="text-balance font-display text-[clamp(2rem,7.2vw,3.2rem)] font-bold leading-[1.06] tracking-[-0.03em] text-fg">
+            I build and ship software, with a growing focus on security.
+          </p>
+          <p className="mt-5 max-w-[34em] text-[1.05rem] leading-[1.5] text-fg-muted sm:mt-6 sm:text-[1.15rem]">
             I finished a Certificate IV in Cyber Security this year and plan to start a Bachelor of Information Technology at
             QUT in 2027, majoring in Computer Science. Based in Brisbane, open to entry-level IT roles, including security and fullstack.
-          </span>
-        </p>
+          </p>
+        </div>
 
         <section className="rise mt-12 sm:mt-[4.5rem]" style={rise(2)} aria-labelledby="now-heading">
           <h2 id="now-heading" className={LABEL}>
@@ -65,31 +65,34 @@ export default async function Home() {
             Work
           </h2>
           <ul className="grid gap-[1.875rem]">
-            {projects.map((p) => {
+            {projects.map((p, i) => {
               const status = p.slug === "blimo" && version ? `Live · v${version}` : p.status;
               return (
                 <li key={p.slug}>
-                  <Link href={`/work/${p.slug}`} className="group block">
-                    <span className="flex items-baseline justify-between gap-3">
-                      <span className="inline-flex items-baseline gap-2">
-                        <span className="border-b border-transparent font-semibold text-fg transition-colors duration-300 group-hover:border-accent group-hover:text-accent group-focus-visible:border-accent group-focus-visible:text-accent">
-                          {p.name}
+                  <Link href={`/work/${p.slug}`} className="group flex items-start justify-between gap-4 sm:gap-6">
+                    <span className="block min-w-0 flex-1">
+                      <span className="flex flex-wrap items-baseline justify-between gap-x-3 gap-y-0.5">
+                        <span className="inline-flex items-baseline gap-2">
+                          <span className="border-b border-transparent font-semibold text-fg transition-colors duration-300 group-hover:border-accent group-hover:text-accent group-focus-visible:border-accent group-focus-visible:text-accent">
+                            {p.name}
+                          </span>
+                          <span
+                            aria-hidden
+                            className="-translate-x-1 text-accent opacity-0 transition duration-300 group-hover:translate-x-0 group-hover:opacity-100 group-focus-visible:translate-x-0 group-focus-visible:opacity-100"
+                          >
+                            →
+                          </span>
                         </span>
-                        <span
-                          aria-hidden
-                          className="-translate-x-1 text-accent opacity-0 transition duration-300 group-hover:translate-x-0 group-hover:opacity-100 group-focus-visible:translate-x-0 group-focus-visible:opacity-100"
-                        >
-                          →
+                        <span className="whitespace-nowrap text-right font-mono text-[10.5px] uppercase tracking-[0.08em] text-fg-dim">
+                          {p.kind} · {status}
                         </span>
                       </span>
-                      <span className="whitespace-nowrap text-right font-mono text-[10.5px] uppercase tracking-[0.08em] text-fg-dim">
-                        {p.kind} · {status}
+                      <span className="mt-0.5 block text-[15px] leading-[1.5] text-fg-muted">{p.summary}</span>
+                      <span className="mt-1.5 block font-mono text-[10.5px] uppercase tracking-[0.08em] text-fg-dim">
+                        {p.tags.join(" · ")}
                       </span>
                     </span>
-                    <span className="mt-0.5 block text-[15px] leading-[1.5] text-fg-muted">{p.summary}</span>
-                    <span className="mt-1.5 block font-mono text-[10.5px] uppercase tracking-[0.08em] text-fg-dim">
-                      {p.tags.join(" · ")}
-                    </span>
+                    <WorkThumb thumb={p.thumb} priority={i < 2} />
                   </Link>
                 </li>
               );

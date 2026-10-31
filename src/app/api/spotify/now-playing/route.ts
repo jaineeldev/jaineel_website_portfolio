@@ -1,3 +1,4 @@
+import { getCloudflareContext } from "@opennextjs/cloudflare";
 import { NextResponse } from "next/server";
 
 export const dynamic = "force-dynamic";
@@ -12,13 +13,29 @@ type Artist = { name: string };
 type Track = { name: string; artists: Artist[] };
 type NowPlayingResponse = { is_playing?: boolean; item?: Track | null };
 
-type Token = { token: string } | { reason: string; missing?: string[] };
+type Token = { token: string } | { reason: string; missing?: string[]; seen?: string[] };
+
+/** What the Cloudflare runtime itself exposes: secrets and variables set on the worker, by name. */
+function workerEnv(): Record<string, unknown> {
+  try {
+    return getCloudflareContext().env as unknown as Record<string, unknown>;
+  } catch {
+    return {};
+  }
+}
+
+/** process.env first (local dev, and hosts that fill it), then the worker bindings Cloudflare passes in. */
+function readEnv(name: string, env: Record<string, unknown>): string | undefined {
+  const value = process.env[name] ?? env[name];
+  return typeof value === "string" && value.trim() ? value.trim() : undefined;
+}
 
 /** The reason is a short label, never a secret, so the response says why the line is hidden. */
 async function getAccessToken(): Promise<Token> {
-  const id = process.env.SPOTIFY_CLIENT_ID;
-  const secret = process.env.SPOTIFY_CLIENT_SECRET;
-  const refresh = process.env.SPOTIFY_REFRESH_TOKEN;
+  const env = workerEnv();
+  const id = readEnv("SPOTIFY_CLIENT_ID", env);
+  const secret = readEnv("SPOTIFY_CLIENT_SECRET", env);
+  const refresh = readEnv("SPOTIFY_REFRESH_TOKEN", env);
   const missing = [
     !id && "SPOTIFY_CLIENT_ID",
     !secret && "SPOTIFY_CLIENT_SECRET",
@@ -26,7 +43,8 @@ async function getAccessToken(): Promise<Token> {
   ].filter(Boolean);
   if (!id || !secret || !refresh) {
     console.warn(`Spotify is not configured: missing ${missing.join(", ")}.`);
-    return { reason: "not-configured", missing: missing as string[] };
+    // Names only, never values: what the worker can see, to tell a typo or the wrong worker from nothing set.
+    return { reason: "not-configured", missing: missing as string[], seen: Object.keys(env).sort() };
   }
 
   const basic = Buffer.from(`${id}:${secret}`).toString("base64");
@@ -51,12 +69,12 @@ async function getAccessToken(): Promise<Token> {
   return data.access_token ? { token: data.access_token } : { reason: "no-access-token" };
 }
 
-const idle = (reason: string, missing?: string[]) =>
-  NextResponse.json({ isPlaying: false, reason, ...(missing ? { missing } : {}) }, { status: 200 });
+const idle = (reason: string, extra: { missing?: string[]; seen?: string[] } = {}) =>
+  NextResponse.json({ isPlaying: false, reason, ...extra }, { status: 200 });
 
 export async function GET() {
   const access = await getAccessToken();
-  if (!("token" in access)) return idle(access.reason, access.missing);
+  if (!("token" in access)) return idle(access.reason, { missing: access.missing, seen: access.seen });
 
   const res = await fetch(NOW_PLAYING_ENDPOINT, {
     headers: { Authorization: `Bearer ${access.token}` },

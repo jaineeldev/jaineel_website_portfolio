@@ -193,6 +193,8 @@ body {
   transition: transform 350ms var(--ease-fluid);
 }
 .link-draw:hover::after, .link-draw:focus-visible::after { transform: scaleX(1); }
+/* An invisible, larger hit area: the labels are 11px, which is too small to tap. Layout doesn't change. */
+.link-draw::before { content: ""; position: absolute; inset: -10px -6px; }
 
 /* ─── Reduced motion ─── */
 @media (prefers-reduced-motion: reduce) {

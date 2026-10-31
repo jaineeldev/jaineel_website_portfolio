@@ -1,4 +1,5 @@
 import { ImageResponse } from "next/og";
+import { MASCOT_BODY, MASCOT_COLOURS, MASCOT_EYES, MASCOT_VIEWBOX } from "@/lib/mascot";
 
 export const alt =
   "Jaineel Khatri — developer and cybersecurity student in Brisbane. Open to entry-level IT roles, including security and fullstack.";
@@ -15,10 +16,6 @@ async function loadGoogleFont(family: string, weight: number): Promise<ArrayBuff
   if (!match) throw new Error(`Font not found: ${family} ${weight}`);
   return await (await fetch(match[1])).arrayBuffer();
 }
-
-// The mascot, from the Blimo app's own icon.
-const BODY =
-  "M77.62 53.7C76.98 79.12 76.48 79.56 49.35 78.87C22.21 78.19 21.74 77.72 22.38 52.3C23.02 26.88 23.52 26.44 50.65 27.13C77.79 27.81 78.26 28.28 77.62 53.7Z";
 
 export default async function Image() {
   const [funnelMedium, funnelExtraBold, geistMono] = await Promise.all([
@@ -42,10 +39,11 @@ export default async function Image() {
         }}
       >
         <div style={{ display: "flex", flex: 1, flexDirection: "column", justifyContent: "center" }}>
-          <svg width="132" height="132" viewBox="20.02 23.02 59.96 59.96">
-            <path fill="#00d5ee" d={BODY} />
-            <ellipse cx="38.33" cy="54.05" rx="5.18" ry="4.85" fill="#041518" />
-            <ellipse cx="61.29" cy="54.05" rx="5.18" ry="4.85" fill="#041518" />
+          <svg width="132" height="132" viewBox={MASCOT_VIEWBOX}>
+            <path fill={MASCOT_COLOURS.body} d={MASCOT_BODY} />
+            {MASCOT_EYES.map((e) => (
+              <ellipse key={e.cx} {...e} fill={MASCOT_COLOURS.eyes} />
+            ))}
           </svg>
 
           <div

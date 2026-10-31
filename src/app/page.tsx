@@ -14,15 +14,15 @@ export const revalidate = 3600;
 const LABEL = "mb-4 font-mono text-[11px] font-normal uppercase tracking-[0.14em] text-fg-dim";
 const WHEN = "whitespace-nowrap pt-[3px] font-mono text-[11px] uppercase tracking-[0.08em] text-fg-dim";
 
-const BACKGROUND: { what: string; note?: string; when: string; soft?: boolean }[] = [
-  { what: "Cert IV in Cybersecurity, TAFE Queensland", when: "2025 to 2026" },
+const BACKGROUND: { what: string; note?: string; when: string }[] = [
+  { what: "Certificate IV in Cyber Security, TAFE Queensland", when: "2025 to 2026" },
   {
     what: "Bachelor of Information Technology, QUT",
     note: "(Computer Science major planned)",
     when: "Planned 2027",
   },
   { what: "Balmoral State High School", when: "2016 to 2021" },
-  { what: "Certificate III in Aviation (Remote Pilot)", when: "AVI30316", soft: true },
+  { what: "Certificate III in Aviation (Remote Pilot)", when: "AVI30316" },
 ];
 
 export default async function Home() {
@@ -33,7 +33,7 @@ export default async function Home() {
     <>
       <Preloader />
       <main className="has-preloader mx-auto w-full max-w-[680px] px-5 pb-20 pt-12 sm:px-8 sm:pb-24 sm:pt-20">
-        <SiteHeader />
+        <SiteHeader heading />
 
         <p
           className="rise mt-10 max-w-[34em] text-[1.05rem] leading-[1.5] text-fg sm:mt-16 sm:text-[1.3rem]"
@@ -41,7 +41,7 @@ export default async function Home() {
         >
           I build and ship software, with a growing focus on security.{" "}
           <span className="text-fg-muted">
-            I finished a Cert IV in Cybersecurity this year and plan to start a Bachelor of Information Technology at
+            I finished a Certificate IV in Cyber Security this year and plan to start a Bachelor of Information Technology at
             QUT in 2027, majoring in Computer Science. Based in Brisbane, open to entry-level IT roles, including security and fullstack.
           </span>
         </p>
@@ -107,7 +107,7 @@ export default async function Home() {
                 key={row.what}
                 className="flex flex-col gap-0.5 border-b border-border py-2.5 sm:flex-row sm:justify-between sm:gap-4"
               >
-                <span className={row.soft ? "text-fg-muted" : "text-fg"}>
+                <span className="text-fg">
                   {row.what}
                   {row.note && <span className="text-fg-muted"> {row.note}</span>}
                 </span>

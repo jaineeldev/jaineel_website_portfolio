@@ -44,7 +44,7 @@ export default function ThemeToggle() {
       onClick={toggle}
       aria-label={aria}
       suppressHydrationWarning
-      className="font-mono text-[11px] uppercase tracking-[0.18em] text-fg-muted transition-colors duration-300 hover:text-accent"
+      className="relative font-mono text-[11px] uppercase tracking-[0.18em] text-fg-muted transition-colors duration-300 before:absolute before:-inset-x-3 before:-inset-y-3 before:content-[''] hover:text-accent"
     >
       {label}
     </button>

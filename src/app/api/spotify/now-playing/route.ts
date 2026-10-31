@@ -12,7 +12,7 @@ type Artist = { name: string };
 type Track = { name: string; artists: Artist[] };
 type NowPlayingResponse = { is_playing?: boolean; item?: Track | null };
 
-type Token = { token: string } | { reason: string };
+type Token = { token: string } | { reason: string; missing?: string[] };
 
 /** The reason is a short label, never a secret, so the response says why the line is hidden. */
 async function getAccessToken(): Promise<Token> {
@@ -26,7 +26,7 @@ async function getAccessToken(): Promise<Token> {
   ].filter(Boolean);
   if (!id || !secret || !refresh) {
     console.warn(`Spotify is not configured: missing ${missing.join(", ")}.`);
-    return { reason: "not-configured" };
+    return { reason: "not-configured", missing: missing as string[] };
   }
 
   const basic = Buffer.from(`${id}:${secret}`).toString("base64");
@@ -51,11 +51,12 @@ async function getAccessToken(): Promise<Token> {
   return data.access_token ? { token: data.access_token } : { reason: "no-access-token" };
 }
 
-const idle = (reason: string) => NextResponse.json({ isPlaying: false, reason }, { status: 200 });
+const idle = (reason: string, missing?: string[]) =>
+  NextResponse.json({ isPlaying: false, reason, ...(missing ? { missing } : {}) }, { status: 200 });
 
 export async function GET() {
   const access = await getAccessToken();
-  if (!("token" in access)) return idle(access.reason);
+  if (!("token" in access)) return idle(access.reason, access.missing);
 
   const res = await fetch(NOW_PLAYING_ENDPOINT, {
     headers: { Authorization: `Bearer ${access.token}` },

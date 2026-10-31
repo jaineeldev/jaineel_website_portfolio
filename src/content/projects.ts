@@ -84,6 +84,32 @@ export const projects: Project[] = [
         text: "That window type is the product. The cost is installer size, and I took it on knowing it.",
       },
       {
+        label: "How it fits together",
+        items: [
+          "The Electron main process handles everything the operating system owns: the window, the cursor, staying on top, idle time, updates and the tray icon.",
+          "A preload script gives the page a list of named calls, such as dragStart and setClickThrough, so the interface asks the main process for things and doesn’t do them itself.",
+          "The React page draws the buddy and keeps its state in a Zustand store. Settings are saved between restarts, with a version number so they can change later.",
+          "Music, video, full-screen and GPU detection run in a separate small C# program that the app starts and talks to over standard input and output. It only runs while a feature that needs it is on, and it restarts after a crash, up to five times in a row.",
+        ],
+      },
+      {
+        label: "A second decision I’d defend",
+        lead: "A face from the name, with one hash per trait.",
+        text: "The same name always makes the same buddy. Each trait, such as the shape or the eyes, is hashed from the name and its own key, instead of being drawn in turn from one random sequence. So adding a new trait later never changes anyone’s existing buddy.",
+      },
+      {
+        label: "Problems the design had to solve",
+        items: [
+          "Click-through. The window is transparent and ignores the mouse, so clicks reach the desktop behind it. Electron still forwards mouse moves, and the page checks what is under the cursor and only switches clicks on over the buddy or the settings panel.",
+          "Seeing the mouse outside the window. A page only sees the mouse over its own window, so the main process reads the cursor about 60 times a second and sends it across. That is how the eyes follow it anywhere on screen.",
+          "Staying on top on Windows. Electron’s default level tucks the window under the taskbar, and games and video players can cover it. Blimo uses a higher level and re-applies it every second.",
+        ],
+      },
+      {
+        label: "Not there yet",
+        text: "There are no automated tests yet.",
+      },
+      {
         label: "Shipping and privacy",
         items: [
           "The Windows installer updates itself from GitHub Releases and needs no admin rights.",
@@ -138,6 +164,20 @@ export const projects: Project[] = [
       {
         label: "What it covers",
         items: ["Proposals and client approvals", "Milestones", "Invoicing and PDF export", "A client portal"],
+      },
+      {
+        label: "A decision I’d defend",
+        lead: "Share links that are safe to hand out.",
+        text: "A proposal reaches a client as a link with a 64-character random token. A malformed token and an unknown one get the same not-found page, so a guess teaches an attacker nothing. Share pages are never cached, and they are rate limited to 30 requests a minute per IP address, which cuts off anyone trying to guess tokens.",
+      },
+      {
+        label: "Only one approval can win",
+        text: "Approving a proposal creates the project, its milestones and the deposit invoice in a single transaction, so a failure halfway can’t leave a project with no invoice. The proposal is claimed first, with an update that only matches one still marked as sent, so a double click or two open tabs can’t create two projects.",
+      },
+      {
+        label: "A trade-off",
+        lead: "The rate limiter fails open.",
+        text: "It uses Upstash Redis when that is set up, and a counter in memory while developing. If Upstash is down, requests are let through and the error is logged. Failing closed would lock every visitor out during an outage.",
       },
       {
         label: "Where it stands",

@@ -1,4 +1,4 @@
-export type ProjectKind = "Software" | "Security";
+export type ProjectKind = "Software" | "Website" | "Security";
 
 export type ProjectSection =
   | { label: string; lead?: string; text?: string }
@@ -188,7 +188,7 @@ export const projects: Project[] = [
   {
     slug: "hawthorne",
     name: "Hawthorne Corner Store",
-    kind: "Software",
+    kind: "Website",
     status: "Live",
     meta: "Live · Since 2025",
     summary: "The website for a Brisbane convenience store, in production since 2025.",

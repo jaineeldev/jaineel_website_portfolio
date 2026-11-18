@@ -1,5 +1,6 @@
 /**
  * A project's status as a small tinted label, so Live, In development and Complete read apart at a glance.
+ * Anything else (Velo's "Concept") gets the plain, untinted label.
  * Takes the first part of a line like "Live · v1.2.0 · Oct 2026" as the status and leaves the rest as plain text.
  * The word is always there, so colour is never the only signal. Colours live in globals.css (`.status`).
  */

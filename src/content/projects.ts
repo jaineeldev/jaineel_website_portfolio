@@ -141,8 +141,8 @@ export const projects: Project[] = [
     slug: "velo",
     name: "Velo",
     kind: "Software",
-    status: "In development",
-    meta: "In development · Started Mar 2026",
+    status: "Concept",
+    meta: "Concept · 2026",
     summary: "Client workflow for Australian freelance devs and agencies.",
     tags: ["Next.js", "Supabase", "Postgres"],
     lead: "Client workflow for Australian freelance devs and agencies: proposals, approvals, milestones, invoicing, PDF export and a client portal in one flow.",
@@ -156,10 +156,12 @@ export const projects: Project[] = [
     thumb: { src: "/work/thumbs/velo.webp" },
     facts: [
       ["Stack", "Next.js, TypeScript, Supabase (auth and Postgres), Resend, Stripe"],
-      ["Status", "In development"],
-      ["Launch", "Not scheduled"],
+      ["Status", "Concept, sign-ups closed"],
     ],
-    links: [{ label: "Marketing site", href: "https://project-velo.vercel.app/" }],
+    links: [
+      { label: "Marketing site", href: "https://project-velo.vercel.app/" },
+      { label: "Source", href: "https://github.com/jaineeldev/project-velo" },
+    ],
     sections: [
       {
         label: "What it covers",
@@ -181,7 +183,7 @@ export const projects: Project[] = [
       },
       {
         label: "Where it stands",
-        text: "The marketing site and waitlist are live. The product itself is still being built, and there is no launch date yet.",
+        text: "Velo is a concept now. The site stays up as a showcase, but it isn’t taking sign-ups or waitlist entries. The core workflow is built: proposals, client approval, milestones, invoices and PDF export.",
       },
     ],
   },

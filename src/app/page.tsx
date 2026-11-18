@@ -53,7 +53,7 @@ export default async function Home() {
           </h2>
           <ul className="grid max-w-[36em] gap-1 text-fg-muted">
             <li>{minor ? `Blimo ${minor} is out for Windows and Mac.` : "Blimo is out for Windows and Mac."}</li>
-            <li>Velo is in development.</li>
+            <li>Velo is now a concept project.</li>
             <li>Learning C.</li>
           </ul>
           {/* Only while something is playing. The height is reserved, so the page doesn't move when it appears. */}

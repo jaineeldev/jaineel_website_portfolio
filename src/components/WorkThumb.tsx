@@ -17,7 +17,6 @@ export default function WorkThumb({ thumb, priority = false }: { thumb: Project[
       height={180}
       sizes="(min-width: 640px) 128px, 90px"
       priority={priority}
-      unoptimized
       className={`h-full w-full object-cover ${extra}`}
     />
   );

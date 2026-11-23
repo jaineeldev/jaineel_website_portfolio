@@ -7,7 +7,7 @@ import SiteHeader from "@/components/SiteHeader";
 import StatusBadge from "@/components/StatusBadge";
 import WorkThumb from "@/components/WorkThumb";
 import { projects } from "@/content/projects";
-import { latestBlimoVersion } from "@/lib/blimo";
+import { latestBlimoRelease } from "@/lib/blimo";
 import { rise } from "@/lib/rise";
 
 // Rechecked at most once an hour, so Blimo's version follows new releases on its own.
@@ -21,14 +21,14 @@ const BACKGROUND: { what: string; note?: string; when: string }[] = [
   {
     what: "Bachelor of Information Technology, QUT",
     note: "(Computer Science major planned)",
-    when: "Planned 2027",
+    when: "Starting 2027",
   },
   { what: "Balmoral State High School", when: "2016 to 2021" },
   { what: "Certificate III in Aviation (Remote Pilot)", when: "AVI30316" },
 ];
 
 export default async function Home() {
-  const version = await latestBlimoVersion();
+  const version = (await latestBlimoRelease())?.version;
   const minor = version?.split(".").slice(0, 2).join(".");
 
   return (
@@ -42,8 +42,8 @@ export default async function Home() {
             I build and ship software, with a growing focus on security.
           </p>
           <p className="mt-5 max-w-[34em] text-[1.05rem] leading-[1.5] text-fg-muted sm:mt-6 sm:text-[1.15rem]">
-            I finished a Certificate IV in Cyber Security this year and plan to start a Bachelor of Information Technology at
-            QUT in 2027, majoring in Computer Science. Based in Brisbane, open to entry-level IT roles, including security and fullstack.
+            I finished a Certificate IV in Cyber Security this year and start a Bachelor of Information Technology at
+            QUT in 2027, with a planned major in Computer Science. Based in Brisbane, open to entry-level IT roles, including security and fullstack.
           </p>
         </div>
 
@@ -53,7 +53,6 @@ export default async function Home() {
           </h2>
           <ul className="grid max-w-[36em] gap-1 text-fg-muted">
             <li>{minor ? `Blimo ${minor} is out for Windows and Mac.` : "Blimo is out for Windows and Mac."}</li>
-            <li>Velo is now a concept project.</li>
             <li>Learning C.</li>
           </ul>
           {/* Only while something is playing. The height is reserved, so the page doesn't move when it appears. */}

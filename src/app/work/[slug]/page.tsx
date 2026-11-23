@@ -6,7 +6,7 @@ import ProjectImage from "@/components/ProjectImage";
 import SiteHeader from "@/components/SiteHeader";
 import StatusBadge from "@/components/StatusBadge";
 import { getProject, projects, type ProjectSection } from "@/content/projects";
-import { latestBlimoVersion } from "@/lib/blimo";
+import { latestBlimoRelease } from "@/lib/blimo";
 import { rise } from "@/lib/rise";
 
 export const revalidate = 3600;
@@ -75,8 +75,8 @@ export default async function ProjectPage({ params }: Props) {
   const project = getProject(slug);
   if (!project) notFound();
 
-  const version = project.slug === "blimo" ? await latestBlimoVersion() : null;
-  const meta = version ? `Live · v${version} · Oct 2026` : project.meta;
+  const release = project.slug === "blimo" ? await latestBlimoRelease() : null;
+  const meta = release ? ["Live", `v${release.version}`, release.month].filter(Boolean).join(" · ") : project.meta;
 
   return (
     <main className="mx-auto w-full max-w-[680px] px-5 pb-20 pt-12 sm:px-8 sm:pb-24 sm:pt-20">

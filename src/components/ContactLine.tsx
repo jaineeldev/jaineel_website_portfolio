@@ -8,9 +8,9 @@ const RESUME = "/resume/Jaineel_Khatri_Resume.pdf";
 const LINK =
   "link-draw font-mono text-[11px] uppercase tracking-[0.14em] text-fg-muted transition-colors duration-300 hover:text-accent";
 
-/** The email as plain text, with a copy button, then the résumé and profile links. */
+/** The email as a mailto link, with a copy button, then the résumé and profile links. */
 export default function ContactLine() {
-  const emailRef = useRef<HTMLSpanElement>(null);
+  const emailRef = useRef<HTMLAnchorElement>(null);
   const [copied, setCopied] = useState(false);
 
   async function copy() {
@@ -34,9 +34,13 @@ export default function ContactLine() {
 
   return (
     <div className="flex flex-wrap items-baseline gap-x-5 gap-y-3">
-      <span ref={emailRef} className="basis-full text-fg sm:basis-auto">
+      <a
+        ref={emailRef}
+        href={`mailto:${EMAIL}`}
+        className="basis-full text-fg transition-colors duration-300 hover:text-accent sm:basis-auto"
+      >
         {EMAIL}
-      </span>
+      </a>
       <button type="button" onClick={copy} className={LINK} aria-live="polite">
         {copied ? "Copied" : "Copy"}
       </button>

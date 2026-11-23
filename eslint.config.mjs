@@ -12,6 +12,10 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // Vendored agent skills and Cloudflare build output: not this site's code.
+    ".agents/**",
+    ".open-next/**",
+    ".wrangler/**",
   ]),
 ]);
 

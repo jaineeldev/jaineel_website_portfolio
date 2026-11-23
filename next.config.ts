@@ -1,8 +1,51 @@
 import type { NextConfig } from "next";
 
+const isDev = process.env.NODE_ENV !== "production";
+
+// Everything the site loads is its own: fonts are self-hosted by next/font, images and videos sit in /public,
+// and the only fetch is /api/spotify. 'unsafe-inline' for scripts covers the small <head> scripts in layout.tsx,
+// Next's own inline data and Cloudflare's bot check (served from /cdn-cgi on this origin); a nonce would make every
+// page dynamic. 'unsafe-eval' is only for React's dev tooling.
+const csp = [
+  "default-src 'self'",
+  `script-src 'self' 'unsafe-inline'${isDev ? " 'unsafe-eval'" : ""}`,
+  "style-src 'self' 'unsafe-inline'",
+  "img-src 'self' data: blob:",
+  "font-src 'self'",
+  "media-src 'self'",
+  `connect-src 'self'${isDev ? " ws:" : ""}`,
+  "frame-src 'self'",
+  "object-src 'none'",
+  "base-uri 'self'",
+  "form-action 'self'",
+  "frame-ancestors 'none'",
+  ...(isDev ? [] : ["upgrade-insecure-requests"]),
+].join("; ");
+
+const securityHeaders = [
+  { key: "Content-Security-Policy", value: csp },
+  // Two years, subdomains included. Not "preload": that's a separate opt-in that's slow to undo.
+  { key: "Strict-Transport-Security", value: "max-age=63072000; includeSubDomains" },
+  { key: "X-Content-Type-Options", value: "nosniff" },
+  { key: "X-Frame-Options", value: "DENY" },
+  { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
+  { key: "Permissions-Policy", value: "camera=(), microphone=(), geolocation=(), payment=(), usb=()" },
+  { key: "Cross-Origin-Opener-Policy", value: "same-origin" },
+];
+
 const nextConfig: NextConfig = {
-  // Lets <ViewTransition> (layout.tsx) fade between pages on client-side navigation.
-  experimental: { viewTransition: true },
+  // <ViewTransition> (template.tsx) needs no flag since Next 16.3; it fades between pages on client-side navigation.
+
+  // No "X-Powered-By: Next.js": it tells a scanner what to try, and nothing else needs it.
+  poweredByHeader: false,
+
+  // Cloudflare has no Next image optimizer here: /_next/image only passed the original file through, at full size.
+  // Images are served as they are, so they're made small up front (scripts/make-captures.mjs, make-thumbs.mjs).
+  images: { unoptimized: true },
+
+  async headers() {
+    return [{ source: "/:path*", headers: securityHeaders }];
+  },
 
   // /favicon.ico is what crawlers and older browsers ask for; app/favicon/route.ts makes the image.
   async rewrites() {

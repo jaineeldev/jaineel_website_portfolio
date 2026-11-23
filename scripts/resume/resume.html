@@ -42,23 +42,39 @@
   .skills p { margin-top: 2px; }
   .skills b { font-weight: 700; }
   .note { color: #333; }
+
+  /* Links: a blue that reads clearly on white, underlined, so they look clickable on screen and in a PDF viewer. */
+  a { color: #1d4ed8; text-decoration: underline; text-decoration-thickness: 0.6pt; text-underline-offset: 1.5pt; }
+  /* Project names also get a small arrow, which says it opens a page. */
+  a.ext::after {
+    content: "";
+    display: inline-block;
+    width: 0.62em;
+    height: 0.62em;
+    margin-left: 0.22em;
+    vertical-align: 0.04em;
+    background: currentColor;
+    -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 10 10%27%3E%3Cpath d=%27M2 8L8 2M3.4 2H8v4.6%27 fill=%27none%27 stroke=%27black%27 stroke-width=%271.5%27/%3E%3C/svg%3E") no-repeat center / contain;
+    mask: url("data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 10 10%27%3E%3Cpath d=%27M2 8L8 2M3.4 2H8v4.6%27 fill=%27none%27 stroke=%27black%27 stroke-width=%271.5%27/%3E%3C/svg%3E") no-repeat center / contain;
+  }
+  .hint { margin: -2px 0 6px; font-size: 8.5pt; color: #555; }
 </style>
 </head>
 <body>
 
 <h1>JAINEEL KHATRI</h1>
 <div class="contact">
-  <span>Brisbane, QLD</span><span>0493 153 251</span><span>jaineelk.dev@gmail.com</span>
+  <span>Brisbane, QLD</span><span>0493 153 251</span><span><a href="mailto:jaineelk.dev@gmail.com">jaineelk.dev@gmail.com</a></span>
 </div>
 <div class="contact" style="margin-top:1px">
-  <span>linkedin.com/in/jaineel-khatri</span><span>jaineel.dev</span><span>github.com/jaineeldev</span>
+  <span><a href="https://linkedin.com/in/jaineel-khatri">linkedin.com/in/jaineel-khatri</a></span><span><a href="https://jaineel.dev">jaineel.dev</a></span><span><a href="https://github.com/jaineeldev">github.com/jaineeldev</a></span>
 </div>
 
 <h2>Summary</h2>
 <p>
   Developer and cybersecurity graduate. Completed the Certificate IV in Cyber Security at TAFE Queensland in September 2026
   and starts a Bachelor of Information Technology (Computer Science) at QUT in 2027. Ships software end to end: Blimo, a
-  desktop app released for Windows and Mac, and Velo, a client workflow platform in development. Cert IV work includes a
+  desktop app released for Windows and Mac, and Velo, a client workflow concept project. Cert IV work includes a
   red team incident response exercise, an AWS cloud security plan and a Python port-scanning tool. Customer-facing work
   since 2021. Looking for junior security, IT or fullstack roles, part-time or casual alongside study.
 </p>
@@ -73,9 +89,10 @@
 </div>
 
 <h2>Projects</h2>
+<p class="hint">Each project name links to its write-up on jaineel.dev.</p>
 
 <div class="entry">
-  <div class="row"><span><span class="title">Blimo</span> – Desktop app for Windows and Mac <span class="stack">| Electron, React, TypeScript</span></span><span class="when">Oct 2026</span></div>
+  <div class="row"><span><span class="title"><a class="ext" href="https://jaineel.dev/work/blimo">Blimo</a></span> – Desktop app for Windows and Mac <span class="stack">| Electron, React, TypeScript</span></span><span class="when">Oct 2026</span></div>
   <ul>
     <li>Built and released a desktop pet whose face is generated from its name, with 21 moods, a customise panel and reactions to music, video and idle time. Version 1.2 supports Windows 10/11 and macOS (Apple Silicon and Intel).</li>
     <li>Chose Electron for the transparent, click-through, always-on-top window the product depends on. Shipped an installer that updates itself from GitHub Releases without admin rights.</li>
@@ -84,30 +101,30 @@
 </div>
 
 <div class="entry">
-  <div class="row"><span><span class="title">Velo</span> – Client workflow platform <span class="stack">| Next.js, TypeScript, Supabase, Postgres</span></span><span class="when">Started Mar 2026</span></div>
+  <div class="row"><span><span class="title"><a class="ext" href="https://jaineel.dev/work/velo">Velo</a></span> – Client workflow platform (concept) <span class="stack">| Next.js, TypeScript, Supabase, Postgres</span></span><span class="when">2026</span></div>
   <ul>
-    <li>Building a full-stack platform for Australian freelance developers and agencies: proposals, client approval links, milestones, invoicing with PDF export and a client portal.</li>
+    <li>Built the core workflow of a full-stack platform for Australian freelance developers and agencies: proposals, client approval links, milestones, invoicing with PDF export and a client portal.</li>
     <li>Implemented Supabase authentication with middleware route guards, an operator admin panel, transactional email through Resend and Stripe Checkout for invoice payments.</li>
-    <li>Added rate limiting, security event logging and signature-verified Stripe webhooks. Marketing site and waitlist are live; the product is in development with no launch date.</li>
+    <li>Added rate limiting, security event logging and signature-verified Stripe webhooks. It is now a concept project: the site stays up as a showcase and is not taking sign-ups.</li>
   </ul>
 </div>
 
 <div class="entry">
-  <div class="row"><span><span class="title">Hawthorne Corner Store</span> – Website for a local business <span class="stack">| React, Vite, Tailwind CSS</span></span><span class="when">2025 – Present</span></div>
+  <div class="row"><span><span class="title"><a class="ext" href="https://jaineel.dev/work/hawthorne">Hawthorne Corner Store</a></span> – Website for a local business <span class="stack">| React, Vite, Tailwind CSS</span></span><span class="when">2025 – Present</span></div>
   <ul>
     <li>Built and maintain the site for a Brisbane convenience store: opening hours with live open or closed status, click to call, directions, reviews and in-store services. In production since 2025.</li>
   </ul>
 </div>
 
 <div class="entry">
-  <div class="row"><span><span class="title">System Fingerprint Tool</span> – Cert IV assessment <span class="stack">| Python, Tkinter</span></span><span class="when">2025</span></div>
+  <div class="row"><span><span class="title"><a class="ext" href="https://jaineel.dev/work/fingerprint">System Fingerprint Tool</a></span> – Cert IV assessment <span class="stack">| Python, Tkinter</span></span><span class="when">2025</span></div>
   <ul>
     <li>Wrote a desktop tool that collects a machine's details (name, IP and MAC address, processor, operating system, internet speed), scans all 65,535 local TCP ports across 200 threads and appends the results to a CSV inventory.</li>
   </ul>
 </div>
 
 <div class="entry">
-  <div class="row"><span><span class="title">Incident Response Team Exercise</span> – Red Team Lead <span class="stack">| Cert IV in Cyber Security, team project</span></span><span class="when">Aug 2026</span></div>
+  <div class="row"><span><span class="title"><a class="ext" href="https://jaineel.dev/work/irtx">Incident Response Team Exercise</a></span> – Red Team Lead <span class="stack">| Cert IV in Cyber Security, team project</span></span><span class="when">Aug 2026</span></div>
   <ul>
     <li>Led the red team in a six-person simulated incident response exercise for a fictional company, attacking an isolated Kali Linux, Metasploitable 2 and Ubuntu lab against an opposing blue team. The blue team caught two of the three attacks.</li>
     <li>Ran the phishing attack: a Metasploit reverse TCP payload delivered through the blue team’s mail server, logged with message IDs, payload hashes and timestamps so detection could be reconciled afterwards.</li>
@@ -116,7 +133,7 @@
 </div>
 
 <div class="entry">
-  <div class="row"><span><span class="title">Cloud Security Plan</span> – AWS migration <span class="stack">| Cert IV in Cyber Security, AWS, CloudFormation</span></span><span class="when"></span></div>
+  <div class="row"><span><span class="title"><a class="ext" href="https://jaineel.dev/work/cloud-security-plan">Cloud Security Plan</a></span> – AWS migration <span class="stack">| Cert IV in Cyber Security, AWS, CloudFormation</span></span><span class="when"></span></div>
   <ul>
     <li>Assessed a case study business's AWS environment, defined in CloudFormation, and designed a hardened upgrade with a network firewall, application load balancer, multi-subnet architecture and segmented security groups.</li>
     <li>Produced testing and migration, monitoring and maintenance, and cloud incident response plans, including a containment, eradication and recovery matrix.</li>
@@ -124,7 +141,7 @@
 </div>
 
 <div class="entry">
-  <div class="row"><span><span class="title">jaineel.dev</span> – Personal portfolio <span class="stack">| Next.js, TypeScript, Tailwind CSS</span></span><span class="when"></span></div>
+  <div class="row"><span><span class="title"><a class="ext" href="https://jaineel.dev">jaineel.dev</a></span> – Personal portfolio <span class="stack">| Next.js, TypeScript, Tailwind CSS</span></span><span class="when"></span></div>
   <ul>
     <li>Designed and built this site and a project page for each of the above, deployed on Cloudflare.</li>
   </ul>

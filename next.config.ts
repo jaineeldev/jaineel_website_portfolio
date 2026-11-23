@@ -2,18 +2,19 @@ import type { NextConfig } from "next";
 
 const isDev = process.env.NODE_ENV !== "production";
 
-// Everything the site loads is its own: fonts are self-hosted by next/font, images and videos sit in /public,
-// and the only fetch is /api/spotify. 'unsafe-inline' for scripts covers the small <head> scripts in layout.tsx,
-// Next's own inline data and Cloudflare's bot check (served from /cdn-cgi on this origin); a nonce would make every
-// page dynamic. 'unsafe-eval' is only for React's dev tooling.
+// Everything the site loads is its own, apart from Cloudflare Web Analytics (its beacon script, which reports back to
+// cloudflareinsights.com): fonts are self-hosted by next/font, images and videos sit in /public, and the site's own
+// fetch is /api/spotify. 'unsafe-inline' for scripts covers the small <head> scripts in layout.tsx, Next's own inline
+// data and Cloudflare's bot check (served from /cdn-cgi on this origin); a nonce would make every page dynamic.
+// 'unsafe-eval' is only for React's dev tooling.
 const csp = [
   "default-src 'self'",
-  `script-src 'self' 'unsafe-inline'${isDev ? " 'unsafe-eval'" : ""}`,
+  `script-src 'self' 'unsafe-inline' https://static.cloudflareinsights.com${isDev ? " 'unsafe-eval'" : ""}`,
   "style-src 'self' 'unsafe-inline'",
   "img-src 'self' data: blob:",
   "font-src 'self'",
   "media-src 'self'",
-  `connect-src 'self'${isDev ? " ws:" : ""}`,
+  `connect-src 'self' https://cloudflareinsights.com${isDev ? " ws:" : ""}`,
   "frame-src 'self'",
   "object-src 'none'",
   "base-uri 'self'",

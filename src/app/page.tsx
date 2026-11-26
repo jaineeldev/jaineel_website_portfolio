@@ -6,7 +6,7 @@ import Preloader from "@/components/Preloader";
 import SiteHeader from "@/components/SiteHeader";
 import StatusBadge from "@/components/StatusBadge";
 import WorkThumb from "@/components/WorkThumb";
-import { projects } from "@/content/projects";
+import { projects, type Project } from "@/content/projects";
 import { latestBlimoRelease } from "@/lib/blimo";
 import { rise } from "@/lib/rise";
 
@@ -15,6 +15,14 @@ export const revalidate = 3600;
 
 const LABEL = "mb-4 font-mono text-[11px] font-normal uppercase tracking-[0.14em] text-fg-dim";
 const WHEN = "whitespace-nowrap pt-[3px] font-mono text-[11px] uppercase tracking-[0.08em] text-fg-dim";
+const GROUP = "mb-4 font-mono text-[10.5px] font-normal uppercase tracking-[0.14em] text-fg-muted";
+
+// The Work list in two groups: what's shipped and live first, then the security work. Order within each group comes
+// from projects.ts.
+const WORK_GROUPS: { label: string; includes: (p: Project) => boolean }[] = [
+  { label: "Software", includes: (p) => p.kind !== "Security" },
+  { label: "Security", includes: (p) => p.kind === "Security" },
+];
 
 const BACKGROUND: { what: string; note?: string; when: string }[] = [
   { what: "Certificate IV in Cyber Security, TAFE Queensland", when: "2025 to 2026" },
@@ -24,7 +32,7 @@ const BACKGROUND: { what: string; note?: string; when: string }[] = [
     when: "Starting 2027",
   },
   { what: "Balmoral State High School", when: "2016 to 2021" },
-  { what: "Certificate III in Aviation (Remote Pilot)", when: "AVI30316" },
+  { what: "Certificate III in Aviation (Remote Pilot)", when: "" },
 ];
 
 export default async function Home() {
@@ -52,7 +60,8 @@ export default async function Home() {
             Now
           </h2>
           <ul className="grid max-w-[36em] gap-1 text-fg-muted">
-            <li>{minor ? `Blimo ${minor} is out for Windows and Mac.` : "Blimo is out for Windows and Mac."}</li>
+            <li>{minor ? `Blimo ${minor} is out for Windows and Mac, with 60+ downloads so far.` : "Blimo is out for Windows and Mac, with 60+ downloads so far."}</li>
+            <li>Looking for my first developer or security role.</li>
             <li>Learning C.</li>
           </ul>
           {/* Only while something is playing. The height is reserved, so the page doesn't move when it appears. */}
@@ -65,41 +74,47 @@ export default async function Home() {
           <h2 id="work-heading" className={LABEL}>
             Work
           </h2>
-          <ul className="grid gap-[1.875rem]">
-            {projects.map((p, i) => {
-              const status = p.slug === "blimo" && version ? `Live · v${version}` : p.status;
-              return (
-                <li key={p.slug}>
-                  <Link href={`/work/${p.slug}`} className="group flex items-start justify-between gap-4 sm:gap-6">
-                    <span className="block min-w-0 flex-1">
-                      <span className="flex flex-wrap items-baseline justify-between gap-x-3 gap-y-0.5">
-                        <span className="inline-flex items-baseline gap-2">
-                          <span className="border-b border-transparent font-semibold text-fg transition-colors duration-300 group-hover:border-accent group-hover:text-accent group-focus-visible:border-accent group-focus-visible:text-accent">
-                            {p.name}
+          {WORK_GROUPS.map((group, g) => (
+            <div key={group.label} className={g ? "mt-10 sm:mt-12" : undefined}>
+              <h3 className={GROUP}>{group.label}</h3>
+              <ul className="grid gap-[1.875rem]">
+                {projects.filter(group.includes).map((p, i) => {
+                  const status = p.slug === "blimo" && version ? `Live · v${version}` : p.status;
+                  return (
+                    <li key={p.slug}>
+                      <Link href={`/work/${p.slug}`} className="group flex items-start justify-between gap-4 sm:gap-6">
+                        <span className="block min-w-0 flex-1">
+                          <span className="flex flex-wrap items-baseline justify-between gap-x-3 gap-y-0.5">
+                            <span className="inline-flex items-baseline gap-2">
+                              <span className="border-b border-transparent font-semibold text-fg transition-colors duration-300 group-hover:border-accent group-hover:text-accent group-focus-visible:border-accent group-focus-visible:text-accent">
+                                {p.name}
+                              </span>
+                              <span
+                                aria-hidden
+                                className="-translate-x-1 text-accent opacity-0 transition duration-300 group-hover:translate-x-0 group-hover:opacity-100 group-focus-visible:translate-x-0 group-focus-visible:opacity-100"
+                              >
+                                →
+                              </span>
+                            </span>
+                            <span className="flex items-center gap-2 whitespace-nowrap font-mono text-[10.5px] uppercase tracking-[0.08em] text-fg-dim">
+                              {/* The group already says it; only a different kind (a website among software) is worth naming. */}
+                              {p.kind !== group.label && p.kind}
+                              <StatusBadge status={status} />
+                            </span>
                           </span>
-                          <span
-                            aria-hidden
-                            className="-translate-x-1 text-accent opacity-0 transition duration-300 group-hover:translate-x-0 group-hover:opacity-100 group-focus-visible:translate-x-0 group-focus-visible:opacity-100"
-                          >
-                            →
+                          <span className="mt-0.5 block text-[15px] leading-[1.5] text-fg-muted">{p.summary}</span>
+                          <span className="mt-1.5 block font-mono text-[10.5px] uppercase tracking-[0.08em] text-fg-dim">
+                            {p.tags.join(" · ")}
                           </span>
                         </span>
-                        <span className="flex items-center gap-2 whitespace-nowrap font-mono text-[10.5px] uppercase tracking-[0.08em] text-fg-dim">
-                          {p.kind}
-                          <StatusBadge status={status} />
-                        </span>
-                      </span>
-                      <span className="mt-0.5 block text-[15px] leading-[1.5] text-fg-muted">{p.summary}</span>
-                      <span className="mt-1.5 block font-mono text-[10.5px] uppercase tracking-[0.08em] text-fg-dim">
-                        {p.tags.join(" · ")}
-                      </span>
-                    </span>
-                    <WorkThumb thumb={p.thumb} priority={i < 2} />
-                  </Link>
-                </li>
-              );
-            })}
-          </ul>
+                        <WorkThumb thumb={p.thumb} priority={g === 0 && i < 2} />
+                      </Link>
+                    </li>
+                  );
+                })}
+              </ul>
+            </div>
+          ))}
         </section>
 
         <section className="rise mt-12 sm:mt-[4.5rem]" style={rise(4)} aria-labelledby="background-heading">

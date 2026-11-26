@@ -39,68 +39,10 @@ export type Project = {
 };
 
 /**
- * In the order they appear on the home page: strongest first.
+ * In the order they appear on the home page: strongest first within each group (software, then security; see page.tsx).
  * Only claims the code, the live site or the release notes back up. See the project repos before changing any.
  */
 export const projects: Project[] = [
-  {
-    slug: "irtx",
-    name: "Incident Response Exercise",
-    kind: "Security",
-    status: "Complete",
-    meta: "Complete · Aug 2026 · Cert IV group project",
-    summary: "Led the red team in a six-person exercise that tested an incident response plan. The blue team caught two of three attacks.",
-    tags: ["Red team", "Metasploit", "Incident response"],
-    lead: "A six-person incident response exercise for a fictional company, RightPoint, run as three red-versus-blue pairs on an isolated lab network. I led the red team and wrote the playbook for the phishing attack.",
-    facts: [
-      ["Role", "Red team lead"],
-      ["Team", "Six: three red, three blue, with the teacher observing as a purple team"],
-      ["Attacks", "Phishing with a reverse TCP payload, a vsftpd 2.3.4 backdoor, a denial of service"],
-      ["Lab", "Isolated Kali Linux, Metasploitable 2 and Ubuntu machines"],
-      ["Live run", "28 August 2026, inside a two-hour window"],
-      ["Measured against", "NIST SP 800-61"],
-    ],
-    sections: [
-      {
-        label: "My attack",
-        items: [
-          "A single phishing email, relayed through the blue team’s mail server, linking to a Linux reverse TCP payload built with msfvenom and served from Kali.",
-          "A blue team member playing the target had to click the link, download the file and run it. That opened a Meterpreter session on my listener.",
-          "Proof of access was two harmless commands, getuid and sysinfo. The session was closed straight after.",
-          "Each step went into an attack log with the message ID, payload hash and timestamps, so the blue team’s logs could be matched against mine afterwards.",
-        ],
-      },
-      {
-        label: "A decision I’d defend",
-        lead: "No evasion. The payload stayed plain, with no encoders.",
-        text: "The exercise measured whether the blue team could detect and respond, not whether I could slip past them. The rules in my playbook also limited us to one attempt, no persistence, no lateral movement and no data theft without approval, and kept every action inside the lab.",
-      },
-      {
-        label: "What happened",
-        items: [
-          "The blue team caught two of the three attacks. The vsftpd backdoor was spotted within a minute, from traffic on port 6200 and a root shell started by the vsftpd process.",
-          "My phishing payload ran at 08:30 and was identified at 08:42. It was contained at 08:58.",
-          "The denial of service was not detected.",
-          "The blue team caught post-exploitation behaviour, such as the command-and-control connection and the backdoor shells. It did not catch the delivery: the phishing email, or the exploit traffic aimed at the FTP service.",
-          "Observers noted the blue team spent more time reading raw logs than using its alerting dashboards.",
-        ],
-      },
-      {
-        label: "What I’d change",
-        items: [
-          "Test the lab before the live run. Static IP addresses made the network fragile, and fixing it cost about 15 minutes of a two-hour window.",
-          "Keep the playbooks and the real lab configuration in step, so nobody re-checks basic connectivity on the day.",
-          "Pair any firewall change made for an attack with a written teardown step, so cleanup isn’t left to memory.",
-          "Practise the communication plan properly. Skipping it in rehearsal forced a full reset of the practice run.",
-          "Put more weight on people. One urgent-sounding pretext was enough to get the payload run.",
-        ],
-      },
-      {
-        label: "Where it came from",
-        text: "A Cert IV in Cybersecurity group assessment. I authored the red team playbook and the reporting templates, and contributed to the project charter and the closure reports. The classmates and the teacher aren’t named here.",
-      },
-    ],
-  },
   {
     slug: "blimo",
     name: "Blimo",
@@ -125,6 +67,10 @@ export const projects: Project[] = [
       ["Stack", "Electron, React, TypeScript, Framer Motion"],
       ["Moods", "21"],
       ["Cost", "Free"],
+      // GitHub's counts: 8 releases from 9 Oct to 10 Nov 2026, 65 installer downloads by then (some are Windows
+      // auto-updates). "60+" stays true as the count grows.
+      ["Shipped", "8 releases in a month"],
+      ["Downloads", "60+ on GitHub"],
     ],
     links: [
       { label: "Download and details", href: "/blimo" },
@@ -184,6 +130,7 @@ export const projects: Project[] = [
       {
         label: "Releases",
         releases: [
+          { text: "v1.2.1 · Mac fixes: goes anywhere on screen, drags first time, opens without a “damaged” warning", date: "10 Nov" },
           { text: "v1.2.0 · macOS support, Apple Silicon and Intel", date: "25 Oct" },
           { text: "v1.1.0 · Reacts to music, videos and full-screen activity", date: "18 Oct" },
           { text: "v1.0.1 · Stays on top, Quiet mode, Start with Windows, new icon", date: "14 Oct" },
@@ -192,6 +139,152 @@ export const projects: Project[] = [
           { text: "v0.2.0 · Early access", date: "10 Oct" },
           { text: "v0.1.0 · First build", date: "9 Oct" },
         ],
+      },
+    ],
+  },
+  {
+    slug: "hawthorne",
+    name: "Hawthorne Corner Store",
+    kind: "Website",
+    status: "Live",
+    meta: "Live · Since 2025",
+    summary: "The website for a Brisbane convenience store, in production since 2025.",
+    tags: ["React", "Vite", "Tailwind"],
+    lead: "The website for a Brisbane convenience store, built for an actual owner and actual foot traffic.",
+    image: {
+      src: "/projects/hawthorne.webp",
+      width: 1280,
+      height: 800,
+      alt: "The Hawthorne Corner Store website",
+      caption: "The live site.",
+    },
+    thumb: { src: "/work/thumbs/hawthorne.webp" },
+    facts: [
+      ["Stack", "React, Vite, Tailwind, Vercel"],
+      ["Status", "In production since 2025"],
+      ["Client", "A local store, real customers"],
+    ],
+    links: [{ label: "Live site", href: "https://hawthornecornerstore.com.au" }],
+    sections: [
+      {
+        label: "What it does",
+        items: [
+          "Opening hours with an open or closed status",
+          "Click to call, directions and Google reviews",
+          "What is in stock, and in-store services such as dry cleaning drop-off and SodaStream gas exchange",
+        ],
+      },
+      {
+        label: "Where it stands",
+        text: "In production since 2025 and still the store’s primary online presence.",
+      },
+    ],
+  },
+  {
+    slug: "velo",
+    name: "Velo",
+    kind: "Software",
+    status: "", // no badge
+    meta: "2026",
+    summary: "Client workflow for Australian freelance devs and agencies.",
+    tags: ["Next.js", "Supabase", "Postgres"],
+    lead: "Client workflow for Australian freelance devs and agencies: proposals, approvals, milestones, invoicing, PDF export and a client portal in one flow.",
+    image: {
+      src: "/projects/velo.webp",
+      width: 1280,
+      height: 800,
+      alt: "The Velo marketing site",
+      caption: "The Velo marketing site.",
+    },
+    thumb: { src: "/work/thumbs/velo.webp" },
+    facts: [
+      ["Stack", "Next.js, TypeScript, Supabase (auth and Postgres), Resend, Stripe"],
+      ["Status", "Built, not taking sign-ups"],
+    ],
+    links: [
+      { label: "Marketing site", href: "https://project-velo.vercel.app/" },
+      { label: "Source", href: "https://github.com/jaineeldev/project-velo" },
+    ],
+    sections: [
+      {
+        label: "What it covers",
+        items: ["Proposals and client approvals", "Milestones", "Invoicing and PDF export", "A client portal"],
+      },
+      {
+        label: "A decision I’d defend",
+        lead: "Share links that are safe to hand out.",
+        text: "A proposal reaches a client as a link with a 64-character random token. A malformed token and an unknown one get the same not-found page, so a guess teaches an attacker nothing. Share pages are never cached, and they are rate limited to 30 requests a minute per IP address, which cuts off anyone trying to guess tokens.",
+      },
+      {
+        label: "Only one approval can win",
+        text: "Approving a proposal creates the project, its milestones and the deposit invoice in a single transaction, so a failure halfway can’t leave a project with no invoice. The proposal is claimed first, with an update that only matches one still marked as sent, so a double click or two open tabs can’t create two projects.",
+      },
+      {
+        label: "A trade-off",
+        lead: "The rate limiter fails open.",
+        text: "It uses Upstash Redis when that is set up, and a counter in memory while developing. If Upstash is down, requests are let through and the error is logged. Failing closed would lock every visitor out during an outage.",
+      },
+      {
+        label: "Where it stands",
+        text: "The core workflow is built: proposals, client approval, milestones, invoices and PDF export. The site stays up as a showcase, but it isn’t taking sign-ups or waitlist entries.",
+      },
+    ],
+  },
+  {
+    slug: "irtx",
+    name: "Incident Response Exercise",
+    kind: "Security",
+    status: "Complete",
+    meta: "Complete · Aug 2026 · Cert IV group project",
+    summary: "Led the red team in a six-person exercise that tested an incident response plan. The blue team caught two of three attacks.",
+    tags: ["Red team", "Metasploit", "Incident response"],
+    lead: "A six-person incident response exercise for a fictional company, RightPoint, run as three red-versus-blue pairs on an isolated lab network. I led the red team and wrote the playbook for the phishing attack.",
+    facts: [
+      ["Role", "Red team lead"],
+      ["Team", "Six: three red, three blue, with the teacher observing as a purple team"],
+      ["Attacks", "Phishing with a reverse TCP payload, a vsftpd 2.3.4 backdoor, a denial of service"],
+      ["Lab", "Isolated Kali Linux, Metasploitable 2 and Ubuntu machines"],
+      ["Live run", "28 August 2026, inside a two-hour window"],
+      ["Measured against", "NIST SP 800-61"],
+    ],
+    sections: [
+      {
+        label: "My attack",
+        items: [
+          "A single phishing email, relayed through the blue team’s mail server, linking to a Linux reverse TCP payload built with msfvenom and served from Kali.",
+          "A blue team member playing the target had to click the link, download the file and run it. That opened a Meterpreter session on my listener.",
+          "Proof of access was two harmless commands, getuid and sysinfo. The session was closed straight after.",
+          "Each step went into an attack log with the message ID, payload hash and timestamps, so the blue team’s logs could be matched against mine afterwards.",
+        ],
+      },
+      {
+        label: "A decision I’d defend",
+        lead: "No evasion. The payload stayed plain, with no encoders.",
+        text: "The exercise measured whether the blue team could detect and respond, not whether I could slip past them. The rules in my playbook also limited us to one attempt, no persistence, no lateral movement and no data theft without approval, and kept every action inside the lab.",
+      },
+      {
+        label: "What happened",
+        items: [
+          "The blue team caught two of the three attacks. The vsftpd backdoor was spotted within a minute, from traffic on port 6200 and a root shell started by the vsftpd process.",
+          "My phishing payload ran at 08:30 and was identified at 08:42. It was contained at 08:58.",
+          "The denial of service was not detected.",
+          "The blue team caught post-exploitation behaviour, such as the command-and-control connection and the backdoor shells. It did not catch the delivery: the phishing email, or the exploit traffic aimed at the FTP service.",
+          "Observers noted the blue team spent more time reading raw logs than using its alerting dashboards.",
+        ],
+      },
+      {
+        label: "What I’d change",
+        items: [
+          "Test the lab before the live run. Static IP addresses made the network fragile, and fixing it cost about 15 minutes of a two-hour window.",
+          "Keep the playbooks and the real lab configuration in step, so nobody re-checks basic connectivity on the day.",
+          "Pair any firewall change made for an attack with a written teardown step, so cleanup isn’t left to memory.",
+          "Practise the communication plan properly. Skipping it in rehearsal forced a full reset of the practice run.",
+          "Put more weight on people. One urgent-sounding pretext was enough to get the payload run.",
+        ],
+      },
+      {
+        label: "Where it came from",
+        text: "A Cert IV in Cybersecurity group assessment. I authored the red team playbook and the reporting templates, and contributed to the project charter and the closure reports. The classmates and the teacher aren’t named here.",
       },
     ],
   },
@@ -287,94 +380,6 @@ export const projects: Project[] = [
       {
         label: "Where it came from",
         text: "Built for an assessment in my Cert IV in Cybersecurity, so some of its limits come from the assessment’s rules rather than my own tuning.",
-      },
-    ],
-  },
-  {
-    slug: "hawthorne",
-    name: "Hawthorne Corner Store",
-    kind: "Website",
-    status: "Live",
-    meta: "Live · Since 2025",
-    summary: "The website for a Brisbane convenience store, in production since 2025.",
-    tags: ["React", "Vite", "Tailwind"],
-    lead: "The website for a Brisbane convenience store, built for an actual owner and actual foot traffic.",
-    image: {
-      src: "/projects/hawthorne.webp",
-      width: 1280,
-      height: 800,
-      alt: "The Hawthorne Corner Store website",
-      caption: "The live site.",
-    },
-    thumb: { src: "/work/thumbs/hawthorne.webp" },
-    facts: [
-      ["Stack", "React, Vite, Tailwind, Vercel"],
-      ["Status", "In production since 2025"],
-      ["Client", "A local store, real customers"],
-    ],
-    links: [{ label: "Live site", href: "https://hawthornecornerstore.com.au" }],
-    sections: [
-      {
-        label: "What it does",
-        items: [
-          "Opening hours with an open or closed status",
-          "Click to call, directions and Google reviews",
-          "What is in stock, and in-store services such as dry cleaning drop-off and SodaStream gas exchange",
-        ],
-      },
-      {
-        label: "Where it stands",
-        text: "In production since 2025 and still the store’s primary online presence.",
-      },
-    ],
-  },
-  {
-    slug: "velo",
-    name: "Velo",
-    kind: "Software",
-    status: "Concept",
-    meta: "Concept · 2026",
-    summary: "Client workflow for Australian freelance devs and agencies.",
-    tags: ["Next.js", "Supabase", "Postgres"],
-    lead: "Client workflow for Australian freelance devs and agencies: proposals, approvals, milestones, invoicing, PDF export and a client portal in one flow.",
-    image: {
-      src: "/projects/velo.webp",
-      width: 1280,
-      height: 800,
-      alt: "The Velo marketing site",
-      caption: "The Velo marketing site.",
-    },
-    thumb: { src: "/work/thumbs/velo.webp" },
-    facts: [
-      ["Stack", "Next.js, TypeScript, Supabase (auth and Postgres), Resend, Stripe"],
-      ["Status", "Concept, sign-ups closed"],
-    ],
-    links: [
-      { label: "Marketing site", href: "https://project-velo.vercel.app/" },
-      { label: "Source", href: "https://github.com/jaineeldev/project-velo" },
-    ],
-    sections: [
-      {
-        label: "What it covers",
-        items: ["Proposals and client approvals", "Milestones", "Invoicing and PDF export", "A client portal"],
-      },
-      {
-        label: "A decision I’d defend",
-        lead: "Share links that are safe to hand out.",
-        text: "A proposal reaches a client as a link with a 64-character random token. A malformed token and an unknown one get the same not-found page, so a guess teaches an attacker nothing. Share pages are never cached, and they are rate limited to 30 requests a minute per IP address, which cuts off anyone trying to guess tokens.",
-      },
-      {
-        label: "Only one approval can win",
-        text: "Approving a proposal creates the project, its milestones and the deposit invoice in a single transaction, so a failure halfway can’t leave a project with no invoice. The proposal is claimed first, with an update that only matches one still marked as sent, so a double click or two open tabs can’t create two projects.",
-      },
-      {
-        label: "A trade-off",
-        lead: "The rate limiter fails open.",
-        text: "It uses Upstash Redis when that is set up, and a counter in memory while developing. If Upstash is down, requests are let through and the error is logged. Failing closed would lock every visitor out during an outage.",
-      },
-      {
-        label: "Where it stands",
-        text: "Velo is a concept now. The site stays up as a showcase, but it isn’t taking sign-ups or waitlist entries. The core workflow is built: proposals, client approval, milestones, invoices and PDF export.",
       },
     ],
   },

@@ -1,3 +1,5 @@
+import { cachedText } from "@/lib/cached-text";
+
 const RELEASES = "https://github.com/jaineeldev/blimo_app/releases/latest";
 
 export type BlimoRelease = {
@@ -13,9 +15,8 @@ export type BlimoRelease = {
  */
 export async function latestBlimoRelease(): Promise<BlimoRelease | null> {
   try {
-    const res = await fetch(`${RELEASES}/download/latest.yml`, { next: { revalidate: 3600 } });
-    if (!res.ok) return null;
-    const yml = await res.text();
+    const yml = await cachedText(`${RELEASES}/download/latest.yml`);
+    if (!yml) return null;
     const version = yml.match(/^version:\s*(\S+)/m)?.[1];
     if (!version) return null;
     const released = new Date(yml.match(/^releaseDate:\s*'?([^'\s]+)/m)?.[1] ?? "");

@@ -3,22 +3,28 @@
 //
 // The résumé is the PDF you made yourself (scripts/resume/source/Jaineel_Khatri_Resume.pdf). Its links are already
 // clickable, but they look like plain text. This reads that file, finds the text under each link, recolours it, draws
-// an underline and an arrow, then writes the result to public/resume/Jaineel_Khatri_Resume.pdf. Every other word and
-// font is left as it was, and the links keep their addresses.
+// an underline and an arrow, then writes the result out. Every other word and font is left as it was, and the links
+// keep their addresses.
+//
+// The site publishes two: the software-focused one (built by make-v2.mjs) as public/resume/Jaineel_Khatri_Resume.pdf,
+// which the site's Résumé link opens, and your original, security-focused one as
+// public/resume/Jaineel_Khatri_Resume_Security.pdf.
 //
 // The one layout change: on the centred contact lines, each item sits close to its "|" separator, so the items are
 // spaced out just enough to fit their arrows and the line is re-centred. Project names have room already.
 //
-// Usage: node scripts/resume/add-links.mjs
-// When the résumé changes: save the new PDF over the source file, then run this again.
+// Usage: node scripts/resume/add-links.mjs [source.pdf] [output.pdf]
+//   With no arguments it does the security-focused résumé. For the software-focused one (after make-v2.mjs):
+//   node scripts/resume/add-links.mjs scripts/resume/source/Jaineel_Khatri_Resume_v2.pdf public/resume/Jaineel_Khatri_Resume.pdf
+// When your résumé changes: save the new PDF over the source file, then run make-v2.mjs and both commands again.
 import { PDFDocument, PDFName, PDFDict, PDFArray, decodePDFRawStream, rgb } from "pdf-lib";
 import { readFile, writeFile } from "node:fs/promises";
 import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), "../..");
-const SOURCE = resolve(root, "scripts/resume/source/Jaineel_Khatri_Resume.pdf");
-const OUT = resolve(root, "public/resume/Jaineel_Khatri_Resume.pdf");
+const SOURCE = resolve(root, process.argv[2] ?? "scripts/resume/source/Jaineel_Khatri_Resume.pdf");
+const OUT = resolve(root, process.argv[3] ?? "public/resume/Jaineel_Khatri_Resume_Security.pdf");
 
 // The blue the site uses for "Complete" in light mode (#1d4ed8): clearly a link colour, and readable on white.
 const BLUE = { r: 29 / 255, g: 78 / 255, b: 216 / 255 };

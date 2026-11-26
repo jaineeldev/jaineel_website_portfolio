@@ -3,6 +3,8 @@
 import { useRef, useState } from "react";
 
 const EMAIL = "jaineelk.dev@gmail.com";
+// The software-focused résumé (built by scripts/resume/make-v2.mjs). The security-focused one is
+// /resume/Jaineel_Khatri_Resume_Security.pdf.
 const RESUME = "/resume/Jaineel_Khatri_Resume.pdf";
 
 const LINK =

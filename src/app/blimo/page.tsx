@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { cachedText } from "@/lib/cached-text";
 import BlimoPage from "./BlimoPage";
 
 export const metadata: Metadata = {
@@ -25,12 +26,11 @@ export type Release = {
 // The newest installer, from the latest.yml every release carries for the app's own updater. It's a
 // plain file download, so unlike GitHub's API (60 requests an hour, shared by everyone on a host's
 // address) it doesn't run out, and the page always agrees with what the app updates to.
+// Both files are fetched at once, and each is kept for an hour (cached-text.ts), so the page rarely waits on GitHub.
 async function latestRelease(): Promise<Release> {
-  const mac = await latestMac();
+  const [mac, yml] = await Promise.all([latestMac(), cachedText(`${RELEASES}/download/latest.yml`)]);
   try {
-    const res = await fetch(`${RELEASES}/download/latest.yml`, { next: { revalidate: 3600 } });
-    if (!res.ok) throw new Error(`GitHub answered ${res.status}`);
-    const yml = await res.text();
+    if (!yml) throw new Error("GitHub couldn't be reached");
     const version = yml.match(/^version:\s*(\S+)/m)?.[1];
     const file = yml.match(/^path:\s*(\S+)/m)?.[1];
     const size = Number(yml.match(/^\s+size:\s*(\d+)/m)?.[1]);
@@ -51,9 +51,8 @@ async function latestRelease(): Promise<Release> {
 // (its `path` is the zip, which is for updating). None if the latest release has no Mac version.
 async function latestMac(): Promise<Release["mac"]> {
   try {
-    const res = await fetch(`${RELEASES}/download/latest-mac.yml`, { next: { revalidate: 3600 } });
-    if (!res.ok) return null;
-    const yml = await res.text();
+    const yml = await cachedText(`${RELEASES}/download/latest-mac.yml`);
+    if (!yml) return null;
     const version = yml.match(/^version:\s*(\S+)/m)?.[1];
     const dmg = yml.split(/^\s*-\s+url:\s*/m).find((entry) => /^\S+\.dmg\s/.test(entry));
     const file = dmg?.match(/^(\S+)/)?.[1];

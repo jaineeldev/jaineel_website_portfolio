@@ -152,16 +152,17 @@ const FEATURES: { title: string; body: string[]; clip: Clip }[] = [
   {
     title: "Customise",
     body: [
-      "Right-click it to change its name, shape, eyes, colour and size. Six of the shapes are hand-drawn extras.",
+      "Right-click it for its panel: a short list of how it's set up, with a page each for its look, mood, size and more. Six of the shapes are hand-drawn characters.",
+      "Share yours as a short code. A friend pastes it into their Blimo and gets the same buddy.",
       "Everything saves on your PC, and it stays exactly where you put it.",
     ],
     clip: {
       file: "customise",
-      width: 546,
-      height: 592,
+      width: 556,
+      height: 596,
       show: 600,
       start: 6,
-      alt: "The settings panel beside Sora: renamed Pip, its face changes with every letter, then it gets a kitty shape, a pink colour and square eyes.",
+      alt: "Sora's panel opens on a short list of how it's set up. On the Look page Sora becomes a pink pastel kitty with square eyes, the list then reads Kitty, pink, squares, and Share copies Sora's code before it goes back to its own look.",
     },
   },
 ];
@@ -169,7 +170,7 @@ const FEATURES: { title: string; body: string[]; clip: Clip }[] = [
 const QUESTIONS: [string, string][] = [
   [
     "Is it safe?",
-    "Yes. It needs no admin rights and no special permissions. It reads where your mouse is and how long since you last used your keyboard or mouse, never what you type. It can tell when music or a video is playing, from Windows' own media info. It only listens to the music if you turn on bop to the beat, and only reads the song's name if you turn on show what's playing, and nothing it hears or reads is kept or sent. It doesn't touch your camera, microphone, location, clipboard or files, and the only thing it connects to is GitHub, to check for updates. The code is open source, so anyone can check.",
+    "Yes. It needs no admin rights and no special permissions. It reads where your mouse is and how long since you last used your keyboard or mouse, never what you type. It can tell when music or a video is playing, from Windows' own media info. It only listens to the music if you turn on bop to the beat, and only reads the song's name if you turn on show what's playing, and nothing it hears or reads is kept or sent. It doesn't touch your camera, microphone, location or files, and it only uses your clipboard to put your buddy's code there when you press Copy code. The only thing it connects to is GitHub, to check for updates. The code is open source, so anyone can check.",
   ],
   [
     "Why does Windows warn me when I install it?",
@@ -178,7 +179,7 @@ const QUESTIONS: [string, string][] = [
   ["Will it slow my computer down?", "No. It sits quietly between moments. On my PC it uses about 2% of the processor while idle."],
   [
     "How do I close or hide it?",
-    "Right-click your buddy and press Quit Blimo at the bottom of its panel. To hide it for a bit, press Ctrl+Alt+B (Option+Command+B on a Mac), and press it again to bring it back.",
+    "Right-click your buddy and press Quit at the bottom of its panel. To hide it for a bit, press Ctrl+Alt+B (Option+Command+B on a Mac), and press it again to bring it back.",
   ],
   ["How do I uninstall it?", "Like any other app. On Windows, open Settings, then Apps, find Blimo and uninstall it. On a Mac, drag it from Applications to the Bin."],
   [
